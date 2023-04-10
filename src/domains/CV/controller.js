@@ -1,6 +1,6 @@
-const CV = require("./models/cv");
-const Student = require("./models/students");
-const Entreprise = require("./models/compagny");
+const CV = require("./model");
+const Student = require("../student/model");
+const Entreprise = require("../entreprise/model");
 
 //CV.findAll({
   //include: [
@@ -21,7 +21,10 @@ const createCV = async (req, res) => {
     }
   };
   
+  const updateCV = async (req, res) => {
+  
   // UPDATEn 
+
     try {
       const { id } = req.params;
       const [rowsUpdated] = await CV.update(req.body, { where: { id } });
@@ -33,7 +36,7 @@ const createCV = async (req, res) => {
       res.status(400).json({ message: err.message });
     }
   
-  
+  };
   // DELETE
   const deleteCV = async (req, res) => {
     try {

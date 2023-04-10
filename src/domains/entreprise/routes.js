@@ -17,7 +17,7 @@ const storage = multer.memoryStorage();
 
 const entrepriseController = require('../entreprise/controller.js')
 
-router.post('/createEntreprise',entrepriseController.createEntreprise)
+router.post('/registerCompany',entrepriseController.registerCompany)
 
 router.get('/getAllEntreprise',entrepriseController.getAllEntreprise)
 
@@ -26,6 +26,7 @@ router.get('/:nom',entrepriseController.getEntrepriseByName)
 router.put('/:id',entrepriseController.updateEntrepriseById)
 
 router.delete('/:id',entrepriseController.deleteEntrepriseById)
+router.post('/verifyOTP1',entrepriseController.verifyOTP1)
 
 //router.get('/PublishedStudent',studentController.getPublishedStudent)
 

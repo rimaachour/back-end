@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const speakeasy = require('speakeasy');
+const mysql = require('mysql2');
 
 
  // Définir une fonction pour générer un OTP aléatoire à 6 chiffres
@@ -25,5 +26,9 @@ const speakeasy = require('speakeasy');
        pass: 'xwhnpgybjsvyybfq'
      }
    });}
+  
+
+
+   
 exports.generateOTP=generateOTP
 exports.sendOTPEmail= sendOTPEmail

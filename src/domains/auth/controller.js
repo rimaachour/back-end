@@ -6,76 +6,8 @@ const bcrypt = require('bcrypt');
 const { mail } = require("../../helpers/mailer");
 const {generateOTP} =require("../../helpers/OTP");
 const {sendOTPEmail}=require("../../helpers/OTP");
-const registerUser = async (req, res, next) => {
-    const { name, email, password, confirmpassword } = req.body;
-    console.log(name)
-  
-    try {
-      // Vérifie si les mots de passe correspondent
-      if (password !== confirmpassword) {
-        throw new Error('Les mots de passe ne correspondent pas');
-      }
-  
-      let messageBienvenue = 'welcome User';
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const confirmPasswordHash = await bcrypt.hash(confirmpassword, 10);
-      const otp =await generateOTP();
-
-      const newUser = new Student({
-        name:name,
-        email: email,
-        password: hashedPassword,
-        confirmpassword:confirmPasswordHash,
-        role: "student",
-        OTP :otp
-      }); 
-
-   await mail(newUser.email,'otp',otp)
 
 
-
-      const saved= await newUser.save();
-      if (saved) {
-        return res.status(200).send(newUser)
-      }
-
-    } catch (err) {
-      return next(err.message);
-    }
-  };
-
-const registerCompany = async (req, res, next) => {
-  const { name, email, password, confirmpassword } = req.body;
-
-  try {
-    // Vérifie si les mots de passe correspondent
-    if (password !== confirmpassword) {
-      throw new Error('Les mots de passe ne correspondent pas');
-    }
-
-    let messageBienvenue = 'welcome company';
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const confirmPasswordHash = await bcrypt.hash(confirmpassword, 10);
-
-    const newUser = new Student({
-      name: name,
-      email: email,
-      password: hashedPassword,
-      confirmpassword:confirmPasswordHash,
-      role: "company"
-    })
-
-    const saved= await newUser.save();
-    if (saved) {
-      return res.status(200).send(newUser)
-    }
-
-  } catch (err) {
-    return next(err.message);
-  }
-};
 
 
 
@@ -185,4 +117,4 @@ const forgotPassword = async (req, res, next) => {
 
 
 
-module.exports = { registerUser,signIn,registerCompany,forgotPassword,restePassword };
+module.exports = { signIn,forgotPassword,restePassword };

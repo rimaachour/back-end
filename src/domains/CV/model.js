@@ -1,75 +1,80 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize  = require("../../config/db");
-const Student = require("../student/model");
-const Entreprise =require("../entreprise/model")
+const Student = require('../student/model');
+const Entreprise = require('../entreprise/model');
+const sequelize = require('../../config/db');
 
 const CV = sequelize.define('cv', {
     id: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       autoIncrement: true,
       allowNull: false,
       primaryKey: true,
       unique: true
     },
     prenom: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: false
     },
     nom: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: false
     },
     email: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: false
     },
     telephone: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       allowNull: false
     },
     education: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: false
     },
     experience: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: false
     },
     competences: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: false
     },
     projets: {
-      type: DataTypes.STRING,
-      allowNull: false
+      type: Sequelize.STRING,
+      allowNull: false 
     },
     informationPersonnelle: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: false
     },
     compagny_id: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       references: {
         model: Entreprise,
         key: 'id'
       }
     },
     student_id: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       references: {
         model: Student,
         key: 'id'
-      }
+      },
+      allowNull:true
     }
   }, {
     timestamps: false
   });
+  
   // Define associations
   CV.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
-  CV.belongsTo(Entreprise, { foreignKey: 'compagny_id', as: 'compagny' });
+  //CV.belongsTo(Entreprise, { foreignKey: 'compagny_id', as: 'compagny' });
   
   Student.hasOne(CV, { foreignKey: 'student_id', as: 'cv' });
-  Entreprise.hasOne(CV, { foreignKey: 'compagny_id', as: 'cv' });
-   
-module.exports = CV;
-
+  sequelize.sync({ force: true }) // force: true will drop the table if it already exists
+  .then(() => {
+    console.log('Table(s) created or updated!');
+  });
+  /* TODO many  */
+ // Entreprise.hasOne(CV, { foreignKey: 'compagny_id', as: 'cv' });
+  module.exports = CV;

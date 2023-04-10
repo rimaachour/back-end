@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { createCV, updateCV, deleteCV } = require('../controllers/cvController');
+const { createCV, updateCV, deleteCV } = require('../CV/controller');
 
-router.post('/cv', createCV);
-router.put('/cv/:id', updateCV);
-router.delete('/cv/:id', deleteCV);
+router.post('/createcv', createCV);
+router.put('/updatecv/:id',updateCV);
+router.delete('/deletecv/:id', deleteCV);
 
 module.exports = router;

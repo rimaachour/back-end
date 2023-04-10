@@ -17,7 +17,7 @@ const storage = multer.memoryStorage();
 
 const studentController = require('../student/controller.js')
 
-router.post('/createStudent',studentController.createStudent)
+router.post('/createStudent',studentController.registerUser)
 
 router.get('/AllStudents',studentController.getAllStudents)
 
@@ -26,6 +26,7 @@ router.get('/:nom',studentController.getStudentByName)
 router.put('/:id',studentController.updateStudentById)
 
 router.delete('/:id',studentController.deleteStudentById)
+router.post('/verifyOTP',studentController.verifyOTP)
 
 //router.get('/PublishedStudent',studentController.getPublishedStudent)
 

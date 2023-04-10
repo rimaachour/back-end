@@ -1,5 +1,8 @@
+const { generateOTP } = require('../../helpers/OTP');
 const { mail } = require('../../helpers/mailer');
 const Student= require('../student/model')
+const bcrypt = require('bcrypt');
+
 
 // create main model
 // const Student = db.student
@@ -13,27 +16,68 @@ const Student= require('../student/model')
 
 
 
-const createStudent = async (req, res) => {
-  try  {
-    await mail('rimaachour57@gmail.com','test','123')
-    const student = await Student.create({
+const registerUser = async (req, res, next) => {
+  const { name, email, password, confirmpassword } = req.body;
+  console.log(password,confirmpassword)
 
-      Name: req.body.Name,
-      Email: req.body. Email,
-      Password: req.body.Password,
-      ConfirmPassword: req.body.ConfirmPassword,
-      
+  try {
+    // Vérifie si les mots de passe correspondent
+    if (password !== confirmpassword) {
+      throw new Error('Les mots de passe ne correspondent pas');
+    }
 
-    
-   
-  });
-  
-  res.status(200).send(student);
-}   catch (err) {
-  console.error(err);
-  res.status(500).send('Server Error');
-}
+    let messageBienvenue = 'welcome User';
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const confirmPasswordHash = await bcrypt.hash(confirmpassword, 10);
+    const otp =await generateOTP()
+
+
+    const newUser = new Student({
+      name:name,
+      email: email,
+      password: hashedPassword,
+      confirmpassword:confirmPasswordHash,
+      role: "student",
+      OTP :otp
+    }); 
+
+ await mail(newUser.email,'otp',otp)
+
+
+
+    const saved= await newUser.save();
+    if (saved) {
+      return res.status(200).send(newUser)
+    }
+
+  } catch (err) {
+    return next(err.message);
+  }
 };
+
+
+async function verifyOTP(req, res) {
+  const { email, OTP} = req.body;
+  console.log(email)
+
+  try {
+    const student = await Student.findOne({ where: {email: email} });
+
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    if (student.OTP === OTP) {
+      student.status='active'
+      return res.status(200).json({ message: 'OTP verified' });
+    } else {
+      return res.status(400).json({ message: 'OTP not verified' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Error verifying OTP' });
+  }}
 
 // 2. get all students
 const getAllStudents = async (req, res) => {
@@ -118,10 +162,11 @@ const deleteStudentById = async (req, res) => {
 //}
 
 module.exports = {
-  createStudent,
+  registerUser,
   getAllStudents,
   getStudentByName,
   updateStudentById,
   deleteStudentById,
+  verifyOTP
  
 }
