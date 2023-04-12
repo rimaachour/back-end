@@ -1,6 +1,5 @@
 const express = require("express");
 const PDFDocument = require("pdfkit");
-const multer = require('multer');
 const mysql = require("mysql2");
 const Pdfmake = require('pdfmake');
 const mysqlPormise = require('mysql2/promise') // you import this package when you want to use execute function with the connection
@@ -11,7 +10,6 @@ const router = express.Router();
 const { Router } = require("express");
 //const app = require("../..");
 
-const storage = multer.memoryStorage();
 //module.exports =  app;
 ///version with sequelize
 
@@ -27,7 +25,6 @@ router.put('/:id',studentController.updateStudentById)
 
 router.delete('/:id',studentController.deleteStudentById)
 router.post('/verifyOTP',studentController.verifyOTP)
-router.post('/addStudentWithImage',studentController.addStudentWithImage)
 
 //router.get('/PublishedStudent',studentController.getPublishedStudent)
 

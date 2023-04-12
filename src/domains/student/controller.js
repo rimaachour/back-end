@@ -173,20 +173,25 @@ const deleteStudentById = async (req, res) => {
 
 
 const addStudentWithImage = async (req, res) => {
-  try {
-    // Get the uploaded file from the request
-    const file = req.file;
-    console.log(req.file); // log req.file to debug the issue
+  console.log(',,,',req.body)
+  console.log("bbb",req.file)
+      // Get the uploaded file from the request
+      const file = req.file;
+  
+      // Read the file as a buffer
+      const imageBuffer = file.buffer;
 
-    // Read the file as a buffer
-    const imageBuffer = file.buffer;
-    // Convert the buffer to a base64 string
-    const base64Image = imageBuffer.toString('base64');
-    // Set the image type to the uploaded file's mimetype
-    const imageType = file.mimetype.split('/')[1];
+
+      // Convert the buffer to a base64 string
+      //const base64Image = imageBuffer.toString('base64');
+      // Set the image type to the uploaded file's mimetype
+      //const imageType = file.mimetype.split('/')[1];
+      console.log(imageBuffer)
+  try {
+
 
     // Create a new student with the provided name, age, and image
-    const newStudent = await Student.create({
+   /* const newStudent = await Student.create({
       firstname: req.body.firstname,
       LastName: req.body.LastName,
       Number: req.body.Number,
@@ -204,7 +209,7 @@ const addStudentWithImage = async (req, res) => {
     });
 
     console.log(`New student ${newStudent.firstname} added to database with image.`);
-    res.send(`New student ${newStudent.firstname} added to database with image.`);
+    res.send(`New student ${newStudent.firstname} added to database with image.`);*/
   } catch (error) {
     console.error('Error adding student with image:', error.message);
     res.status(500).send(`Error adding student with image: ${error.message}`);
