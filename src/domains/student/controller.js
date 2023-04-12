@@ -2,8 +2,18 @@ const { generateOTP } = require('../../helpers/OTP');
 const { mail } = require('../../helpers/mailer');
 const Student= require('../student/model')
 const bcrypt = require('bcrypt');
-
-
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, callback) => {
+    if (file.mimetype.startsWith('image/')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Only image files are allowed'));
+    }
+  }
+});
 // create main model
 // const Student = db.student
 // main work
@@ -161,12 +171,53 @@ const deleteStudentById = async (req, res) => {
   //res.status(200).send(students)
 //}
 
+
+const addStudentWithImage = async (req, res) => {
+  try {
+    // Get the uploaded file from the request
+    const file = req.file;
+    console.log(req.file); // log req.file to debug the issue
+
+    // Read the file as a buffer
+    const imageBuffer = file.buffer;
+    // Convert the buffer to a base64 string
+    const base64Image = imageBuffer.toString('base64');
+    // Set the image type to the uploaded file's mimetype
+    const imageType = file.mimetype.split('/')[1];
+
+    // Create a new student with the provided name, age, and image
+    const newStudent = await Student.create({
+      firstname: req.body.firstname,
+      LastName: req.body.LastName,
+      Number: req.body.Number,
+      streetAdress: req.body.streetAdress,
+      city: req.body.city,
+      state: req.body.state,
+      Postal: req.body.Postal,
+      place: req.body.place,
+      schoolname: req.body.schoolname,
+      schoollocation: req.body.schoollocation,
+      firstattend: req.body.firstattend,
+      finalattend: req.body.finalattend,
+      photo: base64Image,
+      imageType,
+    });
+
+    console.log(`New student ${newStudent.firstname} added to database with image.`);
+    res.send(`New student ${newStudent.firstname} added to database with image.`);
+  } catch (error) {
+    console.error('Error adding student with image:', error.message);
+    res.status(500).send(`Error adding student with image: ${error.message}`);
+  }
+};
+
 module.exports = {
   registerUser,
   getAllStudents,
   getStudentByName,
   updateStudentById,
   deleteStudentById,
-  verifyOTP
- 
+  verifyOTP,
+  addStudentWithImage
+
 }

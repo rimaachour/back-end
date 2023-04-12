@@ -13,6 +13,15 @@ const Student = sequelize.define('students', {
     type: Sequelize.STRING,
     allowNull: false
   },
+  firstname: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  LastName:{
+    type: Sequelize.STRING,
+    allowNull: false
+
+  },
   email: {
     type: Sequelize.STRING,
     allowNull: false
@@ -41,7 +50,62 @@ const Student = sequelize.define('students', {
     type: Sequelize.INTEGER,
     allowNull: true
   },
-  status:{type:Sequelize.ENUM('active','notactive'), default:'notactive'}
+photo: {
+  type:Sequelize.STRING,
+  allowNull:false
+
+},
+Number:{
+  type: Sequelize.INTEGER,
+  allowNull:false
+
+
+},
+streetAdress:{
+  type:Sequelize.STRING,
+  allowNull:false
+},
+city:{
+  type:Sequelize.STRING,
+  allowNull:false,
+},
+state:{
+  type:Sequelize.STRING,
+  allowNull:false,
+},
+Postal:{
+  type:Sequelize.INTEGER,
+  allowNull:false,
+},
+place:{
+  type:Sequelize.STRING,
+  allowNull:false,
+},
+
+schoolname:{
+  type:Sequelize.STRING,
+  allowNull:false,
+},
+
+schoollocation:{
+  type:Sequelize.STRING,
+  allowNull:false,
+
+},
+firstattend:{
+  type: DataTypes.DATE,
+  allowNull:false,
+
+},
+
+finalattend:{
+  type: DataTypes.DATE,
+  allowNull:false,
+
+},
+
+
+status:{type:Sequelize.ENUM('active','notactive'), default:'notactive'}
 }, {
   timestamps: false
 });

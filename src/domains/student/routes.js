@@ -27,6 +27,7 @@ router.put('/:id',studentController.updateStudentById)
 
 router.delete('/:id',studentController.deleteStudentById)
 router.post('/verifyOTP',studentController.verifyOTP)
+router.post('/addStudentWithImage',studentController.addStudentWithImage)
 
 //router.get('/PublishedStudent',studentController.getPublishedStudent)
 
