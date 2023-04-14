@@ -15,11 +15,11 @@ const Student = sequelize.define('students', {
   },
   firstname: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
   LastName:{
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
 
   },
   email: {
@@ -50,57 +50,57 @@ const Student = sequelize.define('students', {
     type: Sequelize.INTEGER,
     allowNull: true
   },
-photo: {
+file: {
   type:Sequelize.STRING,
-  allowNull:false
+  allowNull:true
 
 },
 Number:{
   type: Sequelize.INTEGER,
-  allowNull:false
+  allowNull:true
 
 
 },
 streetAdress:{
   type:Sequelize.STRING,
-  allowNull:false
+  allowNull:true
 },
 city:{
   type:Sequelize.STRING,
-  allowNull:false,
+  allowNull:true,
 },
 state:{
   type:Sequelize.STRING,
-  allowNull:false,
+  allowNull:true,
 },
 Postal:{
   type:Sequelize.INTEGER,
-  allowNull:false,
+  allowNull:true,
 },
 place:{
   type:Sequelize.STRING,
-  allowNull:false,
+  allowNull:true,
 },
 
 schoolname:{
   type:Sequelize.STRING,
-  allowNull:false,
+  allowNull:true,
 },
 
 schoollocation:{
   type:Sequelize.STRING,
-  allowNull:false,
+  allowNull:true,
 
 },
 firstattend:{
   type: DataTypes.DATE,
-  allowNull:false,
+  allowNull:true,
 
 },
 
 finalattend:{
   type: DataTypes.DATE,
-  allowNull:false,
+  allowNull:true,
 
 },
 

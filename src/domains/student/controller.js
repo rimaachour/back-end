@@ -26,45 +26,45 @@ const upload = multer({
 
 
 
-const registerUser = async (req, res, next) => {
-  const { name, email, password, confirmpassword } = req.body;
-  console.log(password,confirmpassword)
+  const registerUser = async (req, res, next) => {
+    const { name, email, password, confirmpassword } = req.body;
+    console.log(password,confirmpassword)
 
-  try {
-    // Vérifie si les mots de passe correspondent
-    if (password !== confirmpassword) {
-      throw new Error('Les mots de passe ne correspondent pas');
+    try {
+      // Vérifie si les mots de passe correspondent
+      if (password !== confirmpassword) {
+        throw new Error('Les mots de passe ne correspondent pas');
+      }
+
+      let messageBienvenue = 'welcome User';
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const confirmPasswordHash = await bcrypt.hash(confirmpassword, 10);
+      const otp =await generateOTP()
+
+
+      const newUser = new Student({
+        name:name,
+        email: email,
+        password: hashedPassword,
+        confirmpassword:confirmPasswordHash,
+        role: "student",
+        OTP :otp
+      }); 
+
+  await mail(newUser.email,'otp',otp)
+
+
+
+      const saved= await newUser.save();
+      if (saved) {
+        return res.status(200).send(newUser)
+      }
+
+    } catch (err) {
+      return next(err.message);
     }
-
-    let messageBienvenue = 'welcome User';
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const confirmPasswordHash = await bcrypt.hash(confirmpassword, 10);
-    const otp =await generateOTP()
-
-
-    const newUser = new Student({
-      name:name,
-      email: email,
-      password: hashedPassword,
-      confirmpassword:confirmPasswordHash,
-      role: "student",
-      OTP :otp
-    }); 
-
- await mail(newUser.email,'otp',otp)
-
-
-
-    const saved= await newUser.save();
-    if (saved) {
-      return res.status(200).send(newUser)
-    }
-
-  } catch (err) {
-    return next(err.message);
-  }
-};
+  };
 
 
 async function verifyOTP(req, res) {
@@ -172,49 +172,54 @@ const deleteStudentById = async (req, res) => {
 //}
 
 
-const addStudentWithImage = async (req, res) => {
-  console.log(',,,',req.body)
-  console.log("bbb",req.file)
-      // Get the uploaded file from the request
-      const file = req.file;
+const updateUser = async (req, res, next) => {
+  const { id } = req.params; // Get the user ID from the request parameters
+  const data = req.body; // Get the data from the request body
+
+  const user = await Student.findOne({
+    where:{id:id}
+  })
   
-      // Read the file as a buffer
-      const imageBuffer = file.buffer;
-
-
-      // Convert the buffer to a base64 string
-      //const base64Image = imageBuffer.toString('base64');
-      // Set the image type to the uploaded file's mimetype
-      //const imageType = file.mimetype.split('/')[1];
-      console.log(imageBuffer)
+  if (!user) {
+    throw new Error('User not found');
+  }
+  console.log(user);
+console.log(req.body)
   try {
 
-
-    // Create a new student with the provided name, age, and image
-   /* const newStudent = await Student.create({
-      firstname: req.body.firstname,
-      LastName: req.body.LastName,
-      Number: req.body.Number,
-      streetAdress: req.body.streetAdress,
-      city: req.body.city,
-      state: req.body.state,
-      Postal: req.body.Postal,
-      place: req.body.place,
-      schoolname: req.body.schoolname,
-      schoollocation: req.body.schoollocation,
-      firstattend: req.body.firstattend,
-      finalattend: req.body.finalattend,
-      photo: base64Image,
-      imageType,
-    });
-
-    console.log(`New student ${newStudent.firstname} added to database with image.`);
-    res.send(`New student ${newStudent.firstname} added to database with image.`);*/
-  } catch (error) {
-    console.error('Error adding student with image:', error.message);
-    res.status(500).send(`Error adding student with image: ${error.message}`);
+  
+    // Update the user object with the new data
+    user.firstname = data.firstname;
+    user.LastName = data.LastName;
+    user.Number = data.Number;
+    user.streetAdress = data.streetAdress;
+    user.city = data.city;
+    user.state = data.state;
+    user.Postal = data.Postal;
+    user.place = data.place;
+    user.schoolname = data.schoolname;
+    user.schoollocation = data.schoollocation;
+    user.firstattend = data.firstattend;
+    user.finalattend = data.finalattend;
+    user.file = data.file;
+  
+    // Save the updated user object to the database
+    const saved = await user.save();
+    if (saved) {
+      // Send a response indicating success
+      return res.status(200).send('Data updated successfully');
+    }
+  } catch (err) {
+    return next(err.message);
   }
-};
+
+
+}
+
+
+
+
+
 
 module.exports = {
   registerUser,
@@ -223,6 +228,7 @@ module.exports = {
   updateStudentById,
   deleteStudentById,
   verifyOTP,
-  addStudentWithImage
+  updateUser
+
 
 }

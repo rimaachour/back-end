@@ -21,10 +21,11 @@ router.get('/AllStudents',studentController.getAllStudents)
 
 router.get('/:nom',studentController.getStudentByName)
 
-router.put('/:id',studentController.updateStudentById)
+//router.put('update/:id',studentController.updateStudentById)
 
 router.delete('/:id',studentController.deleteStudentById)
 router.post('/verifyOTP',studentController.verifyOTP)
+router.put('/updateUser/:id',studentController.updateUser)
 
 //router.get('/PublishedStudent',studentController.getPublishedStudent)
 
