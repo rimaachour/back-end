@@ -23,7 +23,9 @@ router.post('/forgetpassword',UserController.forgotPassword)
 router.post('/restePassword/:token',UserController.restePassword)
 
 
-router.post('/signIn', UserController.signIn)
+router.post("/student/login", async (req, res) => {
+    await UserController.signIn(req, res);
+});
 
 
 

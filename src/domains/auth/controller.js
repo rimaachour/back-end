@@ -7,6 +7,7 @@ const { mail } = require("../../helpers/mailer");
 const {generateOTP} =require("../../helpers/OTP");
 const {sendOTPEmail}=require("../../helpers/OTP");
 
+const jwt = require("jsonwebtoken");
 
 
 
@@ -19,25 +20,47 @@ const {sendOTPEmail}=require("../../helpers/OTP");
   
   const signIn = async (req, res, next) => {
     const { email, password } = req.body;
-  
+    const data = {};
+
     try {
       const user = await Student.findOne({ email });
   
       if (!user) {
         throw new Error('Adresse e-mail invalide');
       }
-  
-      const isPasswordMatch = await bcrypt.compare(password, user.password);
-  
-      if (!isPasswordMatch) {
-        throw new Error('Mot de passe invalide');
+      if (user.status === "pending activation") {
+        return res.status(401).json({ error: "inactive" });
       }
+      bcrypt.compare(password, user.password, (err, matched) => {
+        if (matched) {
+          data.userId = user.id;
+          data.username = user.firstName + " " + user.lastName;
+          data.email = user.email;
+          data.role = user.role;
+          data.picture = user.picture;
+          data.created_at = user.created_at;
 
-      return res.status(200).send({ message: 'Connexion réussie', user });
-  
+          const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY);
+          const expirationTime = new Date(
+              Date.now() + parseInt(process.env.JWT_EXPIRATION)
+          );
+
+          res.setHeader("set-cookie", [
+            `token=${token}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
+            `email=${data.email}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
+            `userId=${data.userId}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
+            `role=${data.role}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
+          ]);
+          return res.status(200).json({ ...data });
+        }
+        return res.status(401).json({ error: "wrong" });
+      });
+
     } catch (err) {
 
-      return next(err.message);
+      res.status(401).json({
+        error: "Error logging you in, please try again later",
+      });
     }
   };
 
