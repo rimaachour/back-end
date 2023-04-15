@@ -7,7 +7,6 @@ const { mail } = require("../../helpers/mailer");
 const {generateOTP} =require("../../helpers/OTP");
 const {sendOTPEmail}=require("../../helpers/OTP");
 
-const jwt = require("jsonwebtoken");
 
 
 
@@ -34,22 +33,20 @@ const jwt = require("jsonwebtoken");
       bcrypt.compare(password, user.password, (err, matched) => {
         if (matched) {
           data.userId = user.id;
-          data.username = user.firstName + " " + user.lastName;
+          data.username = user.name;
           data.email = user.email;
-          data.role = user.role;
-          data.picture = user.picture;
+         // data.picture = user.picture;
           data.created_at = user.created_at;
 
-          const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY);
-          const expirationTime = new Date(
+          const token = jwt.sign({ email: user.email }, 'islam');
+       /*   const expirationTime = new Date(
               Date.now() + parseInt(process.env.JWT_EXPIRATION)
-          );
+          );*/
 
           res.setHeader("set-cookie", [
-            `token=${token}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
-            `email=${data.email}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
-            `userId=${data.userId}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
-            `role=${data.role}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
+           // `token=${token}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
+          //  `email=${data.email}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
+           // `userId=${data.userId}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
           ]);
           return res.status(200).json({ ...data });
         }
@@ -63,7 +60,6 @@ const jwt = require("jsonwebtoken");
       });
     }
   };
-
 //ForgetPassword
 const forgotPassword = async (req, res, next) => {
 

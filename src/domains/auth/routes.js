@@ -5,6 +5,7 @@ const mysql = require("mysql2");
 const Pdfmake = require('pdfmake');
 const mysqlPormise = require('mysql2/promise') // you import this package when you want to use execute function with the connection
 const { Sequelize } = require('sequelize');
+const jwt = require("jsonwebtoken");
 
 //const app = express();
 const router = express.Router();
@@ -23,10 +24,9 @@ router.post('/forgetpassword',UserController.forgotPassword)
 router.post('/restePassword/:token',UserController.restePassword)
 
 
-router.post("/student/login", async (req, res) => {
+router.post("/login", async (req, res) => {
     await UserController.signIn(req, res);
 });
-
 
 
 

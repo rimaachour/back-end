@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize  = require("../../config/db");
 
-const Company = sequelize.define('company', {
+const Offer = sequelize.define('Offer', {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
@@ -9,57 +9,39 @@ const Company = sequelize.define('company', {
     primaryKey: true,
     unique: true
   },
-  name: {
+  Title: {
     type: Sequelize.STRING,
     allowNull: false
   },
-  email: {
+  description: {
     type: Sequelize.STRING,
     allowNull: false
   },
-  password: {
+  Technology: {
     type: Sequelize.STRING,
     allowNull: false
   },
-  confirmpassword: {
+  compagny_name: {
     type: Sequelize.STRING,
     allowNull: false
   },
-  OTP: {
-    type: Sequelize.INTEGER,
+  start_date: {
+    type: DataTypes.DATE,
     allowNull: false
   },
-  role: {
-    type: Sequelize.ENUM('student', 'company'),
+  end_date: {
+    type: DataTypes.DATE,
     allowNull: false
   },
-  resetPasswordToken: {
-    type: Sequelize.STRING,
-    allowNull: true
-  },
-  resetPasswordExpires: {
-    type: Sequelize.INTEGER,
-    allowNull: true
-  },
-  description :{
-    type: Sequelize.STRING,
-    allowNull: false
-
-  },
-  domain :{
-    type: Sequelize.STRING,
-    allowNull: false
-
-  },
-  adress : {
-    type: Sequelize.STRING,
-    allowNull: false
-
-  },
-  logo:{
+doamin: {
     type: Sequelize.STRING,
     allowNull: false
   },
+location: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  
 
 }, 
 
@@ -72,10 +54,10 @@ const Company = sequelize.define('company', {
 
 sequelize.sync()
   .then(() => {
-    console.log('Company table created successfully.');
+    console.log('offer table created successfully.');
   })
   .catch((error) => {
-    console.log('Error creating company table:', error);
+    console.log('Error creating offer table:', error);
   });
 
-module.exports = Company;
+module.exports = Offer;
