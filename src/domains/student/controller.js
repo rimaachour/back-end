@@ -1,7 +1,7 @@
 const { generateOTP } = require('../../helpers/OTP');
 const { mail } = require('../../helpers/mailer');
 const Student= require('../student/model')
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -31,7 +31,6 @@ const upload = multer({
     console.log(password,confirmpassword)
 
     try {
-      // Vérifie si les mots de passe correspondent
       if (password !== confirmpassword) {
         throw new Error('Les mots de passe ne correspondent pas');
       }

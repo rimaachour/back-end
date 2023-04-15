@@ -2,12 +2,12 @@ const User = require ("../auth/model");
 const Student= require ("../student/model")
 const Entreprise = require("../entreprise/model")
 // register 
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { mail } = require("../../helpers/mailer");
 const {generateOTP} =require("../../helpers/OTP");
 const {sendOTPEmail}=require("../../helpers/OTP");
 
-
+const jwt = require("jsonwebtoken");
 
 
 
@@ -22,8 +22,9 @@ const {sendOTPEmail}=require("../../helpers/OTP");
     const data = {};
 
     try {
-      const user = await Student.findOne({ email });
-  
+      const user = await Student.findOne( {
+        where:{email:email}
+      });
       if (!user) {
         throw new Error('Adresse e-mail invalide');
       }
@@ -43,12 +44,12 @@ const {sendOTPEmail}=require("../../helpers/OTP");
               Date.now() + parseInt(process.env.JWT_EXPIRATION)
           );*/
 
-          res.setHeader("set-cookie", [
-           // `token=${token}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
-          //  `email=${data.email}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
-           // `userId=${data.userId}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
-          ]);
-          return res.status(200).json({ ...data });
+          // res.setHeader("set-cookie", [
+          //  // `token=${token}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
+          // //  `email=${data.email}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
+          //  // `userId=${data.userId}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
+          // ]);
+          return res.status(200).json({ ...data, token });
         }
         return res.status(401).json({ error: "wrong" });
       });
