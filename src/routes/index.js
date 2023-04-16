@@ -8,7 +8,7 @@ const entreprise = require("./../domains/entreprise");
 const student = require("./../domains/student");
 const CV = require('../domains/CV')
 const upload = require ('../domains/fileupload')
-const Offer= require('../domains/internshipOffer');
+const Offer= require('../domains/offer');
 
 router.use("/auth", auth);
 
@@ -17,7 +17,7 @@ router.use("/entreprise", entreprise);
 router.use("/student", student);
 router.use("/cv", CV);
 router.use("/uploads",upload)
-router.use("/Offer", Offer)
+router.use("/offer", Offer)
 
 
 module.exports = router;
