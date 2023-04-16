@@ -33,7 +33,7 @@ const Offer = sequelize.define('Offer', {
     type: DataTypes.DATE,
     allowNull: false
   },
-doamin: {
+domain: {
     type: Sequelize.STRING,
     allowNull: false
   },
