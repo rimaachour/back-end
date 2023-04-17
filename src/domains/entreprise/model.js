@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/db');
 const offer = require('../offer/model')
 
-const Company = sequelize.define('company', {
+const Company = sequelize.define('companies', {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
@@ -44,23 +44,23 @@ const Company = sequelize.define('company', {
   },
   description: {
     type: Sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   domain: {
     type: Sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   address: {
     type: Sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   logo: {
     type: Sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
   },
 }, {
   timestamps: false,
 });
-Company.hasMany(offer, { foreignKey: 'company_id' });
+//Company.hasMany(offer, { foreignKey: 'company_id' });
 
 module.exports = Company;

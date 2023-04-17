@@ -27,6 +27,8 @@ router.put('/:id',entrepriseController.updateEntrepriseById)
 
 router.delete('/:id',entrepriseController.deleteEntrepriseById)
 router.post('/verifyOTP1',entrepriseController.verifyOTP1)
+router.put('/updateCompny/:id',entrepriseController.updateCompny)
+
 //router.post('/createcv', createCV)
 
 //router.get('/PublishedStudent',studentController.getPublishedStudent)

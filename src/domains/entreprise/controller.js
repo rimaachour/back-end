@@ -1,10 +1,23 @@
-
+const { generateOTP } = require('../../helpers/OTP');
+const { mail } = require('../../helpers/mailer');
 const Entreprise = require('./model');
+const bcrypt = require('bcrypt');
+const multer = require('multer');
+const storage = multer.memoryStorage();
+/*const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, callback) => {
+    if (file.mimetype.startsWith('image/')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Only image files are allowed'));
+    }
+  }
+});*/
 
-// create main model
-// const Student = db.student
-// main work
-// 1. create product
+/////////////////////sign up Compagny/////////////////////////////////////
+
+
 
 const registerCompany = async (req, res, next) => {
   const { name, email, password, confirmpassword } = req.body;
@@ -19,14 +32,18 @@ const registerCompany = async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const confirmPasswordHash = await bcrypt.hash(confirmpassword, 10);
+    const otp =await generateOTP()
 
     const newUser = new Entreprise({
       name: name,
       email: email,
       password: hashedPassword,
       confirmpassword:confirmPasswordHash,
-      role: "company"
-    })
+      role: "company",
+      OTP :otp
+    });
+    await mail(newUser.email,'otp',otp)
+
 
     const saved= await newUser.save();
     if (saved) {
@@ -37,19 +54,69 @@ const registerCompany = async (req, res, next) => {
     return next(err.message);
   }
 };
+///////////////////////////////////////////////////////////////////
 
+const updateCompny = async (req, res, next) => {
+  const { id } = req.params; // Get the user ID from the request parameters
+  const data = req.body; // Get the data from the request body
+
+  const user1 = await Entreprise.findOne({
+    where:{id:id}
+  })
+  
+  if (!user1) {
+    throw new Error('User not found');
+  }
+  console.log(user1);
+console.log(req.body)
+  try {
+
+// Update the user object with the new data
+    user1.description = data.description;
+    user1.domain = data.domain;
+    user1.address = data.address;
+    user1.logo = data.logo;
+    
+  
+    // Save the updated user object to the database
+    const saved = await user1.save();
+    if (saved) {
+      // Send a response indicating success
+      return res.status(200).send('Data updated successfully');
+    }
+  } catch (err) {
+    return next(err.message);
+  }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+///////////////OTP///////////////////////
 
 async function verifyOTP1(req, res) {
+
   const { email, OTP } = req.body;
 
+  const entreprise = await Entreprise.findOne({ where: { email: email } });
+
+console.log(typeof OTP )
+ console.log(typeof entreprise.OTP)
   try {
-    const entreprise = await Entreprise.findOne({ where: { email: email } });
 
     if (!entreprise) {
       return res.status(404).json({ message: 'compagny not found' });
     }
 
-    if (entreprise.OTP !== OTP) {
+    if (entreprise.OTP !== +OTP) {
       return res.status(401).json({ message: 'OTP not verified' });
     }
 
@@ -67,7 +134,7 @@ async function verifyOTP1(req, res) {
 
 
 
-
+///////////////////////getCompagny///////////////////////////////////////////
   const getAllEntreprise = async (req, res) => {
     try {
       const entreprises = await Entreprise.findAll({});
@@ -111,7 +178,7 @@ async function verifyOTP1(req, res) {
       res.status(500).send('Server Error');
     }
   };
-  
+  ///////////////////////DELETE/////////////////////////////////////////
   const deleteEntrepriseById = async (req, res) => {
     try {
       const rowsDeleted = await Entreprise.destroy({
@@ -133,6 +200,7 @@ async function verifyOTP1(req, res) {
     getEntrepriseByName,
     updateEntrepriseById,
     deleteEntrepriseById,
-    verifyOTP1
+    verifyOTP1,
+    updateCompny
   };
   

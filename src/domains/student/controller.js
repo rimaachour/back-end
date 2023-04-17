@@ -1,6 +1,8 @@
 const { generateOTP } = require('../../helpers/OTP');
 const { mail } = require('../../helpers/mailer');
 const Student= require('../student/model')
+const Offer = require('../offer/model');
+
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const storage = multer.memoryStorage();
@@ -214,6 +216,10 @@ console.log(req.body)
 
 
 }
+
+
+
+
 
 
 

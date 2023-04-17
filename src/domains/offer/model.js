@@ -38,14 +38,14 @@ const Offer = sequelize.define('Offer', {
     type: Sequelize.STRING,
     allowNull: false
   },
-  company_id:{
+  /*company_id:{
     type: Sequelize.INTEGER,
       references: {
         model: Company,
         key: 'id'
       },
       allowNull:true
-  }
+  }*/
 
 
 
@@ -58,7 +58,7 @@ const Offer = sequelize.define('Offer', {
 });
 
 // Define associations
-Offer.belongsTo(Company, { foreignKey: 'company_id' });
+/*Offer.belongsTo(Company, { foreignKey: 'company_id' });
 Company.hasMany(Offer, { foreignKey: 'company_id' });
 
 sequelize.sync()
@@ -67,6 +67,6 @@ sequelize.sync()
   })
   .catch((error) => {
     console.log('Error creating Offer table:', error);
-  });
+  });*/
 
 module.exports = Offer;
