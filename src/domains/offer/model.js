@@ -1,5 +1,5 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize  = require("../../config/db");
+const sequelize = require('../../config/db');
 const Company = require('../entreprise/model');
 
 const Offer = sequelize.define('Offer', {
@@ -10,7 +10,7 @@ const Offer = sequelize.define('Offer', {
     primaryKey: true,
     unique: true
   },
-  Title: {
+  title: {
     type: Sequelize.STRING,
     allowNull: false
   },
@@ -18,11 +18,7 @@ const Offer = sequelize.define('Offer', {
     type: Sequelize.STRING,
     allowNull: false
   },
-  Technology: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  compagny_name: {
+  technology: {
     type: Sequelize.STRING,
     allowNull: false
   },
@@ -34,35 +30,21 @@ const Offer = sequelize.define('Offer', {
     type: DataTypes.DATE,
     allowNull: false
   },
-domain: {
+  domain: {
     type: Sequelize.STRING,
     allowNull: false
   },
-location: {
+  location: {
     type: Sequelize.STRING,
     allowNull: false
-  },
-  
-
-}, 
-
-
-
-
-{
+  }
+}, {
   timestamps: false
 });
 
-sequelize.sync()
-  .then(() => {
-    console.log('offer table created successfully.');
-  })
-  .catch((error) => {
-    console.log('Error creating offer table:', error);
-  });
-
 // Define associations
-Offer.belongsTo(Company, { foreignKey: 'compagny_id' });
+Offer.belongsTo(Company, { foreignKey: 'company_id' });
+Company.hasMany(Offer, { foreignKey: 'company_id' });
 
 sequelize.sync()
   .then(() => {
@@ -71,29 +53,5 @@ sequelize.sync()
   .catch((error) => {
     console.log('Error creating Offer table:', error);
   });
-
-  Company.findOne({ where: { id: 1 }, include: Offer })
-  .then((entreprise) => {
-    console.log('Entreprise:', entreprise);
-    console.log('Offers:', entreprise.Offers);
-  })
-  .catch((error) => {
-    console.log('Error retrieving Entreprise:', error);
-  });
-
-Offer.findOne({ where: { id: 1 }, include: Company })
-  .then((offer) => {
-    console.log('Offer:', offer);
-    console.log('Entreprise:', offer.Company);
-  })
-  .catch((error) => {
-    console.log('Error retrieving Offer:', error);})
-
-
-
-
-
-
-
 
 module.exports = Offer;
