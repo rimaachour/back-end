@@ -37,7 +37,22 @@ const Offer = sequelize.define('Offer', {
   location: {
     type: Sequelize.STRING,
     allowNull: false
+  },
+  company_id:{
+    type: Sequelize.INTEGER,
+      references: {
+        model: Company,
+        key: 'id'
+      },
+      allowNull:true
   }
+
+
+
+
+
+
+
 }, {
   timestamps: false
 });
