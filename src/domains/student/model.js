@@ -81,6 +81,11 @@ place:{
   type:Sequelize.STRING,
   allowNull:true,
 },
+skills : {
+  type:Sequelize.STRING,
+  allowNull:true,
+
+},
 
 schoolname:{
   type:Sequelize.STRING,

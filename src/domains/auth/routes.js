@@ -22,12 +22,15 @@ const UserController = require("../auth/controller.js")
 
 router.post('/forgetpassword',UserController.forgotPassword)
 router.post('/restePassword/:token',UserController.restePassword)
-
+router.post('/forgetpasswordCompany',UserController.forgotPasswordCompny)
+router.post('/restePasswordCompny/:token',UserController.resetPasswordCompany)
 
 router.post("/login", async (req, res) => {
     await UserController.signIn(req, res);
 });
 
-
+router.post("/login1", async (req, res) => {
+    await UserController.signInCompany(req, res);
+});
 
 module.exports = router;

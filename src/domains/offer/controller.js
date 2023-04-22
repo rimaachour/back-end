@@ -1,13 +1,13 @@
 const Offer = require("./model");
 
 const addOffer = async (req, res, next) => {
-    const { Title, description, Technology, compagny_name, start_date, end_date, domain, location } = req.body;
+    const { title, description, technology, compagny_name, start_date, end_date, domain, location } = req.body;
   
     try {
       const newOffer = new Offer({
-        Title: Title,
+        title: title,
         description: description,
-        Technology: Technology,
+        technology: technology,
         compagny_name: compagny_name,
         start_date: start_date,
         end_date: end_date,
@@ -70,5 +70,30 @@ const addOffer = async (req, res, next) => {
     }
   };
 
-  module.exports = {addOffer,deleteOfferById,updateOfferById}
+  const searchInOffers =async function(req, res){
+    try {
+        const { domain, speciality, location } = req.query;
+    let whereClause = {};
+  console.log(whereClause);
+    if (domain) {
+      whereClause.domain = domain;
+    }
+  
+    else if (speciality) {
+      whereClause.technology = speciality;
+    }
+  
+    else if (location) {
+      whereClause.location = location;
+    }
+  
+      const foundOffers = await Offer.findAll({ where: whereClause });
+      res.json(foundOffers);
+    } catch (error) {
+      console.log('Error searching for offer:', error);
+      res.status(500).json({ message: 'Error searching for offer' });
+    }
+
+}
+  module.exports = {addOffer,deleteOfferById,updateOfferById, searchInOffers}
 

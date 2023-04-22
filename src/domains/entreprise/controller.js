@@ -1,6 +1,7 @@
 const { generateOTP } = require('../../helpers/OTP');
 const { mail } = require('../../helpers/mailer');
 const Entreprise = require('./model');
+const Student=require('../student/model')
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const storage = multer.memoryStorage();
@@ -193,7 +194,38 @@ console.log(typeof OTP )
       res.status(500).send('Server Error');
     }
   };
+  //////////////////////////////searchProfileStudent////////////////////
+  const searchStudentBySkills = async (req, res, next) => {
   
+  
+    try {
+        const { skills } = req.query;
+      const students = await Student.findAll({
+        where: {
+          skills: skills
+        }
+      });
+  
+      return res.status(200).send(students);
+    } catch (err) {
+      return next(err.message);
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   module.exports = {
     registerCompany,
     getAllEntreprise,
@@ -201,6 +233,7 @@ console.log(typeof OTP )
     updateEntrepriseById,
     deleteEntrepriseById,
     verifyOTP1,
-    updateCompny
+    updateCompny,
+    searchStudentBySkills
   };
   

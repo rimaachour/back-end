@@ -21,14 +21,7 @@ const upload = multer({
 // main work
 // 1. create product
 
-
-
-
-// sign in 
-
-
-
-  const registerUser = async (req, res, next) => {
+const registerUser = async (req, res, next) => {
     const { name, email, password, confirmpassword } = req.body;
     console.log(password,confirmpassword)
 
@@ -79,7 +72,7 @@ async function verifyOTP(req, res) {
       return res.status(404).json({ message: 'Student not found' });
     }
 
-    if (student.OTP === OTP) {
+    if (student.OTP === +OTP) {
       student.status='active'
       return res.status(200).json({ message: 'OTP verified' });
     } else {
@@ -101,21 +94,38 @@ const getAllStudents = async (req, res) => {
   }
 };
 
-// 3. get single student
-//const getStudentById = async (req, res) => {
-  //try {  console.log(Student); // add this line to check if Student is defined
+////////////search//////////////////////
 
-    ////where: { id: req.params.id },
-    //});
-    //if (!student) {
-      //return res.status(404).send('Student not found');
-    //}
-    //res.status(200).send(student);
-  //} catch (err) {
-    //console.error(err);
-    //res.status(500).send('Server Error');
-  //}
-//};
+/*exports.searchOffers = async (req, res) => {
+  const { category, domain, subcategory, specialty } = req.query;
+  const studentId = req.params.studentId;
+
+  // Check that the student exists
+  const student = await Student.findByPk(studentId);
+  if (!student) {
+    return res.status(404).json({ error: 'Student not found' });
+  }
+
+  // Find offers that match the search criteria and the student's specialty
+  const offers = await Offer.findAll({
+    where: {
+      domain,
+      technology: subcategory,
+      specialty: student.specialty,
+    },
+  });
+
+  return res.json({ offers });
+};*/
+
+exports.getStudentProfile = async (req, res) => {
+  // code to retrieve student profile goes here
+};
+
+exports.updateStudentProfile = async (req, res) => {
+  // code to update student profile goes here
+};
+
 const getStudentByName = async (req, res) => {
   try {
     const student = await Student.findOne({
@@ -199,22 +209,46 @@ console.log(req.body)
     user.Postal = data.Postal;
     user.place = data.place;
     user.schoolname = data.schoolname;
+    user.skills = data.skills
     user.schoollocation = data.schoollocation;
     user.firstattend = data.firstattend;
     user.finalattend = data.finalattend;
     user.file = data.file;
   
-    // Save the updated user object to the database
     const saved = await user.save();
     if (saved) {
-      // Send a response indicating success
+     
       return res.status(200).send('Data updated successfully');
     }
   } catch (err) {
     return next(err.message);
   }
+}
+/// searchOffer////////////
+async function searchOffer(req, res) {
 
+  try {
+      const { domain, technology, location } = req.query;
+  let whereClause = {};
+console.log(whereClause);
+ /* if (domain) {
+    whereClause.domain = domain;
+  }
 
+  else if () {
+    whereClause.technology = speciality;
+  }
+
+  else if (location) {
+    whereClause.location = location;
+  }*/
+
+    //const foundOffers = await Offer.findAll({ where: whereClause });
+    //res.json(foundOffers);
+  } catch (error) {
+    console.log('Error searching for offer:', error);
+    res.status(500).json({ message: 'Error searching for offer' });
+  }
 }
 
 
@@ -233,7 +267,8 @@ module.exports = {
   updateStudentById,
   deleteStudentById,
   verifyOTP,
-  updateUser
+  updateUser,
+  searchOffer
 
 
 }

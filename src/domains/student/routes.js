@@ -8,9 +8,11 @@ const { Sequelize } = require('sequelize');
 //const app = express();
 const router = express.Router();
 const { Router } = require("express");
+
+//const searchoffer = require('../student/controller')
 //const app = require("../..");
 
-//module.exports =  app;
+//module.exports =  app; 
 ///version with sequelize
 
 const studentController = require('../student/controller.js')
@@ -26,6 +28,8 @@ router.get('/:nom',studentController.getStudentByName)
 router.delete('/:id',studentController.deleteStudentById)
 router.post('/verifyOTP',studentController.verifyOTP)
 router.put('/updateUser/:id',studentController.updateUser)
+router.get('/searchoffers', studentController.searchOffer);
+
 
 //router.get('/PublishedStudent',studentController.getPublishedStudent)
 

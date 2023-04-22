@@ -15,20 +15,39 @@ const storage = multer.memoryStorage();
 //module.exports =  app;
 ///version with sequelize
 
-const entrepriseController = require('../entreprise/controller.js')
+const entrepriseController = require('../entreprise/controller.js');
+const Student = require("../student/model.js");
 
 router.post('/registerCompany',entrepriseController.registerCompany)
 
 router.get('/getAllEntreprise',entrepriseController.getAllEntreprise)
 
-router.get('/:nom',entrepriseController.getEntrepriseByName)
+
 
 router.put('/:id',entrepriseController.updateEntrepriseById)
 
 router.delete('/:id',entrepriseController.deleteEntrepriseById)
 router.post('/verifyOTP1',entrepriseController.verifyOTP1)
 router.put('/updateCompny/:id',entrepriseController.updateCompny)
+//router.get('/searchStudentBySkills',entrepriseController.searchStudentBySkills)
+//
+router.get('/search',async (req, res, next) => {
+// open database  
+    try {
+        const { skills } = req.query;
+      const students = await Student.findAll({
+        where: {
+          skills:skills
+        }
+      });
+  
+      return res.status(200).send(students);
+    } catch (err) {
+      return next(err.message);
+    }
+  })
 
+  router.get('/:nom',entrepriseController.getEntrepriseByName)
 //router.post('/createcv', createCV)
 
 //router.get('/PublishedStudent',studentController.getPublishedStudent)
