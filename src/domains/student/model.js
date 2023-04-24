@@ -27,15 +27,30 @@ const Student = sequelize.define('students', {
     type: Sequelize.STRING,
     allowNull: false,
     unique: true,
-
+    validate: {
+      isEmail: true
+    }
   },
   password: {
     type: Sequelize.STRING,
-    allowNull: false
-  },
+    allowNull: false,
+    validate: {
+      len: {
+        args: [6],
+        msg: 'Password must be at least 6 characters'
+      }
+    }
+  }
+  ,
   confirmpassword: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      len: {
+        args: [6],
+        msg: 'Password must be at least 6 characters'
+      }
+    }
   },
   OTP: {
     type: Sequelize.INTEGER,

@@ -41,7 +41,9 @@ const registerCompany = async (req, res, next) => {
       password: hashedPassword,
       confirmpassword:confirmPasswordHash,
       role: "company",
-      OTP :otp
+      OTP :otp,
+      status:'pending activation'
+
     });
     await mail(newUser.email,'otp',otp)
 
@@ -108,20 +110,23 @@ async function verifyOTP1(req, res) {
   const { email, OTP } = req.body;
 
   const entreprise = await Entreprise.findOne({ where: { email: email } });
+  if (entreprise.status ==='active') {
+    return res.status(400).json({ message: 'company already verified' });
+  }
 
-console.log(typeof OTP )
- console.log(typeof entreprise.OTP)
   try {
 
     if (!entreprise) {
       return res.status(404).json({ message: 'compagny not found' });
     }
 
-    if (entreprise.OTP !== +OTP) {
-      return res.status(401).json({ message: 'OTP not verified' });
+    if (student.OTP === +OTP) {
+      student.status='active'
+      return res.status(200).json({ message: 'OTP verified' });
+    } else {
+      return res.status(400).json({ message: 'OTP not verified' });
     }
 
-    res.status(200).json({ message: 'OTP verified' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error verifying OTP' });

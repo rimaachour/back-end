@@ -43,7 +43,8 @@ const registerUser = async (req, res, next) => {
         password: hashedPassword,
         confirmpassword:confirmPasswordHash,
         role: "student",
-        OTP :otp
+        OTP :otp,
+        status:'pending activation'
       }); 
 
   await mail(newUser.email,'otp',otp)
@@ -64,10 +65,15 @@ const registerUser = async (req, res, next) => {
 
 async function verifyOTP(req, res) {
   const { email, OTP} = req.body;
-  console.log(email)
+  const student = await Student.findOne({ where: {email: email} });
+  if (!student) {
+    return res.status(404).json({ message: 'Student not found' });
+  }
 
+  if (student.status ==='active') {
+    return res.status(400).json({ message: 'student already verified' });
+  }
   try {
-    const student = await Student.findOne({ where: {email: email} });
 
     if (!student) {
       return res.status(404).json({ message: 'Student not found' });

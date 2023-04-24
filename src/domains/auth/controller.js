@@ -29,19 +29,9 @@ const signInStudent = async (req, res, next) => {
           data.userId = user.id;
           data.username = user.name;
           data.email = user.email;
-         // data.picture = user.picture;
           data.created_at = user.created_at;
 
           const token = jwt.sign({ email: user.email }, 'islam');
-       /*   const expirationTime = new Date(
-              Date.now() + parseInt(process.env.JWT_EXPIRATION)
-          );*/
-
-          // res.setHeader("set-cookie", [
-          //  // `token=${token}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
-          // //  `email=${data.email}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
-          //  // `userId=${data.userId}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
-          // ]);
           return res.status(200).json({ ...data, token });
         }
         return res.status(401).json({ error: "wrong" });
@@ -78,7 +68,6 @@ const signInCompany = async (req, res, next) => {
         data.userId = user1.id;
         data.username = user1.name;
         data.email = user1.email;
-        // data.picture = user.picture;
         data.created_at = user1.created_at;
 
         const token = jwt.sign({ email: user1.email }, "islam");

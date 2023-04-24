@@ -20,15 +20,30 @@ const Company = sequelize.define('companies', {
     type: Sequelize.STRING,
     allowNull: false,
     unique: true,
-
+    validate: {
+      isEmail: true
+    }
   },
   password: {
     type: Sequelize.STRING,
     allowNull: false,
-  },
+    validate: {
+      len: {
+        args: [6],
+        msg: 'Password must be at least 6 characters'
+      }
+    }
+  }
+  ,
   confirmpassword: {
     type: Sequelize.STRING,
     allowNull: false,
+    validate: {
+      len: {
+        args: [6],
+        msg: 'Password must be at least 6 characters'
+      }
+    }
   },
   OTP: {
     type: Sequelize.INTEGER,
@@ -61,6 +76,10 @@ const Company = sequelize.define('companies', {
   logo: {
     type: Sequelize.STRING,
     allowNull: true,
+  },
+  state: {
+    type: Sequelize.STRING,
+    allowNull: true
   },
 }, {
   timestamps: false,
