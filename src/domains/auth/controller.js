@@ -9,20 +9,8 @@ const {sendOTPEmail}=require("../../helpers/OTP");
 
 const jwt = require("jsonwebtoken");
 
-
-
-
-
- 
-
-
-
-
 // sign in
-
-
-  
-  const signIn = async (req, res, next) => {
+const signInStudent = async (req, res, next) => {
     const { email, password } = req.body;
     const data = {};
 
@@ -69,53 +57,45 @@ const jwt = require("jsonwebtoken");
 
 
 //sign in compagny 
-
-
-
 const signInCompany = async (req, res, next) => {
   const { email, password } = req.body;
   const data = {};
 
   try {
-    const user1 = await Entreprise.findOne( {
-      where:{email:email}
+    const user1 = await Entreprise.findOne({
+      where: { email: email },
     });
     if (!user1) {
-      throw new Error('Adresse e-mail invalide');
+      throw new Error("Adresse e-mail invalide");
     }
     if (user1.status === "pending activation") {
       return res.status(401).json({ error: "inactive" });
     }
-    bcrypt.compare(password, user1.password, (err, matched) => {
+
+    try {
+      const matched = await bcrypt.compare(password, user1.password);
       if (matched) {
         data.userId = user1.id;
         data.username = user1.name;
         data.email = user1.email;
-       // data.picture = user.picture;
+        // data.picture = user.picture;
         data.created_at = user1.created_at;
 
-        const token = jwt.sign({ email: user1.email }, 'islam');
-     /*   const expirationTime = new Date(
-            Date.now() + parseInt(process.env.JWT_EXPIRATION)
-        );*/
+        const token = jwt.sign({ email: user1.email }, "islam");
 
-        // res.setHeader("set-cookie", [
-        //  // `token=${token}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
-        // //  `email=${data.email}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
-        //  // `userId=${data.userId}; httpOnly=true; expires: ${expirationTime}; SameSite=None; Secure`,
-        // ]);
         return res.status(200).json({ ...data, token });
       }
       return res.status(401).json({ error: "wrong" });
-    });
-
-  } catch (err) {
-
-    res.status(401).json({
-      error: "Error logging you in, please try again later",
-    });
+    } catch (error) {
+      console.error(error);
+      return res.status(401).json({ error: "Error logging you in, please try again later" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).json({ error: "Error logging you in, please try again later" });
   }
 };
+
 //ForgetPassword
 const forgotPassword = async (req, res, next) => {
 
@@ -247,4 +227,4 @@ user1.password = pass;
 
 
 
-module.exports = { signIn,forgotPassword,restePassword,signInCompany,resetPasswordCompany,forgotPasswordCompny};
+module.exports = { signInStudent,forgotPassword,restePassword,signInCompany,resetPasswordCompany,forgotPasswordCompny};

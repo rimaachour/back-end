@@ -26,7 +26,7 @@ router.post('/forgetpasswordCompany',UserController.forgotPasswordCompny)
 router.post('/restePasswordCompny/:token',UserController.resetPasswordCompany)
 
 router.post("/login", async (req, res) => {
-    await UserController.signIn(req, res);
+    await UserController.signInStudent(req, res);
 });
 
 router.post("/login1", async (req, res) => {

@@ -19,6 +19,8 @@ const Company = sequelize.define('companies', {
   email: {
     type: Sequelize.STRING,
     allowNull: false,
+    unique: true,
+
   },
   password: {
     type: Sequelize.STRING,
