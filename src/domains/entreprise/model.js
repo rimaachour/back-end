@@ -1,6 +1,8 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/db');
 const offer = require('../offer/model')
+const Review = require('../reviews/model');
+const Student = require ('../student/model')
 
 const Company = sequelize.define('companies', {
   id: {
@@ -61,6 +63,11 @@ const Company = sequelize.define('companies', {
 }, {
   timestamps: false,
 });
-//Company.hasMany(offer, { foreignKey: 'company_id' });
+
+
+Company.hasMany(Review, { as: 'CompanyReviews' });
 
 module.exports = Company;
+
+
+

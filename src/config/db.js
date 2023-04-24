@@ -1,4 +1,5 @@
-const Sequelize = require('sequelize');
+const Sequelize = require("sequelize");
+
 require('dotenv').config();
 const dbHost = process.env.DB_HOST;
 const dbUser = process.env.DB_USER | 'root';
@@ -12,18 +13,6 @@ const sequelize = new Sequelize('test2', 'root', '', {
 });
 
 
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log('Connection has been established successfully.');
-  })
 
-  .catch((err) => {
-    console.error('Unable to connect to the database:', err);
-  });
 
-// const sequelize = new Sequelize('sql7613070','sql7613070','BuWrZAl4qc', {
-//   host: 'sql7.freemysqlhosting.net',
-//   dialect: 'mysql',
-// });
-module.exports = sequelize;
+module.exports = sequelize

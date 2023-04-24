@@ -60,6 +60,7 @@ const registerUser = async (req, res, next) => {
     }
   };
 
+// function verification OTP
 
 async function verifyOTP(req, res) {
   const { email, OTP} = req.body;
