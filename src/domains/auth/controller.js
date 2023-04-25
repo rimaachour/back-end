@@ -18,6 +18,7 @@ const signInStudent = async (req, res, next) => {
       const user = await Student.findOne( {
         where:{email:email}
       });
+      console.log(user)
       if (!user) {
         throw new Error('Adresse e-mail invalide');
       }
@@ -216,4 +217,9 @@ user1.password = pass;
 
 
 
-module.exports = { signInStudent,forgotPassword,restePassword,signInCompany,resetPasswordCompany,forgotPasswordCompny};
+module.exports = { signInStudent,
+  forgotPassword,
+  restePassword,
+  signInCompany,
+  resetPasswordCompany,
+  forgotPasswordCompny};

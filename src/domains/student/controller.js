@@ -75,10 +75,6 @@ async function verifyOTP(req, res) {
   }
   try {
 
-    if (!student) {
-      return res.status(404).json({ message: 'Student not found' });
-    }
-
     if (student.OTP === +OTP) {
       student.status='active'
       return res.status(200).json({ message: 'OTP verified' });
@@ -238,17 +234,17 @@ async function searchOffer(req, res) {
       const { domain, technology, location } = req.query;
   let whereClause = {};
 console.log(whereClause);
- /* if (domain) {
+  if (domain) {
     whereClause.domain = domain;
   }
 
-  else if () {
+  else if (technology) {
     whereClause.technology = speciality;
   }
 
   else if (location) {
     whereClause.location = location;
-  }*/
+  }
 
     //const foundOffers = await Offer.findAll({ where: whereClause });
     //res.json(foundOffers);
@@ -257,11 +253,7 @@ console.log(whereClause);
     res.status(500).json({ message: 'Error searching for offer' });
   }
 }
-
-
-
-
-
+//downloadCV
 
 
 

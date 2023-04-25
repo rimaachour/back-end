@@ -31,6 +31,22 @@ comment: {
   type: DataTypes.STRING,
   allowNull: true,
 },
+
+/*entrepriseId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
+  studentId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    references: {
+      model: Student,
+      key: 'id',
+    },
+  },*/
+
+
+
 },{
   timestamps: false
 });

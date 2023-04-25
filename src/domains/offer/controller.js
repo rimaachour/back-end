@@ -43,12 +43,12 @@ const addOffer = async (req, res, next) => {
   // update offer 
   const updateOfferById = async (req, res, next) => {
     const offerId = req.params.id;
-    const { Title, description, Technology, companyName, start_date, end_date, domain, location } = req.body;
+    const { title, description, technology, companyName, start_date, end_date, domain, location } = req.body;
     try {
       const updatedOffer = await Offer.update({
-        Title: Title,
+        title: title,
         description: description,
-        Technology: Technology,
+        technology: technology,
         companyName: companyName,
         start_date: start_date,
         end_date: end_date,

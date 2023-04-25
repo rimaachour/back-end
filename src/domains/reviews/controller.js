@@ -1,7 +1,4 @@
-
-
-
-const Entreprise = require('./model');
+const Entreprise = require('../entreprise/model');
 const Student=require('../student/model')
 
 const addEntrepriseReview = async (req, res) => {

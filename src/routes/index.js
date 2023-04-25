@@ -9,7 +9,7 @@ const student = require("./../domains/student");
 const CV = require('../domains/CV')
 const upload = require ('../domains/fileupload')
 const Offer= require('../domains/offer');
-const review=require('../domains/reviews')
+const Review=require('../domains/reviews')
 router.use("/auth", auth);
 
 router.use("/admin", admin);
@@ -18,7 +18,7 @@ router.use("/student", student);
 router.use("/cv", CV);
 router.use("/uploads",upload)
 router.use("/offer", Offer)
-router.use("/review",review)
+router.use("/review",Review)
 
 
 module.exports = router;
