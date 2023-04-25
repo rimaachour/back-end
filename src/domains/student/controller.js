@@ -2,7 +2,7 @@ const { generateOTP } = require('../../helpers/OTP');
 const { mail } = require('../../helpers/mailer');
 const Student= require('../student/model')
 const Offer = require('../offer/model');
-
+const studentValidation= require('../../helpers/studentValidation')
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const storage = multer.memoryStorage();
@@ -22,10 +22,19 @@ const upload = multer({
 // 1. create product
 
 const registerUser = async (req, res, next) => {
-    const { name, email, password, confirmpassword } = req.body;
     console.log(password,confirmpassword)
+  // const { error } = studentValidation.validate(req.body)
+  // if (error) {
+  //   console.log(error);
+  //   return res.status(400).json({ error: error.details[0].message });
+  // }
+  const emailExists = await Student.findOne({ where: { email: req.body.email } });
+  if (emailExists) {
+    return res.status(400).json({ error: "email" });
+  }
+  const { name, email, password, confirmpassword } = req.body;
 
-    try {
+  try {
       if (password !== confirmpassword) {
         throw new Error('Les mots de passe ne correspondent pas');
       }
@@ -37,7 +46,7 @@ const registerUser = async (req, res, next) => {
       const otp =await generateOTP()
 
 
-      const newUser = new Student({
+      const newUser =await new Student({
         name:name,
         email: email,
         password: hashedPassword,
@@ -77,6 +86,8 @@ async function verifyOTP(req, res) {
 
     if (student.OTP === +OTP) {
       student.status='active'
+      student.OTP = null
+      await student.save();
       return res.status(200).json({ message: 'OTP verified' });
     } else {
       return res.status(400).json({ message: 'OTP not verified' });

@@ -21,6 +21,10 @@ const storage = multer.memoryStorage();
 
 
 const registerCompany = async (req, res, next) => {
+  const emailExists = await Student.findOne({ where: { email: req.body.email } });
+  if (emailExists) {
+    return res.status(400).json({ error: "email" });
+  }
   const { name, email, password, confirmpassword } = req.body;
 
   try {
@@ -35,7 +39,7 @@ const registerCompany = async (req, res, next) => {
     const confirmPasswordHash = await bcrypt.hash(confirmpassword, 10);
     const otp =await generateOTP()
 
-    const newUser = new Entreprise({
+    const newUser = await new Entreprise({
       name: name,
       email: email,
       password: hashedPassword,
@@ -113,16 +117,15 @@ async function verifyOTP1(req, res) {
   if (entreprise.status ==='active') {
     return res.status(400).json({ message: 'company already verified' });
   }
-
+  if (!entreprise) {
+    return res.status(404).json({ message: 'compagny not found' });
+  }
   try {
-
-    if (!entreprise) {
-      return res.status(404).json({ message: 'compagny not found' });
-    }
 
     if (student.OTP === +OTP) {
       student.status='active'
-      return res.status(200).json({ message: 'OTP verified' });
+      student.OTP =null
+      await student.save();
     } else {
       return res.status(400).json({ message: 'OTP not verified' });
     }
