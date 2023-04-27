@@ -12,6 +12,8 @@ const studentValidation = Joi.object({
     password: Joi.string().required(),
     address: Joi.string().required(),
     dateOfBirth: Joi.string(),
+    city:Joi.string()
+
 });
 
 module.exports = studentValidation;

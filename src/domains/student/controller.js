@@ -76,11 +76,11 @@ async function verifyOTP(req, res) {
   const { email, OTP} = req.body;
   const student = await Student.findOne({ where: {email: email} });
   if (!student) {
-    return res.status(404).json({ message: 'Student not found' });
+    return res.status(404).json({ status: 'error', message: 'Student not found' });
   }
 
   if (student.status ==='active') {
-    return res.status(400).json({ message: 'student already verified' });
+    return res.status(400).json({ status: 'error', message: 'Student already verified' });
   }
   try {
 
@@ -88,14 +88,16 @@ async function verifyOTP(req, res) {
       student.status='active'
       student.OTP = null
       await student.save();
-      return res.status(200).json({ message: 'OTP verified' });
+      return res.status(200).json({ status: 'success', message: 'OTP verified' });
     } else {
-      return res.status(400).json({ message: 'OTP not verified' });
+      return res.status(400).json({ status: 'error', message: 'OTP not verified' });
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Error verifying OTP' });
-  }}
+    return res.status(500).json({ status: 'error', message: 'Error verifying OTP' });
+  }
+}
+
 
 // 2. get all students
 const getAllStudents = async (req, res) => {
