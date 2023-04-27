@@ -114,11 +114,11 @@ async function verifyOTP1(req, res) {
 
   const entreprise = await Entreprise.findOne({ where: { email: email } });
   if (!entreprise) {
-    return res.status(404).json({ message: 'compagny not found' });
+    return res.status(404).json({ status: false, message: 'compagny not found' });
   }
   
   if (entreprise.status === 'active') {
-    return res.status(400).json({ message: 'company already verified' });
+    return res.status(400).json({ status: false, message: 'company already verified' });
   }
 
   try {
@@ -131,14 +131,13 @@ async function verifyOTP1(req, res) {
         message: "OTP verified",
       });
     } else {
-      return res.status(400).json({ message: 'OTP not verified' });
+      return res.status(400).json({ status: false, message: 'OTP not verified' });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Error verifying OTP' });
+    res.status(500).json({ status: false, message: 'Error verifying OTP' });
   }
 }
-
 
 
 
