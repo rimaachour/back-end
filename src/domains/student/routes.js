@@ -4,6 +4,7 @@ const mysql = require("mysql2");
 const Pdfmake = require('pdfmake');
 const mysqlPormise = require('mysql2/promise') // you import this package when you want to use execute function with the connection
 const { Sequelize } = require('sequelize');
+const authentication = require('../../middleware/authentication');
 
 //const app = express();
 const router = express.Router();
@@ -15,11 +16,12 @@ const { Router } = require("express");
 //module.exports =  app; 
 ///version with sequelize
 
-const studentController = require('../student/controller.js')
+const studentController = require('../student/controller.js');
+const Student = require("./model");
 
 router.post('/createStudent',studentController.registerUser)
 
-router.get('/AllStudents',studentController.getAllStudents)
+router.get('/AllStudents',authentication , studentController.getAllStudents)
 
 router.get('/:nom',studentController.getStudentByName)
 

@@ -8,62 +8,71 @@ const {generateOTP} =require("../../helpers/OTP");
 const {sendOTPEmail}=require("../../helpers/OTP");
 
 const jwt = require("jsonwebtoken");
+const { GenerateToken } = require("../../helpers/JWT");
 
 // sign in
 const signInStudent = async (req, res, next) => {
-    const { email, password } = req.body;
-    const data = {};
-
-    try {
-      const user = await Student.findOne( {
-        where:{email:email}
-      });
-      console.log(user)
-      if (!user) {
-        throw new Error('Adresse e-mail invalide');
-      }
-      if (user.status === "pending activation") {
-        return res.status(401).json({ error: "inactive" });
-      }
-      bcrypt.compare(password, user.password, (err, matched) => {
-        if (matched) {
-          data.userId = user.id;
-          data.username = user.name;
-          data.email = user.email;
-          data.created_at = user.created_at;
-
-          const token = jwt.sign({ email: user.email }, 'islam');
-          return res.status(200).json({ ...data, token });
-        }
-        return res.status(401).json({ error: "wrong" });
-      });
-
-    } catch (err) {
-
-      res.status(401).json({
-        error: "Error logging you in, please try again later",
-      });
-    }
-  };
-
-
-//sign in compagny 
-const signInCompany = async (req, res, next) => {
   const { email, password } = req.body;
   const data = {};
 
   try {
-    const user1 = await Entreprise.findOne({
-      where: { email: email },
-    });
-    if (!user1) {
-      throw new Error("Adresse e-mail invalide");
+    const user = await Student.findOne({ where: { email } });
+    console.log(user);
+    if (!user) {
+      throw new Error("Invalid email address");
     }
-    if (user1.status === "pending activation") {
+    if (user.status === "pending activation") {
       return res.status(401).json({ error: "inactive" });
     }
+    const matched = await bcrypt.compare(password, user.password);
+    if (matched) {
+      data.userId = user.id;
+      data.username = user.name;
+      data.email = user.email;
+      data.created_at = user.created_at;
 
-    try {
+      const token = await GenerateToken({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        type: "student",
+      });
+
+      return res.status(200).json({ ...data, token });
+    }
+    return res.status(401).json({ error: "Incorrect password" });
+  } catch (err) {
+    console.error(err);
+    res.status(401).json({
+      error: "Error logging you in, please try again later",
+    });
+  }
+};
+
+
+
+
+  
+
+
+//sign in compagny 
+const signInCompany = async (req, res, next) => {
+   
+    try {  
+      const { email, password } = req.body;
+  const data = {};
+  const user1 = await Entreprise.findOne({
+    where: { email: email },
+  });
+
+  if (!user1) {
+    throw new Error("Adresse e-mail invalide");
+  }
+
+  if (user1.status === "pending activation") {
+    return res.status(401).json({ error: "inactive" });
+  }
+
       const matched = await bcrypt.compare(password, user1.password);
       if (matched) {
         data.userId = user1.id;
@@ -71,20 +80,24 @@ const signInCompany = async (req, res, next) => {
         data.email = user1.email;
         data.created_at = user1.created_at;
 
-        const token = jwt.sign({ email: user1.email }, "islam");
+        //const token = jwt.sign({ email: user1.email }, "islam");
+       // if (saved) {
+          const token = await GenerateToken({
+            id: user1.id,
+            name: user1.name,
+            email: user1.email,
+            type: "company"
+          });
 
         return res.status(200).json({ ...data, token });
-      }
-      return res.status(401).json({ error: "wrong" });
-    } catch (error) {
-      console.error(error);
-      return res.status(401).json({ error: "Error logging you in, please try again later" });
     }
-  } catch (error) {
-    console.error(error);
-    return res.status(401).json({ error: "Error logging you in, please try again later" });
-  }
-};
+      return res.status(401).json({ error: "wrong" });
+    
+}catch (error) {
+  console.error(error.message);
+return res.status(401).send(error.message);
+}
+}
 
 //ForgetPassword
 const forgotPassword = async (req, res, next) => {

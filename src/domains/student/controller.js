@@ -5,6 +5,7 @@ const Offer = require('../offer/model');
 const studentValidation= require('../../helpers/studentValidation')
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
+const { GenerateToken } = require('../../helpers/JWT');
 const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
@@ -62,9 +63,15 @@ const registerUser = async (req, res, next) => {
 
       const saved= await newUser.save();
       if (saved) {
-        return res.status(200).send(newUser)
+        const token = await GenerateToken({
+          id: newUser.id,
+          name: newUser.name,
+          email: newUser.email,
+          type: "student"
+        });
+        return res.status(200).json({user: newUser, token});
       }
-
+  
     } catch (err) {
       return next(err.message);
     }
@@ -101,10 +108,33 @@ async function verifyOTP(req, res) {
 
 
 // 2. get all students
+
 const getAllStudents = async (req, res) => {
   try {
-    const students = await Student.findAll({});
-    res.status(200).send(students);
+    const user = req.local;
+    const students = await Student.findAll({
+      attributes: ["id",
+      "name",
+      "firstname",
+      "LastName",
+      "email",
+      "role",
+      "file",
+      "Number",
+      "streetAdress",
+      "city",
+      "state",
+      "Postal",
+      "place",
+      "skills",
+      "schoolname",
+      "schoollocation",
+      "firstattend",
+      "finalattend",
+      "status"]
+    });
+    // again ?
+    res.status(200).json({students,user});
   } catch (err)  {
     console.error(err);
     res.status(500).send('Server Error');

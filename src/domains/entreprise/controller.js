@@ -4,6 +4,7 @@ const Entreprise = require('./model');
 const Student=require('../student/model')
 const bcrypt = require('bcrypt');
 const multer = require('multer');
+const { GenerateToken } = require('../../helpers/JWT');
 const storage = multer.memoryStorage();
 /*const upload = multer({
   storage: storage,
@@ -54,7 +55,13 @@ const registerCompany = async (req, res, next) => {
 
     const saved= await newUser.save();
     if (saved) {
-      return res.status(200).send(newUser)
+      const token = await GenerateToken({
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        type: "company"
+      });
+      return res.status(200).json({user: newUser, token});
     }
 
   } catch (err) {
@@ -147,8 +154,10 @@ async function verifyOTP1(req, res) {
 ///////////////////////getCompagny///////////////////////////////////////////
   const getAllEntreprise = async (req, res) => {
     try {
+      const user = req.local;
+      
       const entreprises = await Entreprise.findAll({});
-      res.status(200).send(entreprises);
+      res.status(200).json({entreprises, user});
     } catch (err) {
       console.error(err);
       res.status(500).send('Server Error');

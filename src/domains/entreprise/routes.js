@@ -17,10 +17,11 @@ const storage = multer.memoryStorage();
 
 const entrepriseController = require('../entreprise/controller.js');
 const Student = require("../student/model.js");
+const authentication = require("../../middleware/authentication.js");
 
 router.post('/registerCompany',entrepriseController.registerCompany)
 
-router.get('/getAllEntreprise',entrepriseController.getAllEntreprise)
+router.get('/getAllEntreprise', authentication, entrepriseController.getAllEntreprise)
 
 
 

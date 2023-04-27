@@ -1,6 +1,5 @@
 const Sequelize = require("sequelize");
 
-require('dotenv').config();
 const dbHost = process.env.DB_HOST;
 const dbUser = process.env.DB_USER | 'root';
 const dbPassword = process.env.DB_PASSWORD | '123456';
