@@ -3,7 +3,7 @@ const sequelize = require('../../config/db');
 const offer = require('../offer/model')
 const Review = require('../reviews/model');
 const Student = require ('../student/model')
-
+const OTP = require('../OTP/model')
 const Company = sequelize.define('companies', {
   id: {
     type: Sequelize.INTEGER,
@@ -47,7 +47,7 @@ const Company = sequelize.define('companies', {
   },
   OTP: {
     type: Sequelize.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   role: {
     type: Sequelize.ENUM('student', 'company'),
@@ -77,16 +77,21 @@ const Company = sequelize.define('companies', {
     type: Sequelize.STRING,
     allowNull: true,
   },
-  state: {
+  status: {
     type: Sequelize.STRING,
-    allowNull: true
+    allowNull: false
   },
+
+  
 }, {
   timestamps: false,
 });
 
 
 Company.hasMany(Review, { as: 'CompanyReviews' });
+Company.hasMany(OTP, { foreignKey: 'companyId' });
+OTP.belongsTo(Company, { foreignKey: 'companyId' });
+
 
 module.exports = Company;
 

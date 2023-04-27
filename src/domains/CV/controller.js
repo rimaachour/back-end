@@ -1,6 +1,6 @@
-const CV = require("./model");
 const Student = require("../student/model");
 const Entreprise = require("../entreprise/model");
+const CV = require("./model");
 
 //CV.findAll({
   //include: [

@@ -123,6 +123,28 @@ const Student = sequelize.define('students', {
 }, {
   timestamps: false
 });
+const Domain = sequelize.define('Domain', {
+  domainName: {
+    type: DataTypes.STRING,
+    primaryKey: true
+  },
+});
+
+const Field = sequelize.define('Field', {
+  fieldId: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+
+});
+
+// Define associations between the models
+Student.hasMany(Domain);
+Domain.belongsTo(Student);
+
+Domain.hasMany(Field);
+Field.belongsTo(Domain);
 
 // Define the relationship after defining both models
 Student.hasMany(Review, { as: 'studentReviews' });

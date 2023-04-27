@@ -122,10 +122,14 @@ async function verifyOTP1(req, res) {
   }
   try {
 
-    if (student.OTP === +OTP) {
-      student.status='active'
-      student.OTP =null
-      await student.save();
+    if (entreprise.OTP === +OTP) {
+      entreprise.status='active'
+      entreprise.OTP =null
+      await entreprise.save();
+      return res.status(200).json({
+        status:true,
+        message:"OTP verified",
+      });
     } else {
       return res.status(400).json({ message: 'OTP not verified' });
     }

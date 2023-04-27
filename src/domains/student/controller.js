@@ -22,7 +22,7 @@ const upload = multer({
 // 1. create product
 
 const registerUser = async (req, res, next) => {
-    console.log(password,confirmpassword)
+   
   // const { error } = studentValidation.validate(req.body)
   // if (error) {
   //   console.log(error);
