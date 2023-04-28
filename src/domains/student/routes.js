@@ -19,18 +19,19 @@ const { Router } = require("express");
 const studentController = require('../student/controller.js');
 const Student = require("./model");
 
+
 router.post('/createStudent',studentController.registerUser)
 
 router.get('/AllStudents',authentication , studentController.getAllStudents)
 
-router.get('/:nom',studentController.getStudentByName)
+router.get('/:nom',authentication,studentController.getStudentByName)
 
 //router.put('update/:id',studentController.updateStudentById)
 
-router.delete('/:id',studentController.deleteStudentById)
+router.delete('/:id',authentication,studentController.deleteStudentById)
 router.post('/verifyOTP',studentController.verifyOTP)
-router.put('/updateUser/:id',studentController.updateUser)
-router.get('/searchoffers', studentController.searchOffer);
+router.put('/updateUser/:id',authentication,studentController.updateUser)
+router.get('/searchoffers',authentication, studentController.searchOffer);
 
 
 //router.get('/PublishedStudent',studentController.getPublishedStudent)

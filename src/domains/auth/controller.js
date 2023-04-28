@@ -100,37 +100,97 @@ return res.status(401).send(error.message);
 }
 
 //ForgetPassword
-const forgotPassword = async (req, res, next) => {
-
+const forgotPasswordStudent = async (req, res, next) => {
   const { email } = req.body;
-  console.log(email)
 
   try {
     // Find the user by email
     const user = await Student.findOne({
-      where:{email:email}
-    })
-    console.log(user)
+      where: { email: email },
+    });
+
     if (!user) {
-      throw new Error('Adresse e-mail invalide');
+      return res.status(400).json({ error: "Invalid email address" });
     }
-    const token = Math.random().toString(36).substring(7);
-    console.log(token)
-    user.resetPasswordToken = token;
+
+    const otp = await generateOTP(); // Generate OTP
+    await mail(user.email, "OTP Verification", `Your OTP is ${otp}`);
+
+    user.resetPasswordToken = otp;
     user.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour
-    await user.save()
-    const resetLink = `<p>Please click <a href="">here</a> to reset your password.</p>`
+    await user.save();
 
-    await mail(user.email, 'Password Reset ',resetLink)
-    
-    res.status(200).json({ok: true, message: 'Password reset link sent' });
-
+    return res
+      .status(200)
+      .json({ ok: true, message: "OTP sent to your email" });
   } catch (err) {
-    return next(err.message);
+    console.error(err);
+    return res
+      .status(500)
+      .json({ error: "Error sending OTP, please try again later" });
+  }
+};
+//verifyOtp
+const verifyOTPStudent = async (req, res, next) => {
+  const { email, OTP } = req.body;
+
+  const student = await Student.findOne({ where: { email: email } });
+  if (!student) {
+    return res.status(404).json({ status: false, message: 'Student not found' });
+  }
+  
+  if (student.status === 'active') {
+    return res.status(400).json({ status: false, message: 'Student already verified' });
+  }
+
+  try {
+    if (student.OTP === +OTP) {
+      student.status = 'active';
+      student.OTP = null;
+      await student.save();
+      return res.status(200).json({
+        status: true,
+        message: "OTP verified",
+      });
+    } else {
+      return res.status(400).json({ status: false, message: 'OTP not verified' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: 'Error verifying OTP' });
   }
 }
+// resendOtpStudent 
+
+async function resendOtp(req, res) {
+  const { email } = req.body;
+
+  const user = await Student.findOne({ where: { email } });
+  if (!user) {
+    return res.status(404).json({ status: false, message: 'User not found' });
+  }
+
+  if (user.isVerified) {
+    return res.status(400).json({ status: false, message: 'User already verified' });
+  }
+
+  try {
+    const otp = await generateOTP(); // Generate OTP
+    user.otp = otp;
+    await user.save();
+    await mail(user.email, "OTP Verification", `Your OTP is ${otp}`);
+    return res.status(200).json({
+      status: true,
+      message: 'New OTP sent to your email',
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: 'Error resending OTP' });
+  }
+}
+
 // resetPasswordStudent
-  const restePassword = async (req, res, next) => {
+  const resetPasswordStudent = async (req, res, next) => {
     const { password } = req.body;
     const { token } = req.params;
     try{
@@ -161,37 +221,88 @@ const forgotPassword = async (req, res, next) => {
 
 //forgetPasswordCompany//////////
 //ForgetPassword
-const forgotPasswordCompny = async (req, res, next) => {
-
+const forgotPasswordCompany = async (req, res, next) => {
   const { email } = req.body;
-  console.log(email)
 
   try {
-    // Find the user by email
-    const user1 = await Entreprise.findOne({
-      where:{email:email}
-    })
-    console.log(user1)
-    if (!user1) {
-      throw new Error('Adresse e-mail invalide');
+    // Find the entreprise by email
+    const entreprise = await Entreprise.findOne({
+      where: { email: email },
+    });
+
+    if (!entreprise) {
+      return res.status(400).json({ error: "Invalid email address" });
     }
-    const token = Math.random().toString(36).substring(7);
-    console.log(token)
-    user1.resetPasswordToken = token;
-    user1.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour
-    await user1.save()
-    const resetLink = `<p>Please click <a href="">here</a> to reset your password.</p>`
 
-    await mail(user1.email, 'Password Reset ',resetLink)
-    
-    res.status(200).json({ok: true, message: 'Password reset link sent' });
+    const otp = await generateOTP(); // Generate OTP
+    await mail(entreprise.email, "OTP Verification", `Your OTP is ${otp}`);
 
+    entreprise.resetPasswordToken = otp;
+    entreprise.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour
+    await entreprise.save();
+
+    return res
+      .status(200)
+      .json({ ok: true, message: "OTP sent to your email" });
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(500)
+      .json({ error: "Error sending OTP, please try again later" });
+  }
+};
+//verifyOTPEntreprise 
+const verifyOTPCompany = async (req, res, next) => {
+  const { email, OTP } = req.body;
+  try {
+    const entreprise = await Entreprise.findOne({ where: { email } });
+    if (!entreprise) {
+      throw new Error("Invalid email address");
+    }
+    if (entreprise.OTP !== OTP) {
+      throw new Error("Invalid OTP");
+    }
+    const timeDiff = entreprise.otpExpires - Date.now();
+    if (timeDiff < 0) {
+      throw new Error("OTP expired");
+    }
+    entreprise.otp = null;
+    entreprise.otpExpires = null;
+    entreprise.status = 'active';
+    await entreprise.save();
+    res.status(200).json({ ok: true, message: "OTP verified successfully" });
   } catch (err) {
     return next(err.message);
   }
+};
+
+//resendOTP
+async function resendOtpC(req, res) {
+  const { email } = req.body;
+
+  const entreprise = await Entreprise.findOne({ where: { email: email } });
+  if (!entreprise) {
+    return res.status(404).json({ status: false, message: 'Company not found' });
+  }
+
+  if (entreprise.status === 'active') {
+    return res.status(400).json({ status: false, message: 'Company already verified' });
+  }
+
+  try {
+    const otp = await generateOTP(); // Generate OTP
+    entreprise.OTP = otp;
+    await entreprise.save();
+    await mail(entreprise.email, "OTP Verification", `Your OTP is ${otp}`);
+    return res.status(200).json({
+      status: true,
+      message: 'New OTP sent to your email',
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: 'Error resending OTP' });
+  }
 }
-
-
 // resetPasswordCompany
 const resetPasswordCompany = async (req, res, next) => {
   const { password } = req.body;
@@ -231,8 +342,16 @@ user1.password = pass;
 
 
 module.exports = { signInStudent,
-  forgotPassword,
-  restePassword,
+  forgotPasswordStudent,
+  verifyOTPStudent,
+  resetPasswordStudent,
   signInCompany,
   resetPasswordCompany,
-  forgotPasswordCompny};
+  resendOtp,
+  forgotPasswordCompany,
+  verifyOTPCompany,
+  resendOtpC,
+resetPasswordCompany
+
+
+};

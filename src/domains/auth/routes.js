@@ -20,9 +20,15 @@ const { Router } = require("express");
 const UserController = require("../auth/controller.js")
 
 
-router.post('/forgetpassword',UserController.forgotPassword)
-router.post('/restePassword/:token',UserController.restePassword)
-router.post('/forgetpasswordCompany',UserController.forgotPasswordCompny)
+router.post('/forgotPasswordStudent',UserController.forgotPasswordStudent)
+router.post('/verifyOTPStudent',UserController.verifyOTPStudent)
+router.post('/resendOtp',UserController.resendOtp)
+
+router.post('/resetPasswordStudent/:token',UserController.resetPasswordStudent)
+router.post('/forgetpasswordCompany',UserController.forgotPasswordCompany)
+router.post('/verifyOTPCompany',UserController.verifyOTPCompany)
+router.post('/resendOtpC',UserController.resendOtpC)
+
 router.post('/restePasswordCompny/:token',UserController.resetPasswordCompany)
 
 router.post("/login", async (req, res) => {
