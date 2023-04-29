@@ -85,15 +85,16 @@ async function verifyOTP(req, res) {
   if (!student) {
     return res.status(404).json({ status: false, message: 'Student not found' });
   }
-
+console.log(OTP);
+console.log(student);
   if (student.status ==='active') {
     return res.status(400).json({ status: false, message: 'Student already verified' });
   }
   try {
-
+    
     if (student.OTP === +OTP) {
       student.status='active'
-      student.OTP = null
+      //student.OTP = null
       await student.save();
       return res.status(200).json({ status: true, message: 'OTP verified' });
     } else {

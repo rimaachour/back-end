@@ -54,7 +54,7 @@ const Student = sequelize.define('students', {
   },
   OTP: {
     type: Sequelize.INTEGER,
-    allowNull: false
+    allowNull: true,
   },
   role: {
     type: Sequelize.ENUM('student', 'company'),

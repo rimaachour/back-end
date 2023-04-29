@@ -131,7 +131,7 @@ async function verifyOTP1(req, res) {
   try {
     if (entreprise.OTP === +OTP) {
       entreprise.status = 'active';
-      entreprise.OTP = null;
+      //entreprise.OTP = null;
       await entreprise.save();
       return res.status(200).json({
         status: true,

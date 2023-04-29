@@ -19,7 +19,7 @@ const { Router } = require("express");
 
 const UserController = require("../auth/controller.js")
 
-
+//for sign in 
 router.post('/forgotPasswordStudent',UserController.forgotPasswordStudent)
 router.post('/verifyOTPStudent',UserController.verifyOTPStudent)
 router.post('/resendOtp',UserController.resendOtp)
@@ -38,5 +38,7 @@ router.post("/login", async (req, res) => {
 router.post("/login1", async (req, res) => {
     await UserController.signInCompany(req, res);
 });
+//for signup
+
 
 module.exports = router;
