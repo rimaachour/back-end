@@ -71,10 +71,10 @@ const CV = sequelize.define('cv', {
   //CV.belongsTo(Entreprise, { foreignKey: 'compagny_id', as: 'compagny' });
   
   Student.hasOne(CV, { foreignKey: 'student_id', as: 'cv' });
-  sequelize.sync({ force: true }) // force: true will drop the table if it already exists
+  /*sequelize.sync({ force: true }) // force: true will drop the table if it already exists
   .then(() => {
     console.log('Table(s) created or updated!');
-  });
+  });*/
   /* TODO many  */
  // Entreprise.hasOne(CV, { foreignKey: 'compagny_id', as: 'cv' });
   module.exports = CV;

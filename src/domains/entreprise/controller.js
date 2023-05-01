@@ -48,20 +48,13 @@ const registerCompany = async (req, res, next) => {
       role: "company",
       OTP :otp,
       status:'pending activation'
-
     });
     await mail(newUser.email,'otp',otp)
 
 
     const saved= await newUser.save();
     if (saved) {
-      const token = await GenerateToken({
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-        type: "company"
-      });
-      return res.status(200).json({user: newUser, token});
+      return res.status(200).json({user: newUser});
     }
 
   } catch (err) {

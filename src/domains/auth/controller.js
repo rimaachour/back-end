@@ -38,7 +38,7 @@ const signInStudent = async (req, res, next) => {
         type: "student",
       });
 
-      return res.status(200).json({ ...data, token });
+      return res.status(200).json({ data, token });
     }
     return res.status(401).json({ error: "Incorrect password" });
   } catch (err) {
@@ -89,7 +89,7 @@ const signInCompany = async (req, res, next) => {
         type: "company"
       });
 
-      return res.status(200).json({ ...data, token });
+      return res.status(200).json({ data, token });
     }
     return res.status(401).json({ error: "wrong" });
 
@@ -144,23 +144,23 @@ const verifyOTPStudent = async (req, res) => {
     }
     if (student.OTP !== +OTP) return res.status(422).json({ error: "Invalid OTP" });
 
-    
+
     console.log(student.OTP)
     console.log(OTP)
-  const token = await GenerateToken({
-          id: student.id,
-          name: student.name,
-          email: student.email,
-          type: "student"
-        });
-    
-    student.resetPasswordToken = token;
+    const resetPasswordToken = await GenerateToken({
+      id: student.id,
+      name: student.name,
+      email: student.email,
+      type: "student"
+    });
+
+    student.resetPasswordToken = resetPasswordToken;
     student.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour
     await student.save();
 
-    return res.json({ message: "OTP Verif!!" ,token});
+    return res.json({ message: "OTP Verif!!", resetPasswordToken });
 
-   
+
     // switch (type) {
     //   case "verify-account":
     //     if (student.status ==='active') {
@@ -226,12 +226,11 @@ async function resendOtp(req, res) {
 
 // resetPasswordStudent
 const resetPasswordStudent = async (req, res, next) => {
-  const { password ,confirmpassword} = req.body;
-  const { token } = req.params;
+  const { password, confirmpassword, resetPasswordToken } = req.body;
   try {
     // Find the user by email
     const user = await Student.findOne({
-      where: { resetPasswordToken: token }
+      where: { resetPasswordToken: resetPasswordToken }
     })
     if (!user) {
       return res.status(404).json({ error: 'Invalid password reset token' });
@@ -243,8 +242,7 @@ const resetPasswordStudent = async (req, res, next) => {
     if (password !== confirmpassword) {
       throw new Error('Les mots de passe ne correspondent pas');
     }
-console.log(user.password);
-    
+
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const confirmPasswordHash = await bcrypt.hash(confirmpassword, 10);
@@ -254,7 +252,7 @@ console.log(user.password);
     user.confirmpassword = confirmPasswordHash;
     console.log(user.password);
 
-    return res.status(400).json({ message: 'Password has been changed successfully' });
+    res.status(200).json({ message: 'Password has been changed successfully' });
 
   } catch (err) {
     console.log(err)
@@ -270,7 +268,7 @@ console.log(user.password);
 //ForgetPassword
 const forgotPasswordCompany = async (req, res, next) => {
   const { email } = req.body;
-
+  console.log(email)
   try {
     // Find the entreprise by email
     const entreprise = await Entreprise.findOne({
@@ -302,28 +300,29 @@ const forgotPasswordCompany = async (req, res, next) => {
 //verifyOTPEntreprise 
 const verifyOTPCompany = async (req, res) => {
   try {
-    const { email, OTP} = req.body;
+    const { email, OTP } = req.body;
 
     const entreprise = await Entreprise.findOne({ where: { email: email } });
     if (!entreprise) {
       return res.status(404).json({ status: false, message: 'compagny not found' });
     }
     if (entreprise.OTP !== +OTP) return res.status(422).json({ error: "Invalid OTP" });
-      console.log(entreprise.OTP)  
-        const token =await GenerateToken({
-          id : entreprise.id,
-        name:   entreprise.name,
-      email:entreprise.email,
-    type:"company"    });
-    entreprise.resetPasswordToken= token;
-    entreprise.resetPasswordExpires =Date.now()+3600000;
+    console.log(entreprise.OTP)
+    const resetPasswordToken = await GenerateToken({
+      id: entreprise.id,
+      name: entreprise.name,
+      email: entreprise.email,
+      type: "company"
+    });
+    entreprise.resetPasswordToken = resetPasswordToken;
+    entreprise.resetPasswordExpires = Date.now() + 3600000;
     await entreprise.save();
-    return res.json({ message: "OTP Verif!!" ,token});
-        } catch(error){
-          console.error(error);
-          return res.status(500).json({status:false ,message:'Error verifying OTP'})
-        }
-      }
+    return res.json({ message: "OTP Verif!!", resetPasswordToken });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: false, message: 'Error verifying OTP' })
+  }
+}
 
 
 
@@ -356,12 +355,11 @@ async function resendOtpC(req, res) {
 }
 // resetPasswordCompany
 const resetPasswordCompany = async (req, res, next) => {
-  const { password ,confirmpassword} = req.body;
-  const { token } = req.params;
+  const { password, confirmpassword, resetPasswordToken } = req.body;
   try {
     // Find the user by email
     const user1 = await Entreprise.findOne({
-      where: { resetPasswordToken: token }
+      where: { resetPasswordToken: resetPasswordToken }
     })
     if (!user1) {
       return res.status(404).json({ error: 'Invalid password reset token' });
@@ -373,19 +371,19 @@ const resetPasswordCompany = async (req, res, next) => {
     if (password !== confirmpassword) {
       throw new Error('Les mots de passe ne correspondent pas');
     }
-console.log(user1.password);
-    
-const hashedPassword = await bcrypt.hash(password, 10);
-const confirmPasswordHash = await bcrypt.hash(confirmpassword, 10);
-user1.password = hashedPassword;
-user1.confirmpassword = confirmPasswordHash;
-console.log(user1.password);
+    console.log(user1.password);
 
-return res.status(400).json({ message: 'Password has been changed successfully' });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const confirmPasswordHash = await bcrypt.hash(confirmpassword, 10);
+    user1.password = hashedPassword;
+    user1.confirmpassword = confirmPasswordHash;
+    console.log(user1.password);
 
-} catch (err) {
-console.log(err)
-}
+    return res.status(200).json({ message: 'Password has been changed successfully' });
+
+  } catch (err) {
+    console.log(err)
+  }
 
 }
 

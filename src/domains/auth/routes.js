@@ -24,20 +24,16 @@ router.post('/forgotPasswordStudent',UserController.forgotPasswordStudent)
 router.post('/verifyOTPStudent',UserController.verifyOTPStudent)
 router.post('/resendOtp',UserController.resendOtp)
 
-router.post('/resetPasswordStudent/:token',UserController.resetPasswordStudent)
+router.post('/resetPasswordStudent',UserController.resetPasswordStudent)
 router.post('/forgetpasswordCompany',UserController.forgotPasswordCompany)
 router.post('/verifyOTPCompany',UserController.verifyOTPCompany)
 router.post('/resendOtpC',UserController.resendOtpC)
 
-router.post('/restePasswordCompny/:token',UserController.resetPasswordCompany)
+router.post('/restePasswordCompny',UserController.resetPasswordCompany)
 
-router.post("/login", async (req, res) => {
-    await UserController.signInStudent(req, res);
-});
+router.post("/login", UserController.signInStudent);
 
-router.post("/login1", async (req, res) => {
-    await UserController.signInCompany(req, res);
-});
+router.post("/login1",UserController.signInCompany);
 //for signup
 
 

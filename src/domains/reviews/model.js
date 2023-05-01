@@ -52,10 +52,10 @@ comment: {
 });
 
 
-sequelize.sync({ force: true }).then(() => {
+/*sequelize.sync({ force: true }).then(() => {
   console.log('Tables created successfully');
 }).catch((err) => {
   console.error('Unable to create tables:', err);
-});
+});*/
 
 module.exports = Review;
