@@ -99,6 +99,33 @@ console.log(req.body)
 }
 
 
+////////////////////////////////////////////////////////resendOTPregister//////////////
+async function resendOtpCRegister(req, res) {
+  const { email } = req.body;
+
+  const entreprise = await Entreprise.findOne({ where: { email: email } });
+  if (!entreprise) {
+    return res.status(404).json({ status: false, message: 'Company not found' });
+  }
+
+  if (entreprise.isVerified) {
+    return res.status(400).json({ status: false, message: 'Company already verified' });
+  }
+
+  try {
+    const otp = await generateOTP(); // Generate OTP
+    entreprise.OTP = otp;
+    await entreprise.save();
+    await mail(entreprise.email, "OTP Verification", `Your OTP is ${otp}`);
+    return res.status(200).json({
+      status: true,
+      message: 'New OTP sent to your email',
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: 'Error resending OTP' });
+  }
+}
 
 
 
@@ -245,6 +272,7 @@ async function verifyOTP1(req, res) {
     deleteEntrepriseById,
     verifyOTP1,
     updateCompny,
-    searchStudentBySkills
+    searchStudentBySkills,
+    resendOtpCRegister
   };
   

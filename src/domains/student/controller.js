@@ -106,6 +106,49 @@ console.log(student);
   }
 }
 
+///////////////////////////////ResendOTPRegister//////////////////////
+async function resendOtpSRegister(req, res) {
+  const { email } = req.body;
+
+  const user = await Student.findOne({ where: { email } });
+  if (!user) {
+    return res.status(404).json({ status: false, message: 'User not found' });
+  }
+
+  if (user.isVerified) {
+    return res.status(400).json({ status: false, message: 'User already verified' });
+  }
+
+  try {
+    const otp = await generateOTP(); // Generate OTP
+    user.OTP = otp;
+    await user.save();
+    await mail(user.email, "OTP Verification", `Your OTP is ${otp}`);
+    return res.status(200).json({
+      status: true,
+      message: 'New OTP sent to your email',
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: 'Error resending OTP' });
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // 2. get all students
@@ -312,7 +355,8 @@ module.exports = {
   deleteStudentById,
   verifyOTP,
   updateUser,
-  searchOffer
+  searchOffer,
+  resendOtpSRegister
 
 
 }

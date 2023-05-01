@@ -29,5 +29,6 @@ router.get('/search', authentication, async (req, res, next) => {
 });
 
 router.get('/:nom',authentication, entrepriseController.getEntrepriseByName);
+router.post('/ResendOtpCRegister', entrepriseController.resendOtpCRegister);
 
 module.exports = router;
