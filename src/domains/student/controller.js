@@ -31,7 +31,7 @@ const registerUser = async (req, res, next) => {
   // }
   const emailExists = await Student.findOne({ where: { email: req.body.email } });
   if (emailExists) {
-    return res.status(400).json({ error: "email" });
+    return res.status(400).json({ status :false , message:'error'});
   }
   const { name, email, password, confirmpassword } = req.body;
 

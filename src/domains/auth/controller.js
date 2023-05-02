@@ -91,7 +91,7 @@ const signInCompany = async (req, res, next) => {
 
       return res.status(200).json({ data, token });
     }
-    return res.status(401).json({ error: "wrong" });
+    return res.status(401).json({ status : false , message :'error' });
 
   } catch (error) {
     console.error(error.message);
@@ -110,7 +110,7 @@ const forgotPasswordStudent = async (req, res, next) => {
     });
 
     if (!user) {
-      return res.status(400).json({ error: "Invalid email address" });
+      return res.status(400).json({  status :false , message: "Invalid email address" });
     }
 
     const otp = await generateOTP(); // Generate OTP
@@ -123,12 +123,12 @@ const forgotPasswordStudent = async (req, res, next) => {
     console.log(user.OTP);
     return res
       .status(200)
-      .json({ ok: true, message: "OTP sent to your email" });
+      .json({ status: true, message: "OTP sent to your email" });
   } catch (err) {
     console.error(err);
     return res
       .status(500)
-      .json({ error: "Error sending OTP, please try again later" });
+      .json({  status:false ,message: "Error sending OTP, please try again later" });
   }
 };
 //verifyOtp
@@ -142,7 +142,7 @@ const verifyOTPStudent = async (req, res) => {
     if (!student) {
       return res.status(404).json({ status: false, message: 'Student not found' });
     }
-    if (student.OTP !== +OTP) return res.status(422).json({ error: "Invalid OTP" });
+    if (student.OTP !== +OTP) return res.status(422).json({  status : false ,  message : "Invalid OTP" });
 
 
     console.log(student.OTP)
@@ -252,7 +252,7 @@ const resetPasswordStudent = async (req, res, next) => {
     user.confirmpassword = confirmPasswordHash;
     console.log(user.password);
 
-    res.status(200).json({ message: 'Password has been changed successfully' });
+    res.status(200).json({  status : true, message: 'Password has been changed successfully' });
 
   } catch (err) {
     console.log(err)
@@ -276,7 +276,7 @@ const forgotPasswordCompany = async (req, res, next) => {
     });
 
     if (!entreprise) {
-      return res.status(400).json({ error: "Invalid email address" });
+      return res.status(400).json({ status:false ,  message: "Invalid email address" });
     }
 
     const otp = await generateOTP(); // Generate OTP
@@ -294,7 +294,7 @@ const forgotPasswordCompany = async (req, res, next) => {
     console.error(err);
     return res
       .status(500)
-      .json({ error: "Error sending OTP, please try again later" });
+      .json({ status:false , message : "Error sending OTP, please try again later" });
   }
 };
 //verifyOTPEntreprise 
@@ -306,7 +306,7 @@ const verifyOTPCompany = async (req, res) => {
     if (!entreprise) {
       return res.status(404).json({ status: false, message: 'compagny not found' });
     }
-    if (entreprise.OTP !== +OTP) return res.status(422).json({ error: "Invalid OTP" });
+    if (entreprise.OTP !== +OTP) return res.status(422).json({  status : false , message: "Invalid OTP" });
     console.log(entreprise.OTP)
     const resetPasswordToken = await GenerateToken({
       id: entreprise.id,
@@ -362,10 +362,10 @@ const resetPasswordCompany = async (req, res, next) => {
       where: { resetPasswordToken: resetPasswordToken }
     })
     if (!user1) {
-      return res.status(404).json({ error: 'Invalid password reset token' });
+      return res.status(404).json({ status : false ,  message : 'Invalid password reset token' });
     }
     if (Date.now() > this.resetPasswordExpires) {
-      return res.status(400).json({ error: 'Password reset token has expired' });
+      return res.status(400).json({  status : false , message : 'Password reset token has expired' });
 
     }
     if (password !== confirmpassword) {
