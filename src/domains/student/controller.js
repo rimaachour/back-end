@@ -24,100 +24,94 @@ const upload = multer({
 
 const registerUser = async (req, res, next) => {
    
-  // const { error } = studentValidation.validate(req.body)
-  // if (error) {
-  //   console.log(error);
-  //   return res.status(400).json({ error: error.details[0].message });
-  // }
-  
   try {
-    const emailExists = await Student.findOne({ where: { email: req.body.email } });
-  if (emailExists) {
-   // return res.status(400).json({ status :false , message:'error'});
-   throw new Error('duplicated Email');
+    const email = req.body.email;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  }
-  const { name, email, password, confirmpassword } = req.body;
-      if (password !== confirmpassword) {
-        throw new Error('Les mots de passe ne correspondent pas');
-      }
-
-      let messageBienvenue = 'welcome student';
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const confirmPasswordHash = await bcrypt.hash(confirmpassword, 10);
-      const otp =await generateOTP()
-
-
-      const newUser =await new Student({
-        name:name,
-        email: email,
-        password: hashedPassword,
-        confirmpassword:confirmPasswordHash,
-        role: "student",
-        OTP :otp,
-        status:'pending activation'
-      }); 
-
-  await mail(newUser.email,'otp',otp)
-
-
-
-      await newUser.save();
-      
-       res.status(200).json({user: newUser, status : true, message:"Student Add Successfully"});
-      
-  
-    } catch (err) {
-       next(err);
-       console.log(err.message)
-
+    if (!emailRegex.test(email)) {
+      throw new Error('Invalid email format');
     }
-  };
+
+    const emailExists = await Student.findOne({ where: { email: email } });
+    if (emailExists) {
+      throw new Error('Email already exists');
+    }
+
+    const { name, password, confirmpassword } = req.body;
+    if (password !== confirmpassword) {
+      throw new Error('Passwords do not match');
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const confirmPasswordHash = await bcrypt.hash(confirmpassword, 10);
+    const otp = await generateOTP();
+
+    const newUser = await new Student({
+      name: name,
+      email: email,
+      password: hashedPassword,
+      confirmpassword: confirmPasswordHash,
+      role: "student",
+      OTP: otp,
+      status: 'pending activation'
+    }); 
+
+    await mail(newUser.email, 'otp', otp);
+    await newUser.save();
+
+    res.status(200).json({ user: newUser, status: true, message: "Student added successfully" });
+      
+  } catch (err) {
+    next(err);
+    console.log(err.message);
+  }
+};
+
 
 // function verification OTP
 
 async function verifyOTP(req, res) {
+  
+  try {
   const { email, OTP} = req.body;
   const student = await Student.findOne({ where: {email: email} });
   if (!student) {
-    return res.status(404).json({ status: false, message: 'Student not found' });
+    throw new Error('Student not found' );
   }
 console.log(OTP);
 console.log(student);
   if (student.status ==='active') {
-    return res.status(400).json({ status: false, message: 'Student already verified' });
+    throw new Error('Student already verified' );
   }
-  try {
-    
     if (student.OTP === +OTP) {
       student.status='active'
       //student.OTP = null
       await student.save();
       return res.status(200).json({ status: true, message: 'OTP verified' });
     } else {
-      return res.status(400).json({ status: false, message: 'OTP not verified' });
+      throw new Error( 'OTP not verified' );
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ status: false, message: 'Error verifying OTP' });
+    throw new Error('Error verifying OTP' );
   }
 }
 
 ///////////////////////////////ResendOTPRegister//////////////////////
 async function resendOtpSRegister(req, res) {
-  const { email } = req.body;
+  
+
+  try {
+    const { email } = req.body;
 
   const user = await Student.findOne({ where: { email } });
   if (!user) {
-    return res.status(404).json({ status: false, message: 'User not found' });
+    throw new Error ('User not found' );
   }
 
   if (user.isVerified) {
-    return res.status(400).json({ status: false, message: 'User already verified' });
+    throw new Error('User already verified' );
   }
-
-  try {
     const otp = await generateOTP(); // Generate OTP
     user.OTP = otp;
     await user.save();
@@ -128,7 +122,7 @@ async function resendOtpSRegister(req, res) {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: false, message: 'Error resending OTP' });
+    throw new Error('Error resending OTP' );
   }
 }
 
@@ -276,35 +270,35 @@ const updateUser = async (req, res, next) => {
   const { id } = req.params; // Get the user ID from the request parameters
   const data = req.body; // Get the data from the request body
 
-  const user = await Student.findOne({
+  const user2 = await Student.findOne({
     where:{id:id}
   })
   
-  if (!user) {
+  if (!user2) {
     throw new Error('User not found');
   }
-  console.log(user);
+  console.log(user2);
 console.log(req.body)
   try {
 
   
     // Update the user object with the new data
-    user.firstname = data.firstname;
-    user.LastName = data.LastName;
-    user.Number = data.Number;
-    user.streetAdress = data.streetAdress;
-    user.city = data.city;
-    user.state = data.state;
-    user.Postal = data.Postal;
-    user.place = data.place;
-    user.schoolname = data.schoolname;
-    user.skills = data.skills
-    user.schoollocation = data.schoollocation;
-    user.firstattend = data.firstattend;
-    user.finalattend = data.finalattend;
-    user.file = data.file;
+    user2.firstname = data.firstname;
+    user2.LastName = data.LastName;
+    user2.Number = data.Number;
+    user2.streetAdress = data.streetAdress;
+    user2.city = data.city;
+    user2.state = data.state;
+    user2.Postal = data.Postal;
+    user2.place = data.place;
+    user2.schoolname = data.schoolname;
+    user2.skills = data.skills
+    user2.schoollocation = data.schoollocation;
+    user2.firstattend = data.firstattend;
+    user2.finalattend = data.finalattend;
+    user2.file = data.file;
   
-    const saved = await user.save();
+    const saved = await user2.save();
     if (saved) {
      
       return res.status(200).send('Data updated successfully');
@@ -313,6 +307,46 @@ console.log(req.body)
     return next(err.message);
   }
 }
+// get all the data 
+const getProfile = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const user2 = await Student.findOne({ where: { id } });
+    if (!user2) {
+      throw new Error("User not found");
+    }
+
+    const userData = {
+      id: user2.id,
+      firstname: user2.firstname,
+      LastName: user2.LastName,
+      email: user2.email,
+      Number: user2.Number,
+      streetAdress: user2.streetAdress,
+      city: user2.city,
+      state: user2.state,
+      Postal: user2.Postal,
+      place: user2.place,
+      schoolname: user2.schoolname,
+      skills: user2.skills,
+      schoollocation: user2.schoollocation,
+      firstattend: user2.firstattend,
+      finalattend: user2.finalattend,
+      file: user2.file,
+      created_at: user2.created_at,
+      updated_at: user2.updated_at,
+    };
+
+    return res.status(200).json(userData);
+  } catch (err) {
+    return next(err.message);
+  }
+};
+
+
+
+
 /// searchOffer////////////
 async function searchOffer(req, res) {
 
@@ -354,7 +388,8 @@ module.exports = {
   verifyOTP,
   updateUser,
   searchOffer,
-  resendOtpSRegister
+  resendOtpSRegister,
+  getProfile
 
 
 }

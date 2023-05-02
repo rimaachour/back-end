@@ -22,46 +22,57 @@ const storage = multer.memoryStorage();
 
 
 const registerCompany = async (req, res, next) => {
-
-
   try {
+    // Check if email address is already in use
     const emailExists = await Entreprise.findOne({ where: { email: req.body.email } });
     if (emailExists) {
-      //return res.status(401).json({status:false , message:'duplicated Email'});
       throw new Error('duplicated Email');
     }
+
     const { name, email, password, confirmpassword } = req.body;
-    // Vérifie si les mots de passe correspondent
+
+    // Validate email address format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      throw new Error('Invalid email format');
+    }
+
+    // Check if passwords match
     if (password != confirmpassword) {
       throw new Error('the password and confirm password diff');
     }
 
-    let messageBienvenue = 'welcome company';
-
+    // Generate OTP and hash passwords
+    const otp = await generateOTP();
     const hashedPassword = await bcrypt.hash(password, 10);
     const confirmPasswordHash = await bcrypt.hash(confirmpassword, 10);
-    const otp =await generateOTP()
 
+    // Create new user
     const newUser = await new Entreprise({
       name: name,
       email: email,
       password: hashedPassword,
-      confirmpassword:confirmPasswordHash,
+      confirmpassword: confirmPasswordHash,
       role: "company",
-      OTP :otp,
-      status:'pending activation'
+      OTP: otp,
+      status: 'pending activation'
     });
-    await mail(newUser.email,'otp',otp)
 
+    // Send OTP via email
+    await mail(newUser.email, 'otp', otp);
 
+    // Save new user to database
     await newUser.save();
-    res.status(200).json({user: newUser,status : true, message:"Company Add Successfully"});
+
+    // Send success response
+    res.status(200).json({ user: newUser, status: true, message: "Company Add Successfully" });
 
   } catch (err) {
     next(err);
-    console.log(err.message)
+    console.log(err.message);
   }
 };
+
 ///////////////////////////////////////////////////////////////////
 
 const updateCompny = async (req, res, next) => {
@@ -99,34 +110,34 @@ console.log(req.body)
 
 }
 
-
 ////////////////////////////////////////////////////////resendOTPregister//////////////
-async function resendOtpCRegister(req, res) {
-  const { email } = req.body;
-
-  const entreprise = await Entreprise.findOne({ where: { email: email } });
-  if (!entreprise) {
-    return res.status(404).json({ status: false, message: 'Company not found' });
-  }
-
-  if (entreprise.isVerified) {
-    return res.status(400).json({ status: false, message: 'Company already verified' });
-  }
-
+async function resendOtpCRegister(req, res, next) {
   try {
-    const otp = await generateOTP(); // Generate OTP
+    const { email } = req.body;
+
+    const entreprise = await Entreprise.findOne({ where: { email: email } });
+    if (!entreprise) {
+      throw new Error('Company not found');
+    }
+
+    if (entreprise.isVerified) {
+      throw new Error('Company already verified');
+    }
+
+    const otp = await generateOTP();
     entreprise.OTP = otp;
     await entreprise.save();
-    await mail(entreprise.email, "OTP Verification", `Your OTP is ${otp}`);
+    await mail(entreprise.email, 'OTP Verification', `Your OTP is ${otp}`);
     return res.status(200).json({
       status: true,
       message: 'New OTP sent to your email',
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: false, message: 'Error resending OTP' });
+    throw new Error('Error resending OTP');
   }
 }
+
 
 
 
@@ -138,34 +149,33 @@ async function resendOtpCRegister(req, res) {
 ///////////////OTP///////////////////////
 
 async function verifyOTP1(req, res) {
+  try {
   const { email, OTP } = req.body;
 
   const entreprise = await Entreprise.findOne({ where: { email: email } });
   if (!entreprise) {
-    return res.status(404).json({ status: false, message: 'compagny not found' });
+    throw new Error('company not found');
   }
   
   if (entreprise.status === 'active') {
-    return res.status(400).json({ status: false, message: 'company already verified' });
+    throw new Error('Company already verified');
   }
-
-  try {
     if (entreprise.OTP === +OTP) {
       entreprise.status = 'active';
-      //entreprise.OTP = null;
       await entreprise.save();
       return res.status(200).json({
         status: true,
         message: "OTP verified",
       });
     } else {
-      return res.status(400).json({ status: false, message: 'OTP not verified' });
+      throw new Error('OTP not verified');
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: false, message: 'Error verifying OTP' });
+    throw new Error('Error verifying OTP');
   }
 }
+
 
 
 

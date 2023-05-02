@@ -22,17 +22,18 @@ const Student = require("./model");
 
 router.post('/createStudent',studentController.registerUser)
 
-router.get('/AllStudents',authentication , studentController.getAllStudents)
+router.get('/AllStudents' , studentController.getAllStudents)
 
 router.get('/:nom',authentication,studentController.getStudentByName)
 
 //router.put('update/:id',studentController.updateStudentById)
 
-router.delete('/:id',authentication,studentController.deleteStudentById)
+router.delete('/:id',studentController.deleteStudentById)
 router.post('/verifyOTP',studentController.verifyOTP)
-router.put('/updateUser/:id',authentication,studentController.updateUser)
-router.get('/searchoffers',authentication, studentController.searchOffer);
-router.post('/resendOTPStudent',studentController.resendOtpSRegister)
+router.put('/updateUser/:id',studentController.updateUser)
+router.get('/searchoffers', studentController.searchOffer);
+router.post('/resendOTPStudent',studentController.resendOtpSRegister);
+router.get ('/getProfile/:id',studentController.getProfile)
 
 
 //router.get('/PublishedStudent',studentController.getPublishedStudent)
