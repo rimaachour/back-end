@@ -206,7 +206,7 @@ async function resendOtp(req, res) {
   }
 
   if (user.isVerified) {
-    return res.status(400).json({ status: false, message: 'User already verified' });
+    return res.status(200).json({ status: false, message: 'User already verified' });
   }
 
   try {
@@ -336,7 +336,7 @@ async function resendOtpC(req, res) {
   }
 
   if (entreprise.isVerified) {
-    return res.status(400).json({ status: false, message: 'Company already verified' });
+    return res.status(200).json({ status: false, message: 'Company already verified' });
   }
 
   try {
