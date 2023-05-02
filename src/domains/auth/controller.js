@@ -381,7 +381,7 @@ const resetPasswordCompany = async (req, res, next) => {
 
     return res.status(200).json({ message: 'Password has been changed successfully' });
 
-  } catch (err) {
+  } catch (err) { 
     console.log(err)
   }
 

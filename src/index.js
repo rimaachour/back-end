@@ -26,8 +26,8 @@ app.use(cors());
 
 //for accepting posts from data
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+app.use(express.json());
+app.use(express.urlencoded());
 app.use((req,res,next)=>{
   res.setHeader('Access-control-allow-origin','*');
   res.setHeader('Access-control-allow-Methods','GET,POST,PUT,DELETE');
@@ -65,7 +65,10 @@ app.post('/register', (req, res) => {
   res.send('Inscription réussie');
 });
 
-
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ status: false, message: err.message });
+});
 
 
 //server 

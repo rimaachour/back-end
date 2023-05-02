@@ -29,18 +29,20 @@ const registerUser = async (req, res, next) => {
   //   console.log(error);
   //   return res.status(400).json({ error: error.details[0].message });
   // }
-  const emailExists = await Student.findOne({ where: { email: req.body.email } });
+  
+  try {
+    const emailExists = await Student.findOne({ where: { email: req.body.email } });
   if (emailExists) {
-    return res.status(400).json({ status :false , message:'error'});
+   // return res.status(400).json({ status :false , message:'error'});
+   throw new Error('duplicated Email');
+
   }
   const { name, email, password, confirmpassword } = req.body;
-
-  try {
       if (password !== confirmpassword) {
         throw new Error('Les mots de passe ne correspondent pas');
       }
 
-      let messageBienvenue = 'welcome User';
+      let messageBienvenue = 'welcome student';
 
       const hashedPassword = await bcrypt.hash(password, 10);
       const confirmPasswordHash = await bcrypt.hash(confirmpassword, 10);
@@ -61,19 +63,15 @@ const registerUser = async (req, res, next) => {
 
 
 
-      const saved= await newUser.save();
-      if (saved) {
-        const token = await GenerateToken({
-          id: newUser.id,
-          name: newUser.name,
-          email: newUser.email,
-          type: "student"
-        });
-        return res.status(200).json({user: newUser, token});
-      }
+      await newUser.save();
+      
+       res.status(200).json({user: newUser, status : true, message:"Student Add Successfully"});
+      
   
     } catch (err) {
-      return next(err.message);
+       next(err);
+       console.log(err.message)
+
     }
   };
 

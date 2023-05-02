@@ -22,16 +22,18 @@ const storage = multer.memoryStorage();
 
 
 const registerCompany = async (req, res, next) => {
-  const emailExists = await Student.findOne({ where: { email: req.body.email } });
-  if (emailExists) {
-    return res.status(400).json({status:false , message:'error'});
-  }
-  const { name, email, password, confirmpassword } = req.body;
+
 
   try {
+    const emailExists = await Entreprise.findOne({ where: { email: req.body.email } });
+    if (emailExists) {
+      //return res.status(401).json({status:false , message:'duplicated Email'});
+      throw new Error('duplicated Email');
+    }
+    const { name, email, password, confirmpassword } = req.body;
     // Vérifie si les mots de passe correspondent
-    if (password !== confirmpassword) {
-      throw new Error('Les mots de passe ne correspondent pas');
+    if (password != confirmpassword) {
+      throw new Error('the password and confirm password diff');
     }
 
     let messageBienvenue = 'welcome company';
@@ -52,13 +54,12 @@ const registerCompany = async (req, res, next) => {
     await mail(newUser.email,'otp',otp)
 
 
-    const saved= await newUser.save();
-    if (saved) {
-      return res.status(200).json({user: newUser});
-    }
+    await newUser.save();
+    res.status(200).json({user: newUser,status : true, message:"Company Add Successfully"});
 
   } catch (err) {
-    return next(err.message);
+    next(err);
+    console.log(err.message)
   }
 };
 ///////////////////////////////////////////////////////////////////
@@ -92,7 +93,7 @@ console.log(req.body)
       return res.status(200).send('Data updated successfully');
     }
   } catch (err) {
-    return next(err.message);
+    next(err);
   }
 
 
