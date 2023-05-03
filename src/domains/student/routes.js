@@ -16,6 +16,8 @@ const { Router } = require("express");
 //module.exports =  app; 
 ///version with sequelize
 
+
+
 const studentController = require('../student/controller.js');
 const Student = require("./model");
 
@@ -23,7 +25,39 @@ const Student = require("./model");
 router.post('/createStudent',studentController.registerUser)
 
 router.get('/AllStudents' , studentController.getAllStudents)
-
+router.get ('/profile',authentication, async (req, res, next) =>{
+    try {
+        const userpayload = req.local;
+        const student = await Student.findOne({
+            where: { id: userpayload.id},
+            attributes: ["id",
+            "name",
+            "firstname",
+            "LastName",
+            "email",
+           
+            "role",
+           
+            "file",
+            "Number",
+            "streetAdress",
+            "city",
+            "state",
+            "Postal",
+            "place",
+            "skills",
+            "schoolname",
+            "schoollocation",
+            "firstattend",
+            "finalattend",
+            "status"]
+          });
+          if(!student) throw new Error('Invalid user');
+        res.json(student)
+    } catch (error) {
+        next(error);
+    }
+})
 router.get('/:nom',authentication,studentController.getStudentByName)
 
 //router.put('update/:id',studentController.updateStudentById)
@@ -33,7 +67,7 @@ router.post('/verifyOTP',studentController.verifyOTP)
 router.put('/updateUser/:id',studentController.updateUser)
 router.get('/searchoffers', studentController.searchOffer);
 router.post('/resendOTPStudent',studentController.resendOtpSRegister);
-router.get ('/getProfile/:id',studentController.getProfile)
+
 
 
 //router.get('/PublishedStudent',studentController.getPublishedStudent)

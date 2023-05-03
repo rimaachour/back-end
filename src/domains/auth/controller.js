@@ -49,11 +49,12 @@ const signInStudent = async (req, res, next) => {
     throw new Error("Incorrect password");
   } catch (err) {
     console.error(err);
+    next(err);
     throw new Error("Error logging you in, please try again later");
   }
 };
 
-
+// where get profile/??
 
 
 
