@@ -23,9 +23,8 @@ const upload = multer({
 // 1. create product
 
 const registerUser = async (req, res, next) => {
-   
+  const { name, email, password, confirmpassword } = req.body;
   try {
-    const email = req.body.email;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email)) {
@@ -37,7 +36,7 @@ const registerUser = async (req, res, next) => {
       throw new Error('Email already exists');
     }
 
-    const { name, password, confirmpassword } = req.body;
+
     if (password !== confirmpassword) {
       throw new Error('Passwords do not match');
     }
@@ -70,40 +69,36 @@ const registerUser = async (req, res, next) => {
 
 // function verification OTP
 
-async function verifyOTP(req, res) {
-  
-  try {
+async function verifyOTP(req, res,next) {
   const { email, OTP} = req.body;
+
+  try {
   const student = await Student.findOne({ where: {email: email} });
   if (!student) {
     throw new Error('Student not found' );
   }
-console.log(OTP);
-console.log(student);
+
   if (student.status ==='active') {
     throw new Error('Student already verified' );
   }
-    if (student.OTP === +OTP) {
-      student.status='active'
-      //student.OTP = null
+    if (student.OTP != +OTP) {
+      throw new Error('OTP not verified');}
+student.status ='active';
       await student.save();
-      return res.status(200).json({ status: true, message: 'OTP verified' });
-    } else {
-      throw new Error( 'OTP not verified' );
-    }
+    res.status(200).json({ status: true, message: 'OTP verified' });
+    
   } catch (error) {
-    console.error(error);
-    throw new Error('Error verifying OTP' );
+    next(error);
   }
 }
 
 ///////////////////////////////ResendOTPRegister//////////////////////
-async function resendOtpSRegister(req, res) {
-  
+async function resendOtpSRegister(req, res ,next) {
+  const { email } = req.body;
+
 
   try {
-    const { email } = req.body;
-
+    
   const user = await Student.findOne({ where: { email } });
   if (!user) {
     throw new Error ('User not found' );
@@ -116,13 +111,13 @@ async function resendOtpSRegister(req, res) {
     user.OTP = otp;
     await user.save();
     await mail(user.email, "OTP Verification", `Your OTP is ${otp}`);
-    return res.status(200).json({
+     res.status(200).json({
       status: true,
       message: 'New OTP sent to your email',
     });
   } catch (error) {
-    console.error(error);
-    throw new Error('Error resending OTP' );
+    next(error)
+    
   }
 }
 

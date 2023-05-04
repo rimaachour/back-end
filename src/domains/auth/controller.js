@@ -10,41 +10,42 @@ const { sendOTPEmail } = require("../../helpers/OTP");
 const jwt = require("jsonwebtoken");
 const { GenerateToken } = require("../../helpers/JWT");
 
-// sign in
+// // sign in
 const signInStudent = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
     const data = {};
+  try {
+    
 
     // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      throw new Error("Invalid email address");
-    }
+    //const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    //if (!emailRegex.test(email)) {
+     // throw new Error("Invalid email address");
+    //}
 
-    const user = await Student.findOne({ where: { email } });
-    console.log(user);
-    if (!user) {
+    const user2 = await Student.findOne({ where: { email } });
+    // console.log(user);
+    if (!user2) {
       throw new Error("Invalid email address");
     }
-    if (user.status === "pending activation") {
-      throw new Error("Account is inactive");
+    if (user2.status === "pending activation") {
+      throw new res.status(401).json({error:"Account is inactive"});
     }
-    const matched = await bcrypt.compare(password, user.password);
+    const matched = await bcrypt.compare(password, user2.password);
     if (matched) {
-      data.userId = user.id;
-      data.username = user.name;
-      data.email = user.email;
-      data.created_at = user.created_at;
+      data.userId = user2.id;
+      data.username = user2.name;
+      data.email = user2.email;
+      data.created_at = user2.created_at;
 
       const token = await GenerateToken({
-        id: user.id,
-        name: user.name,
-        email: user.email,
+        id: user2.id,
+        name: user2.name,
+        email: user2.email,
         type: "student",
       });
 
-      return res.send({ data, token });
+      return res.status(200).json({ data, token });
     }
     throw new Error("Incorrect password");
   } catch (err) {
@@ -61,16 +62,16 @@ const signInStudent = async (req, res, next) => {
 
 //sign in compagny 
 const signInCompany = async (req, res, next) => {
-
+  const { email, password } = req.body;
+  const data = {};
   try {
-    const { email, password } = req.body;
-    const data = {};
+    
 
     // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: "Invalid email address" });
-    }
+    //const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    //if (!emailRegex.test(email)) {
+      //throw new Error (  "Invalid email address" );
+    //}
 
     const user1 = await Entreprise.findOne({
       where: { email: email },
@@ -81,7 +82,7 @@ const signInCompany = async (req, res, next) => {
     }
 
     if (user1.status === "pending activation") {
-      return res.status(401).json({ error: "inactive" });
+      throw new res.status(401).json({ error: "inactive" });
     }
 
     const matched = await bcrypt.compare(password, user1.password);
@@ -104,6 +105,8 @@ const signInCompany = async (req, res, next) => {
 
   } catch (error) {
     console.error(error.message);
+    next(error);
+
     return res.status(401).json({ error: error.message });
   }
 }
@@ -114,36 +117,49 @@ const signInCompany = async (req, res, next) => {
 const forgotPasswordStudent = async (req, res, next) => {
   try {
     const { email } = req.body;
-    const user = await Student.findOne({ where: { email: email } });
-    if (!user) {
+
+ 
+    const student = await Student.findOne({ where: { email: email } });
+    if (!student) {
       throw new Error("Invalid email address");
     }
     const otp = await generateOTP();
-    await mail(user.email, "OTP Verification", `Your OTP is ${otp}`);
-    user.OTP = otp;
-    await user.save();
-    return res.status(200).json({ status: true, message: "OTP sent to your email" });
+    await mail(student.email, "OTP Verification", `Your OTP is ${otp}`);
+    student.OTP = otp;
+    await student.save();
+    return res.status(200).json({ ok: true, message: "OTP sent to your email" });
   } catch (err) {
     console.error(err);
+    next(err);
     throw new Error("Error sending OTP, please try again later");
+
+   
   }
 };
 
 //verifyOtp
-const verifyOTPStudent = async (req, res) => {
+const verifyOTPStudent = async (req, res, next) => {
+  const { email, OTP } = req.body;
+    console.log(email);
   try {
-    const { email, OTP } = req.body;
+    
 
     const student = await Student.findOne({ where: { email: email } });
     if (!student) {
       throw new Error('Student not found');
     }
-    if (student.OTP !== +OTP) {
+    // console.log(student)
+    // console.log("-".repeat(10))
+    // console.log(otp)
+    // console.log("-".repeat(10))
+    // console.log("-".repeat(10))
+    // console.log(student.OTP)
+    // console.log("-".repeat(10))
+
+    if (student.OTP != +OTP) {
       throw new Error('Invalid OTP');
     }
 
-    console.log(student.OTP)
-    console.log(OTP)
     const resetPasswordToken = await GenerateToken({
       id: student.id,
       name: student.name,
@@ -157,56 +173,62 @@ const verifyOTPStudent = async (req, res) => {
 
     return res.json({ message: "OTP Verif!!", resetPasswordToken });
   } catch (error) {
-    console.error(error);
-    throw new Error('Error verifying OTP');
+    next(error);
+
+    
   }
 }
 
 // resendOtpStudent 
 
 async function resendOtp(req, res) {
-  
+  const { email } = req.body;
+  const student = await Student.findOne({ where: { email } });
+  if (!student) {
+    return res.status(404).json({status:false , message :'student not found'});
+  }
+  if(student.isVerified){
+    return res.status(200).json({ status: false, message: 'student already verified' });
+
+  }
 
   try {
-    const { email } = req.body;
 
-  const user = await Student.findOne({ where: { email } });
-  if (!user) {
-    throw new Error('User not found');
-  }
+ 
+  
 
-  if (user.isVerified) {
-    throw new Error('User already verified');
-  }
+ 
     const otp = await generateOTP(); // Generate OTP
-    user.OTP = otp;
-    await user.save();
-    await mail(user.email, "OTP Verification", `Your OTP is ${otp}`);
+    student.OTP = otp;
+    await student.save();
+    await mail(student.email, "OTP Verification", `Your OTP is ${otp}`);
     return res.status(200).json({
       status: true,
       message: 'New OTP sent to your email',
     });
   } catch (error) {
     console.error(error);
-    throw new Error('Error resending OTP');
+    next(error);
+
   }
 }
 
 
 // resetPasswordStudent
 const resetPasswordStudent = async (req, res, next) => {
+  const { password, confirmpassword, resetPasswordToken } = req.body;
   try {
-    const { password, confirmpassword, resetPasswordToken } = req.body;
+   
 
     // Find the user by email
     const user = await Student.findOne({
       where: { resetPasswordToken: resetPasswordToken }
     })
     if (!user) {
-      throw new Error('Invalid password reset token');
+      return res.status(404).json({ status : false ,  message : 'Invalid password reset token' });
     }
     if (Date.now() > this.resetPasswordExpires) {
-      throw new Error('Password reset token has expired');
+      return res.status(400).json({  status : false , message : 'Password reset token has expired' });
     }
     if (password !== confirmpassword) {
       throw new Error('Les mots de passe ne correspondent pas');
@@ -218,13 +240,16 @@ const resetPasswordStudent = async (req, res, next) => {
     user.resetPasswordToken = null;
     user.password = hashedPassword;
     user.confirmpassword = confirmPasswordHash;
-    console.log(user.password);
+    await user.save()
 
     res.status(200).json({ status: true, message: 'Password has been changed successfully' });
 
   } catch (err) {
     console.log(err);
-    throw new Error('Error resetting password');
+    next(err);
+
+    console.log(err)
+
   }
 }
 
@@ -262,23 +287,26 @@ const forgotPasswordCompany = async (req, res, next) => {
       .json({ ok: true, message: "OTP sent to your email" });
   } catch (err) {
     console.error(err);
+    next(err);
+
     throw new Error("Error sending OTP, please try again later");
   }
 };
 
 //verifyOTPEntreprise 
-const verifyOTPCompany = async (req, res) => {
+const verifyOTPCompany = async (req, res,next) => {
+  const { email, OTP } = req.body;
+  console.log(email)
   try {
-    const { email, OTP } = req.body;
 
     const entreprise = await Entreprise.findOne({ where: { email: email } });
     if (!entreprise) {
       throw new Error('compagny not found');
     }
-    if (entreprise.OTP !== +OTP) {
+    console.log(entreprise.OTP)
+    if (entreprise.OTP != +OTP) {
       throw new Error('Invalid OTP');
     }
-    console.log(entreprise.OTP)
     const resetPasswordToken = await GenerateToken({
       id: entreprise.id,
       name: entreprise.name,
@@ -290,8 +318,7 @@ const verifyOTPCompany = async (req, res) => {
     await entreprise.save();
     return res.json({ message: "OTP Verif!!", resetPasswordToken });
   } catch (error) {
-    console.error(error);
-    throw new Error('Error verifying OTP');
+    next(error);
   }
 }
 
@@ -322,6 +349,8 @@ async function resendOtpC(req, res) {
     });
   } catch (error) {
     console.error(error);
+    next(error);
+
     throw new Error('Error resending OTP'); // Throw an error with the message 'Error resending OTP'
   }
 }
@@ -351,11 +380,12 @@ const resetPasswordCompany = async (req, res, next) => {
     const confirmPasswordHash = await bcrypt.hash(confirmpassword, 10);
     user1.password = hashedPassword;
     user1.confirmpassword = confirmPasswordHash;
-    console.log(user1.password);
-
+    await user1.save()
     return res.status(200).json({ message: 'Password has been changed successfully' });
 
   } catch (err) { 
+    next(err);
+
     console.log(err)
   }
 
