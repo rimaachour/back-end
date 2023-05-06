@@ -30,11 +30,8 @@ const Offer = sequelize.define('offers', {
     type: DataTypes.DATE,
     allowNull: false
   },
-  domain: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  location: {
+ 
+location: {
     type: Sequelize.STRING,
     allowNull: false
   },
@@ -59,7 +56,7 @@ const Offer = sequelize.define('offers', {
 
 // Define associations
 /*Offer.belongsTo(Company, { foreignKey: 'company_id' });
-Company.hasMany(Offer, { foreignKey: 'company_id' });
+Company.hasMany(Offer, { foreignKey: 'company_id' });*/
 
 sequelize.sync()
   .then(() => {
@@ -67,6 +64,6 @@ sequelize.sync()
   })
   .catch((error) => {
     console.log('Error creating Offer table:', error);
-  });*/
+  });
 
 module.exports = Offer;

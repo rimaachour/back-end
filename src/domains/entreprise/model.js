@@ -3,7 +3,7 @@ const sequelize = require('../../config/db');
 const offer = require('../offer/model')
 const Review = require('../reviews/model');
 const Student = require ('../student/model')
-const OTP = require('../OTP/model')
+//const OTP = require('../OTP/model')
 const Company = sequelize.define('companies', {
   id: {
     type: Sequelize.INTEGER,
@@ -89,8 +89,8 @@ const Company = sequelize.define('companies', {
 
 
 Company.hasMany(Review, { as: 'CompanyReviews' });
-Company.hasMany(OTP, { foreignKey: 'companyId' });
-OTP.belongsTo(Company, { foreignKey: 'companyId' });
+//Company.hasMany(OTP, { foreignKey: 'companyId' });
+//OTP.belongsTo(Company, { foreignKey: 'companyId' });
 
 
 module.exports = Company;

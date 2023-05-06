@@ -149,10 +149,10 @@ Field.belongsTo(Domain);
 // Define the relationship after defining both models
 Student.hasMany(Review, { as: 'studentReviews' });
 
-/*sequelize.sync({ force: true }).then(() => {
+sequelize.sync({ force: true }).then(() => {
   console.log('Tables created successfully');
 }).catch((err) => {
   console.error('Unable to create tables:', err);
-});*/
+});
 
 module.exports = Student;

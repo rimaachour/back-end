@@ -13,14 +13,14 @@ const { GenerateToken } = require("../../helpers/JWT");
 // // sign in
 const signInStudent = async (req, res, next) => {
   const { email, password } = req.body;
-    const data = {};
+  const data = {};
   try {
-    
+
 
     // Email format validation
     //const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     //if (!emailRegex.test(email)) {
-     // throw new Error("Invalid email address");
+    // throw new Error("Invalid email address");
     //}
 
     const user2 = await Student.findOne({ where: { email } });
@@ -29,29 +29,28 @@ const signInStudent = async (req, res, next) => {
       throw new Error("Invalid email address");
     }
     if (user2.status === "pending activation") {
-      throw new res.status(401).json({error:"Account is inactive"});
+      throw new res.status(401).json({ error: "Account is inactive" });
     }
     const matched = await bcrypt.compare(password, user2.password);
-    if (matched) {
-      data.userId = user2.id;
-      data.username = user2.name;
-      data.email = user2.email;
-      data.created_at = user2.created_at;
+    if (!matched) {
+      throw new Error("Incorrect password");
 
-      const token = await GenerateToken({
-        id: user2.id,
-        name: user2.name,
-        email: user2.email,
-        type: "student",
-      });
-
-      return res.status(200).json({ data, token });
     }
-    throw new Error("Incorrect password");
+    data.userId = user2.id;
+    data.username = user2.name;
+    data.email = user2.email;
+    data.created_at = user2.created_at;
+
+    const token = await GenerateToken({
+      id: user2.id,
+      name: user2.name,
+      email: user2.email,
+      type: "student",
+    });
+
+    res.status(200).json({ data, token });
   } catch (err) {
-    console.error(err);
     next(err);
-    throw new Error("Error logging you in, please try again later");
   }
 };
 
@@ -65,12 +64,12 @@ const signInCompany = async (req, res, next) => {
   const { email, password } = req.body;
   const data = {};
   try {
-    
+
 
     // Email format validation
     //const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     //if (!emailRegex.test(email)) {
-      //throw new Error (  "Invalid email address" );
+    //throw new Error (  "Invalid email address" );
     //}
 
     const user1 = await Entreprise.findOne({
@@ -82,32 +81,32 @@ const signInCompany = async (req, res, next) => {
     }
 
     if (user1.status === "pending activation") {
-      throw new res.status(401).json({ error: "inactive" });
+      throw new Error( "inactive");
     }
 
     const matched = await bcrypt.compare(password, user1.password);
-    if (matched) {
-      data.userId = user1.id;
-      data.username = user1.name;
-      data.email = user1.email;
-      data.created_at = user1.created_at;
+    if (!matched) {
+      throw new Error('Incorrect password');
 
-      const token = await GenerateToken({
-        id: user1.id,
-        name: user1.name,
-        email: user1.email,
-        type: "company"
-      });
-
-      return res.status(200).json({ data, token });
     }
-    throw new Error('Incorrect password');
+    data.userId = user1.id;
+    data.username = user1.name;
+    data.email = user1.email;
+    data.created_at = user1.created_at;
+
+    const token = await GenerateToken({
+      id: user1.id,
+      name: user1.name,
+      email: user1.email,
+      type: "company"
+    });
+
+    res.status(200).json({ data, token });
 
   } catch (error) {
     console.error(error.message);
     next(error);
 
-    return res.status(401).json({ error: error.message });
   }
 }
 
@@ -118,7 +117,7 @@ const forgotPasswordStudent = async (req, res, next) => {
   try {
     const { email } = req.body;
 
- 
+
     const student = await Student.findOne({ where: { email: email } });
     if (!student) {
       throw new Error("Invalid email address");
@@ -133,16 +132,16 @@ const forgotPasswordStudent = async (req, res, next) => {
     next(err);
     throw new Error("Error sending OTP, please try again later");
 
-   
+
   }
 };
 
 //verifyOtp
 const verifyOTPStudent = async (req, res, next) => {
   const { email, OTP } = req.body;
-    console.log(email);
+  console.log(email);
   try {
-    
+
 
     const student = await Student.findOne({ where: { email: email } });
     if (!student) {
@@ -175,7 +174,7 @@ const verifyOTPStudent = async (req, res, next) => {
   } catch (error) {
     next(error);
 
-    
+
   }
 }
 
@@ -185,19 +184,19 @@ async function resendOtp(req, res) {
   const { email } = req.body;
   const student = await Student.findOne({ where: { email } });
   if (!student) {
-    return res.status(404).json({status:false , message :'student not found'});
+    return res.status(404).json({ status: false, message: 'student not found' });
   }
-  if(student.isVerified){
+  if (student.isVerified) {
     return res.status(200).json({ status: false, message: 'student already verified' });
 
   }
 
   try {
 
- 
-  
 
- 
+
+
+
     const otp = await generateOTP(); // Generate OTP
     student.OTP = otp;
     await student.save();
@@ -218,17 +217,17 @@ async function resendOtp(req, res) {
 const resetPasswordStudent = async (req, res, next) => {
   const { password, confirmpassword, resetPasswordToken } = req.body;
   try {
-   
+
 
     // Find the user by email
     const user = await Student.findOne({
       where: { resetPasswordToken: resetPasswordToken }
     })
     if (!user) {
-      return res.status(404).json({ status : false ,  message : 'Invalid password reset token' });
+      return res.status(404).json({ status: false, message: 'Invalid password reset token' });
     }
     if (Date.now() > this.resetPasswordExpires) {
-      return res.status(400).json({  status : false , message : 'Password reset token has expired' });
+      return res.status(400).json({ status: false, message: 'Password reset token has expired' });
     }
     if (password !== confirmpassword) {
       throw new Error('Les mots de passe ne correspondent pas');
@@ -294,7 +293,7 @@ const forgotPasswordCompany = async (req, res, next) => {
 };
 
 //verifyOTPEntreprise 
-const verifyOTPCompany = async (req, res,next) => {
+const verifyOTPCompany = async (req, res, next) => {
   const { email, OTP } = req.body;
   console.log(email)
   try {
@@ -357,7 +356,7 @@ async function resendOtpC(req, res) {
 
 // resetPasswordCompany
 const resetPasswordCompany = async (req, res, next) => {
-  
+
   try {
     const { password, confirmpassword, resetPasswordToken } = req.body;
     // Find the user by email
@@ -365,10 +364,10 @@ const resetPasswordCompany = async (req, res, next) => {
       where: { resetPasswordToken: resetPasswordToken }
     })
     if (!user1) {
-      return res.status(404).json({ status : false ,  message : 'Invalid password reset token' });
+      return res.status(404).json({ status: false, message: 'Invalid password reset token' });
     }
     if (Date.now() > this.resetPasswordExpires) {
-      return res.status(400).json({  status : false , message : 'Password reset token has expired' });
+      return res.status(400).json({ status: false, message: 'Password reset token has expired' });
 
     }
     if (password !== confirmpassword) {
@@ -383,7 +382,7 @@ const resetPasswordCompany = async (req, res, next) => {
     await user1.save()
     return res.status(200).json({ message: 'Password has been changed successfully' });
 
-  } catch (err) { 
+  } catch (err) {
     next(err);
 
     console.log(err)

@@ -5,6 +5,7 @@ const Student = require('../student/model')
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const { GenerateToken } = require('../../helpers/JWT');
+
 const storage = multer.memoryStorage();
 /*const upload = multer({
   storage: storage,
@@ -255,6 +256,43 @@ const searchStudentBySkills = async (req, res, next) => {
     return next(err.message);
   }
 };
+/////////////////////////
+// get all the data 
+const getProfileStudent = async (req, res, next) => {
+
+  const { id } = req.params;
+console.log(id)
+  try {
+    const user2 = await Student.findOne({ where: { id } });
+    if (!user2) {
+      throw new Error("User not found");
+    }
+   const userData = {
+      id: user2.id,
+      firstname: user2.firstname,
+      LastName: user2.LastName,
+      email: user2.email,
+      Number: user2.Number,
+      streetAdress: user2.streetAdress,
+      city: user2.city,
+      state: user2.state,
+      Postal: user2.Postal,
+      place: user2.place,
+      schoolname: user2.schoolname,
+      skills: user2.skills,
+      schoollocation: user2.schoollocation,
+      firstattend: user2.firstattend,
+      finalattend: user2.finalattend,
+      file: user2.file,
+      created_at: user2.created_at,
+      updated_at: user2.updated_at,
+    };
+
+     res.status(200).json(userData);
+  } catch (err) {
+     next(err);
+  }
+};
 
 
 
@@ -279,5 +317,6 @@ module.exports = {
   verifyOTP1,
   updateCompny,
   searchStudentBySkills,
-  resendOtpCRegister
+  resendOtpCRegister,
+  getProfileStudent
 };

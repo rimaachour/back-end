@@ -7,7 +7,8 @@ module.exports = async function authentication(req, res, next){
 
 
         const [sign, signture] = token?.split(/\s/gi);
-
+        console.log(sign)
+        console.log(signture)
         const payload = await VerifyToken(signture);
         console.log(payload)
         req.local = {
@@ -15,7 +16,6 @@ module.exports = async function authentication(req, res, next){
         }
         next();
     } catch (error) {
-        //next(error);
-        return res.status(401).send(error.message)
+        next(error);
     }
 }
