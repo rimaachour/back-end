@@ -10,6 +10,9 @@ const upload = require('../domains/fileupload')
 const Offer = require('../domains/offer');
 const Review = require('../domains/reviews')
 //const otp = require('../domains/OTP')
+const filiere =require('../domains/filiere');
+const Domain = require('../domains/domain');
+const preference = require('../domains/preference')
 
 router.use("/auth", auth);
 router.use("/admin", admin);
@@ -20,5 +23,9 @@ router.use("/uploads", upload)
 router.use("/offer", Offer)
 router.use("/review", Review)
 //router.use("/otp", otp)
+router.use("/filiere",filiere)
+router.use("/domain", Domain)
+router.use("/preference",preference)
 
 module.exports = router;
+

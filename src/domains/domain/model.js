@@ -3,12 +3,12 @@ const sequelize = require('../../config/db');
 
 const Domain = sequelize.define('domains', {
     id: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },
     name: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: false
     }
   }, {
@@ -17,11 +17,10 @@ const Domain = sequelize.define('domains', {
   });
   
   // Synchronize the model with the database and create the domains table if it doesn't exist
-  sequelize.sync()
-  .then(() => {
-    console.log('Offer table created successfully.');
-  })
-  .catch((error) => {
-    console.log('Error creating Offer table:', error);
+
+  sequelize.sync({ force: true }).then(() => {
+    console.log('Tables created successfully');
+  }).catch((err) => {
+    console.error('Unable to create tables:', err);
   });
   module.exports = Domain;

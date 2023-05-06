@@ -1,27 +1,25 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/db');
 
-const preference = sequelize.define('preferences', {
+const preference = sequelize.define('pref', {
     id: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },
     name: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING,
       allowNull: false
     }
   }, {
-    tableName: 'preferences',
+    //tableName: 'pref',
     timestamps: false
   });
   
-  // Synchronize the model with the database and create the domains table if it doesn't exist
-  sequelize.sync()
-  .then(() => {
-    console.log('preference table created successfully.');
-  })
-  .catch((error) => {
-    console.log('Error creating preference table:', error);
-  });
+sequelize.sync({ force: true }).then(() => {
+  console.log('Tables created successfully');
+}).catch((err) => {
+  console.error('Unable to create tables:', err);
+});
+
   module.exports = preference;
