@@ -265,18 +265,21 @@ const updateUser = async (req, res, next) => {
   const { id } = req.params; // Get the user ID from the request parameters
   const data = req.body; // Get the data from the request body
 
+  if(req.local.id != req.params.id){
+    throw new Error("You can't update this user")
+  }
   const user2 = await Student.findOne({
-    where:{id:id}
+    where: { id: id }
   })
-  
+
   if (!user2) {
     throw new Error('User not found');
   }
   console.log(user2);
-console.log(req.body)
+  console.log(req.body)
   try {
 
-  
+
     // Update the user object with the new data
     user2.firstname = data.firstname;
     user2.LastName = data.LastName;
@@ -292,16 +295,14 @@ console.log(req.body)
     user2.firstattend = data.firstattend;
     user2.finalattend = data.finalattend;
     user2.file = data.file;
-  
-    const saved = await user2.save();
-    if (saved) {
-     
-      return res.status(200).send('Data updated successfully');
-    }
+
+    await user2.save();
+    res.status(200).json({ status: true, data: 'Data updated successfully' });
   } catch (err) {
-    return next(err.message);
+    next(err);
   }
 }
+
 // get all the data 
 const getProfile = async (req, res, next) => {
   const { id } = req.params;

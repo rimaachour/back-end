@@ -58,12 +58,12 @@ location: {
 /*Offer.belongsTo(Company, { foreignKey: 'company_id' });
 Company.hasMany(Offer, { foreignKey: 'company_id' });*/
 
-sequelize.sync()
+/*sequelize.sync()
   .then(() => {
     console.log('Offer table created successfully.');
   })
   .catch((error) => {
     console.log('Error creating Offer table:', error);
-  });
+  });*/
 
 module.exports = Offer;

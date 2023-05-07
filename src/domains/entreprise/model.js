@@ -1,8 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/db');
-const offer = require('../offer/model')
 const Review = require('../reviews/model');
-const Student = require ('../student/model')
 //const OTP = require('../OTP/model')
 const Company = sequelize.define('companies', {
   id: {
@@ -87,11 +85,11 @@ const Company = sequelize.define('companies', {
   timestamps: false,
 });
 
-sequelize.sync({ force: true }).then(() => {
+/*sequelize.sync({ force: false }).then(() => {
   console.log('Tables created successfully');
 }).catch((err) => {
   console.error('Unable to create tables:', err);
-});
+});*/
 
 Company.hasMany(Review, { as: 'CompanyReviews' });
 //Company.hasMany(OTP, { foreignKey: 'companyId' });
