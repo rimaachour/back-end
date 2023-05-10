@@ -64,7 +64,7 @@ router.get('/:nom', authentication, studentController.getStudentByName)
 
 router.delete('/:id', studentController.deleteStudentById)
 router.post('/verifyOTP', studentController.verifyOTP)
-router.put('/updateUser/:id', authentication,studentController.updateUser)
+router.put('/updateStudent/:id',authentication,studentController.updateUser)
 router.get('/searchoffers', authentication,studentController.searchOffer);
 router.post('/resendOTPStudent', studentController.resendOtpSRegister);
 

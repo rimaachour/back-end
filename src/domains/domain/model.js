@@ -21,10 +21,10 @@ const Domain = sequelize.define('domains',{
 
 
 
-sequelize.sync({ force: false }).then(() => {
+/*sequelize.sync({ force: true }).then(() => {
   console.log('Tables created successfully');
 }).catch((err) => {
   console.error('Unable to create tables:', err);
-});
+});*/
 
 module.exports = Domain;

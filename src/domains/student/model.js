@@ -140,14 +140,14 @@ const Field = sequelize.define('Field', {
 });
 
 // Define associations between the models
-Student.hasMany(Domain);
+/*Student.hasMany(Domain);
 Domain.belongsTo(Student);
 
 Domain.hasMany(Field);
-Field.belongsTo(Domain);
+Field.belongsTo(Domain);*/
 
 // Define the relationship after defining both models
-Student.hasMany(Review, { as: 'studentReviews' });
+//Student.hasMany(Review, { as: 'studentReviews' });
 
 /*sequelize.sync({ force: true }).then(() => {
   console.log('Tables created successfully');

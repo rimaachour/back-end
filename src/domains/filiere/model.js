@@ -30,12 +30,12 @@ Filiere.belongsTo(Domain, {
   onUpdate: 'CASCADE'
 });
 */
-Domain.hasMany(Filiere, { as: 'domainId' });
-Filiere.belongsTo(Domain, { foreignKey: 'domainId' });
-sequelize.sync({ force: false }).then(() => {
+//Domain.hasMany(Filiere, { as: 'domainId' });
+//Filiere.belongsTo(Domain, { foreignKey: 'domainId' });
+/*sequelize.sync({ force: true }).then(() => {
   console.log('Tables created successfully');
 }).catch((err) => {
   console.error('Unable to create tables:', err);
 });
-
+*/
 module.exports = Filiere;

@@ -22,5 +22,4 @@ const preference = sequelize.define('pref', {
   console.error('Unable to create tables:', err);
 });*/
 
-
   module.exports = preference;

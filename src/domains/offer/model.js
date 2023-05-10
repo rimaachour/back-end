@@ -58,7 +58,7 @@ location: {
 /*Offer.belongsTo(Company, { foreignKey: 'company_id' });
 Company.hasMany(Offer, { foreignKey: 'company_id' });*/
 
-/*sequelize.sync()
+/*sequelize.sync({ force: true })
   .then(() => {
     console.log('Offer table created successfully.');
   })

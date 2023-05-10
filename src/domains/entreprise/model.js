@@ -85,13 +85,13 @@ const Company = sequelize.define('companies', {
   timestamps: false,
 });
 
-/*sequelize.sync({ force: false }).then(() => {
+/*sequelize.sync({ force: true }).then(() => {
   console.log('Tables created successfully');
 }).catch((err) => {
   console.error('Unable to create tables:', err);
-});*/
-
-Company.hasMany(Review, { as: 'CompanyReviews' });
+});
+*/
+//Company.hasMany(Review, { as: 'CompanyReviews' });
 //Company.hasMany(OTP, { foreignKey: 'companyId' });
 //OTP.belongsTo(Company, { foreignKey: 'companyId' });
 
