@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize  = require("../../config/db");
 
-const Admin = sequelize.define('students', {
+const Admin = sequelize.define('Admins', {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
@@ -10,8 +10,8 @@ const Admin = sequelize.define('students', {
   nom: Sequelize.STRING,
   prenom: Sequelize.STRING,
   email: Sequelize.STRING,
-  specialite: Sequelize.STRING,
-  image: Sequelize.STRING
+  password: Sequelize.STRING,
+  //image: Sequelize.STRING
 }, {
   timestamps: false // Option pour désactiver les timestamps
 });
@@ -20,4 +20,4 @@ const Admin = sequelize.define('students', {
  
 
 
-module.exports = Student;
+module.exports = Admin;

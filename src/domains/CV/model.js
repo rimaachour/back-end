@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const Student = require('../student/model');
 const Entreprise = require('../entreprise/model');
 const sequelize = require('../../config/db');
-
+const Skill = require('../skills/model')
 const CV = sequelize.define('cv', {
     id: {
       type: Sequelize.INTEGER,
@@ -67,14 +67,15 @@ const CV = sequelize.define('cv', {
   });
   
   // Define associations
-  CV.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
+  // CV.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
   //CV.belongsTo(Entreprise, { foreignKey: 'compagny_id', as: 'compagny' });
-  
+  Student.belongsToMany(Skill, { through: 'StudentSkill' });
+  Skill.belongsToMany(Student, { through: 'StudentSkill' });
   Student.hasOne(CV, { foreignKey: 'student_id', as: 'cv' });
-  /*sequelize.sync({ force: true }) // force: true will drop the table if it already exists
+  sequelize.sync({ force: false }) // force: true will drop the table if it already exists
   .then(() => {
     console.log('Table(s) created or updated!');
-  });*/
+  });
   /* TODO many  */
  // Entreprise.hasOne(CV, { foreignKey: 'compagny_id', as: 'cv' });
   module.exports = CV;

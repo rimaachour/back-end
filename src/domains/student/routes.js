@@ -67,7 +67,7 @@ router.post('/verifyOTP', studentController.verifyOTP)
 router.put('/updateUser/:id', authentication,studentController.updateUser)
 router.get('/searchoffers', authentication,studentController.searchOffer);
 router.post('/resendOTPStudent', studentController.resendOtpSRegister);
-
+router.post('/addStudentSkill' , authentication, studentController.addStudentSkill)
 
 
 //router.get('/PublishedStudent',studentController.getPublishedStudent)

@@ -1,6 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/db');
-const { Student } = require('../student/model');
+const Student  = require('../student/model');
+//const Company = require('../entreprise/model')
 
 const Review = sequelize.define('reviews', {
   id: {
@@ -52,10 +53,10 @@ comment: {
 });
 
 
-/*sequelize.sync({ force: true }).then(() => {
+sequelize.sync({ force: false }).then(() => {
   console.log('Tables created successfully');
 }).catch((err) => {
   console.error('Unable to create tables:', err);
-});*/
+});
 
 module.exports = Review;

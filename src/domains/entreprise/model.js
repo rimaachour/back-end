@@ -1,7 +1,8 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/db');
 const Review = require('../reviews/model');
-//const OTP = require('../OTP/model')
+const Offer = require('../offer/model')
+
 const Company = sequelize.define('companies', {
   id: {
     type: Sequelize.INTEGER,
@@ -23,17 +24,6 @@ const Company = sequelize.define('companies', {
     }
   },
   password: {
-    type: Sequelize.STRING,
-    allowNull: false,
-    validate: {
-      len: {
-        args: [6],
-        msg: 'Password must be at least 6 characters'
-      }
-    }
-  }
-  ,
-  confirmpassword: {
     type: Sequelize.STRING,
     allowNull: false,
     validate: {
@@ -79,24 +69,19 @@ const Company = sequelize.define('companies', {
     type: Sequelize.STRING,
     allowNull: false
   },
-
-  
 }, {
   timestamps: false,
 });
 
-/*sequelize.sync({ force: false }).then(() => {
+    Company.hasMany(Offer, { as: 'companyId'});
+
+// Offer.belongsTo(Company, { foreignKey: 'companyId' });
+// Company.hasMany(Review, { as: 'CompanyReviews' });
+
+sequelize.sync({ force: false }).then(() => {
   console.log('Tables created successfully');
 }).catch((err) => {
   console.error('Unable to create tables:', err);
-});*/
+});
 
-Company.hasMany(Review, { as: 'CompanyReviews' });
-//Company.hasMany(OTP, { foreignKey: 'companyId' });
-//OTP.belongsTo(Company, { foreignKey: 'companyId' });
-
-
-module.exports = Company;
-
-
-
+module.exports = Company ;

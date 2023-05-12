@@ -13,6 +13,7 @@ const Review = require('../domains/reviews')
 const filiere =require('../domains/filiere');
 const Domain = require('../domains/domain');
 const preference = require('../domains/preference')
+const skills = require('../domains/skills')
 
 router.use("/auth", auth);
 router.use("/admin", admin);
@@ -26,6 +27,7 @@ router.use("/review", Review)
 router.use("/filiere",filiere)
 router.use("/domain", Domain)
 router.use("/preference",preference)
-
+router.use("/skills",skills)
+//router.use("/studentSkills",skills2)
 module.exports = router;
 

@@ -5,6 +5,8 @@ const Offer = require('../offer/model');
 const studentValidation= require('../../helpers/studentValidation')
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
+const Skill = require('../skills/model')
+const StudentSkill = require('../StudentSkill/model')
 const { GenerateToken } = require('../../helpers/JWT');
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -369,10 +371,31 @@ console.log(whereClause);
     res.status(500).json({ message: 'Error searching for offer' });
   }
 }
-//downloadCV
 
 
+const addStudentSkill = async (req, res, next) => {
+  const { skillId, percentage } = req.body;
+  const studentId = req.params.id; // assuming that the user ID is stored in the 'id' property of the token payload
 
+  try {
+    const student = await Student.findByPk(studentId);
+    const skill = await Skill.findByPk(skillId);
+
+    if (!student || !skill) {
+      return res.status(400).send('Invalid student or skill id');
+    }
+
+    const studentSkill = new StudentSkill({ percentage });
+    await student.addSkill(skill, { through: studentSkill });
+
+    res.status(200).send(studentSkill);
+  } catch (err) {
+    return next(err.message);
+  }
+};
+
+
+module.exports = { addStudentSkill };
 
 
 module.exports = {
@@ -385,7 +408,9 @@ module.exports = {
   updateUser,
   searchOffer,
   resendOtpSRegister,
-  getProfile
+  getProfile,
+  addStudentSkill
+  
 
 
 }
