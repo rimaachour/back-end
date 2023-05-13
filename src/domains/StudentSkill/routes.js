@@ -5,6 +5,6 @@ const authentication = require('../../middleware/authentication');
 const authentication = require('../../middleware/authentication');
 
 router.post('/addskill',authentication,StudentskillController.addStudentSkill);
-router.put('/updateskill',authentication,StudentskillController.updatePercentageById);
+router.put('/deleteskills',authentication,StudentskillController.deleteStudentSkillById);
 router.put('/updateskill',authentication,StudentskillController.updatePercentageById);
 

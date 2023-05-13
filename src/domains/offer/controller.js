@@ -66,7 +66,7 @@ const deleteOfferById = async (req, res, next) => {
     const { title, description, technology, start_date, end_date, domain, location } = req.body;
   
     try {
-      if (req.local.type != 'company') {
+      if (req.local.type !== 'company') {
         throw new Error('You are not authorized to update this offer');
       }
   

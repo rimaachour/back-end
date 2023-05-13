@@ -7,10 +7,23 @@ const Admin = sequelize.define('Admins', {
     primaryKey: true,
     autoIncrement: true
   },
-  nom: Sequelize.STRING,
-  prenom: Sequelize.STRING,
-  email: Sequelize.STRING,
-  password: Sequelize.STRING,
+ 
+
+  
+  email: {type:Sequelize.STRING,
+    allowNull: false,
+
+  },
+  password:{ type: Sequelize.STRING,
+    allowNull: false,
+  },
+  
+    role: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      defaultValue: 'admin'
+  
+  }
   //image: Sequelize.STRING
 }, {
   timestamps: false // Option pour désactiver les timestamps

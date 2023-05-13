@@ -132,6 +132,7 @@ const Student = sequelize.define('students', {
   timestamps: false
 });
 
+Student.associate = () => {
 Skill.belongsToMany(Student, { through:StudentSkill});
 Domain.belongsToMany(Student, { through:preference});
 //  Filiere.belongsToMany(Student)
@@ -153,7 +154,7 @@ Domain.belongsToMany(Student, { through:preference});
  Student.belongsToMany(Company, { through: 'reviews' });
  Company.belongsToMany(Student, { through: 'reviews' });
 
-
+};
 
 sequelize.sync({ force: false }).then(() => {
   console.log('Tables created successfully');

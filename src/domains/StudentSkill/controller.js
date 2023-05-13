@@ -2,10 +2,14 @@ const StudentSkill = require('./model');
 const Student = require('../student/model')
 
 const addStudentSkill = async (req, res, next) => {
+  if (req.local.type != 'company') {
+        
+    throw new Error('You are not authorized to add skill');}
     const { skillId, percentage } = req.body;
     const studentId = req.params.studentId;
     try {
-        const userpayload = req.local;
+
+  
 
       const newStudentSkill = await StudentSkill.create({
         skillId: skillId,
@@ -22,13 +26,15 @@ const addStudentSkill = async (req, res, next) => {
     const studentSkillId = req.params.id;
 
     try {
-        const userpayload = req.local;
+      if (req.local.type != 'student') {
+        
+        throw new Error('You are not authorized to delete skills ');}
       const numDeleted = await StudentSkill.destroy({
         where: {
           id: studentSkillId
         }
       });
-      if (numDeleted === 0) {
+      if (numDeleted === 0) { 
         throw new Error(`StudentSkill with ID ${studentSkillId} not found`);
       }
       res.status(200).send(`Deleted StudentSkill with ID ${studentSkillId}`);
@@ -38,6 +44,9 @@ const addStudentSkill = async (req, res, next) => {
   };
 
   const updatePercentageById = async (req, res, next) => {
+    if (req.local.type != 'student') {
+        
+      throw new Error('You are not authorized to update');}
     const studentSkillId = req.params.id;
     const newPercentage = req.body.percentage;
     try {
@@ -56,6 +65,9 @@ const addStudentSkill = async (req, res, next) => {
   };
 
   const getAllStudentSkills = async (req, res, next) => {
+    if (req.local.type != 'student') {
+        
+      throw new Error('You are not authorized to get skills ');}
     try {
         const userpayload = req.local;
 

@@ -1,10 +1,18 @@
-const Domain = require('../domain/model');
-const Filiere = require('../domain/model')
+const {Domain, Filiere} = require('../domain/model');
+console.log(
+  'Domain model => ', Domain,
+  'Filiere model => ', Filiere,
+)
+//const Filiere = require('../domain/model')
 
 const addDomain = async (req, res, next) => {
   const { name } = req.body;
 
   try {
+    if (req.local.role != 'admin') {
+        
+      throw new Error('You are not authorized to add domain');
+   }
     const newDomain = await Domain.create({ name });
     res.status(200).send(newDomain);
   } catch (err) {
@@ -18,6 +26,10 @@ const updateDomain = async (req, res, next) => {
   const { name } = req.body;
 
   try {
+    if (req.local.role != 'admin') {
+        
+      throw new Error('You are not authorized to update domain');
+   }
     const domain = await Domain.findByPk(id);
 
     if (!domain) {
@@ -35,20 +47,28 @@ const deleteDomain = async (req, res, next) => {
   const { id } = req.params;
 
   try {
+    if (req.local.role != 'admin') {
+        
+      throw new Error('You are not authorized to delete admin');
+   }
     const domain = await Domain.findByPk(id);
 
     if (!domain) {
-      return res.status(404).send("Domain not found");
+      throw new Error("Domain not found");
     }
 
     await domain.destroy();
     res.status(200).send("Domain deleted successfully");
   } catch (err) {
-    return next(err.message);
+     next(err);
   }
 };
 ////////////////////////////////Addfiliere//////////////////////////////////:::
 const addFiliere = async (req, res, next) => {
+  if (req.local.role != 'admin') {
+        
+    throw new Error('You are not authorized to add filier');
+ }
   const { name, domainId } = req.body;
 
   try {
@@ -70,6 +90,10 @@ const updateFiliere = async (req, res, next) => {
   const { name, domainId } = req.body;
 
   try {
+    if (req.local.role != 'admin') {
+        
+      throw new Error('You are not authorized to update filiere');
+   }
     const filiere = await Filiere.findByPk(id);
 
     if (!filiere) {
@@ -92,16 +116,20 @@ const deleteFiliere = async (req, res, next) => {
   const { id } = req.params;
 
   try {
+    if (req.local.role != 'admin') {
+        
+      throw new Error('You are not authorized to delete filiere');
+   }
     const filiere = await Filiere.findByPk(id);
 
     if (!filiere) {
-      return res.status(404).send("Filiere not found");
+     throw new Error("Filiere not found");
     }
 
     await filiere.destroy();
     res.status(200).send("Filiere deleted successfully");
   } catch (err) {
-    return next(err.message);
+    return next(message);
   }
 };
 
