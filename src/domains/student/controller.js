@@ -159,6 +159,7 @@ const getAllStudents = async (req, res) => {
       "state",
       "Postal",
       "Fb",
+      "LinkedIn",
       "GitHub",
       "LinkedIn",
       "WhatsApp",
@@ -296,6 +297,7 @@ const updateUser = async (req, res, next) => {
     user2.WhatsApp = data.WhatsApp;
     user2.GitHub = data.GitHub;
     user2.file = data.file;
+    user2.LinkedIn = data.LinkedIn;
 
     await user2.save();
     res.status(200).json({ status: true, data: 'Data updated successfully' });
@@ -331,6 +333,7 @@ const getProfile = async (req, res, next) => {
       WhatsApp: user2.WhatsApp,
       bio: user2.bio,
       file: user2.file,
+      LinkedIn:user2.LinkedIn,
       created_at: user2.created_at,
       updated_at: user2.updated_at,
     };
@@ -381,7 +384,7 @@ const addStudentSkill = async (req, res, next) => {
     const skill = await Skill.findByPk(skillId);
 
     if (!student || !skill) {
-      return res.status(400).send('Invalid student or skill id');
+      throw new Error('Invalid student or skill id');
     }
 
     const studentSkill = new StudentSkill({ percentage });
@@ -389,7 +392,7 @@ const addStudentSkill = async (req, res, next) => {
 
     res.status(200).send(studentSkill);
   } catch (err) {
-    return next(err.message);
+    next(err);
   }
 };
 
