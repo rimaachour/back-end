@@ -17,6 +17,8 @@ const preference = sequelize.define('pref', {
     timestamps: false
   });
   
+Student.hasMany(preference);
+
 sequelize.sync({ force: false }).then(() => {
   console.log('Tables created successfully');
 }).catch((err) => {

@@ -15,20 +15,23 @@ const StudentSkill =  sequelize.define('StudentSkill', {
         type: DataTypes.INTEGER,
         allowNull: false
       },
-      studentId:{
-        type:Sequelize.INTEGER,
-        allowNull:false,
-      
+      // studentId:{
+      //   type:Sequelize.INTEGER,
+      //   allowNull:false,
+      //   references: {
+      //     model: Student, // 'Actors' would also work
+      //     key: 'id'
+      //   }
      
-      },
-      skillId:{
-        type:Sequelize.INTEGER,
-        allowNull:false,
-        references: {
-          model: Skill, // 'Actors' would also work
-          key: 'id'
-        }
-      }
+      // },
+      // skillId:{
+      //   type:Sequelize.INTEGER,
+      //   allowNull:false,
+      //   references: {
+      //     model: Skill, // 'Actors' would also work
+      //     key: 'id'
+      //   }
+      // }
     }, {
    
       tablelName: 'StudentSkill'

@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes, HasMany } = require('sequelize');
 const sequelize = require('../../config/db');
-
+const preference = require('../student/model')
 const Domain = sequelize.define('domains',{
   id: {
     type: Sequelize.INTEGER,
@@ -45,13 +45,14 @@ const Filiere = sequelize.define('filiere', {
   timestamps: false
 });
 
+// Domain.hasMany(preference);
 
 // Synchronize the model with the database and create the domains table if it doesn't exist
 
-Domain.associate = () => {
+
   Domain.hasMany(Filiere);
 Filiere.belongsTo(Domain);
-}
+
 
 
 sequelize.sync({ force: false }).then(() => {

@@ -142,16 +142,19 @@ const Student = sequelize.define('students', {
   timestamps: false
 });
 
-Student.associate = () => {
-Skill.belongsToMany(Student, { through:StudentSkill});
-Domain.belongsToMany(Student, { through:preference});
+
+Skill.belongsToMany(Student, { through:'StudentSkill'});
+Student.belongsToMany(Skill, { through:'StudentSkill'});
+
+//Domain.belongsToMany(Student, { through:'preference'});
 //  Filiere.belongsToMany(Student)
 
 
 
 
-// Student.hasMany(preference);
-// preference.belongsTo(Student);
+
+//  Student.hasMany(preference);
+
 
 // Define associations between the models
 // Student.hasMany(Domain);
@@ -161,10 +164,11 @@ Domain.belongsToMany(Student, { through:preference});
 
 // Define the relationship after defining both models
  //Student.belongsToMany(Review, { as: 'studentReviews' });
- Student.belongsToMany(Company, { through: 'reviews' });
- Company.belongsToMany(Student, { through: 'reviews' });
 
-};
+
+
+Student.belongsToMany(Company, { through: 'reviews' });
+Company.belongsToMany(Student, { through: 'reviews' });
 
 sequelize.sync({ force: false }).then(() => {
   console.log('Tables created successfully');

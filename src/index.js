@@ -4,6 +4,8 @@ const routes = require("./routes");
 const express = require('express');
 const app = express();
 const Admin = require("./domains/admin/model");
+const Student = require("./domains/student/model")
+const preference = require("./domains/preference/model")
  async function addAdmin(){
   const admin = await Admin.findOne({ where: { email:'admin@gmail.com' } })
   if(!admin){
@@ -47,3 +49,4 @@ app.use((err, req, res, next) => {
 app.listen(5000, () => {
   console.log("server running on port 5000");
 });
+Student.hasMany(preference);
