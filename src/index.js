@@ -3,12 +3,31 @@ const cors = require("cors");
 const routes = require("./routes");
 const express = require('express');
 const app = express();
+const Admin = require("./domains/admin/model");
+ async function addAdmin(){
+  const admin = await Admin.findOne({ where: { email:'admin@gmail.com' } })
+  if(!admin){
+    Admin.create({
+      email:"admin@gmail.com",
+      password:"123456789",
+      
+    })
+    console.log("admin a été ajoute");
+  }
+ }
+
+
 
 //databaseConnection
 dbConnection.authenticate()
+
   .then(() => {
     console.log("connection has been established Successfully");
-  }).catch((err) => console.error("unable to connect database", err))
+  })
+  .then(()=>{
+    addAdmin()
+  })
+  .catch((err) => console.error("unable to connect database", err))
 
 
 //cors

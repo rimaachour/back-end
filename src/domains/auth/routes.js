@@ -35,6 +35,6 @@ router.post("/login", UserController.signInStudent);
 
 router.post("/login1",UserController.signInCompany);
 //for signup
-
+router.post("/loginadmin",UserController.signInAdmin);
 
 module.exports = router;

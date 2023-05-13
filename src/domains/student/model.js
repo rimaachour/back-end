@@ -1,6 +1,14 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/db');
 const Review = require('../reviews/model');
+const Skill = require('../skills/model');
+const preference=require('../preference/model');
+const StudentSkill = require ('../StudentSkill/model')
+const Domain = require('../domain/model');
+const company = require('../entreprise/model')
+const { compareSync } = require('bcrypt');
+const Company = require('../entreprise/model');
+const Filiere =require('../filiere/model');
 
 const Student = sequelize.define('students', {
   id: {
@@ -92,10 +100,7 @@ const Student = sequelize.define('students', {
     type: Sequelize.INTEGER,
     allowNull: true
   },
-  place: {
-    type: Sequelize.STRING,
-    allowNull: true
-  },
+ 
   skills: {
     type: Sequelize.STRING,
     allowNull: true
@@ -104,18 +109,31 @@ const Student = sequelize.define('students', {
     type: Sequelize.STRING,
     allowNull: true
   },
-  schoollocation: {
+  LinkedIn:{
     type: Sequelize.STRING,
+      allowNull: true
+  
+   },
+ Fb:{
+  type: Sequelize.STRING,
     allowNull: true
-  },
-  firstattend: {
-    type: DataTypes.DATE,
+
+ },
+ GitHub:{
+  type: Sequelize.STRING,
     allowNull: true
-  },
-  finalattend: {
-    type: DataTypes.DATE,
+
+ },
+ WhatsApp:{
+  type: Sequelize.STRING,
     allowNull: true
-  },
+
+ },
+ bio : {
+  type: Sequelize.STRING,
+    allowNull: true
+
+ },
   status: {
     type: Sequelize.ENUM('active', 'notactive'),
     defaultValue: 'notactive'
@@ -123,36 +141,35 @@ const Student = sequelize.define('students', {
 }, {
   timestamps: false
 });
-const Domain = sequelize.define('Domain', {
-  domainName: {
-    type: DataTypes.STRING,
-    primaryKey: true
-  },
-});
 
-const Field = sequelize.define('Field', {
-  fieldId: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
+Student.associate = () => {
+Skill.belongsToMany(Student, { through:StudentSkill});
+Domain.belongsToMany(Student, { through:preference});
+//  Filiere.belongsToMany(Student)
 
-});
+
+
+
+// Student.hasMany(preference);
+// preference.belongsTo(Student);
 
 // Define associations between the models
-/*Student.hasMany(Domain);
-Domain.belongsTo(Student);
+// Student.hasMany(Domain);
+// Domain.belongsTo(Student);
 
-Domain.hasMany(Field);
-Field.belongsTo(Domain);*/
+
 
 // Define the relationship after defining both models
-//Student.hasMany(Review, { as: 'studentReviews' });
+ //Student.belongsToMany(Review, { as: 'studentReviews' });
+ Student.belongsToMany(Company, { through: 'reviews' });
+ Company.belongsToMany(Student, { through: 'reviews' });
 
-/*sequelize.sync({ force: true }).then(() => {
+};
+
+sequelize.sync({ force: false }).then(() => {
   console.log('Tables created successfully');
 }).catch((err) => {
   console.error('Unable to create tables:', err);
-});*/
+});
 
 module.exports = Student;

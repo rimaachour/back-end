@@ -1,17 +1,30 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize  = require("../../config/db");
 
-const Admin = sequelize.define('students', {
+const Admin = sequelize.define('Admins', {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  nom: Sequelize.STRING,
-  prenom: Sequelize.STRING,
-  email: Sequelize.STRING,
-  specialite: Sequelize.STRING,
-  image: Sequelize.STRING
+ 
+
+  
+  email: {type:Sequelize.STRING,
+    allowNull: false,
+
+  },
+  password:{ type: Sequelize.STRING,
+    allowNull: false,
+  },
+  
+    role: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      defaultValue: 'admin'
+  
+  }
+  //image: Sequelize.STRING
 }, {
   timestamps: false // Option pour désactiver les timestamps
 });
@@ -20,4 +33,4 @@ const Admin = sequelize.define('students', {
  
 
 
-module.exports = Student;
+module.exports = Admin;

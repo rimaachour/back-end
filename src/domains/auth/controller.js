@@ -1,7 +1,7 @@
 const User = require("../auth/model");
 const Student = require("../student/model")
 const Entreprise = require("../entreprise/model")
-// register 
+const Admin = require("../admin/model")
 const bcrypt = require('bcryptjs');
 const { mail } = require("../../helpers/mailer");
 const { generateOTP } = require("../../helpers/OTP");
@@ -10,19 +10,58 @@ const { sendOTPEmail } = require("../../helpers/OTP");
 const jwt = require("jsonwebtoken");
 const { GenerateToken } = require("../../helpers/JWT");
 
+//sign in for admin 
+
+const signInAdmin = async (req, res, next) => {
+  const { email, password } = req.body;
+  const data = {};
+  try {
+    
+
+    const admin = await Admin.findOne({ where: { email } });
+    // console.log(user);
+    if (!admin) {
+      throw new Error("Invalid email address");
+    }
+ 
+    if (password != admin.password){
+      throw new Error("Incorrect password");
+    }
+
+    data.userId = admin.id;
+    data.email = admin.email;
+    data.role = admin.role;
+    data.created_at = admin.created_at;
+
+    const token = await GenerateToken(data);
+
+    res.status(200).json({ data, token });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // // sign in
 const signInStudent = async (req, res, next) => {
   const { email, password } = req.body;
   const data = {};
   try {
-
-
-    // Email format validation
-    //const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    //if (!emailRegex.test(email)) {
-    // throw new Error("Invalid email address");
-    //}
-
     const user2 = await Student.findOne({ where: { email } });
     // console.log(user);
     if (!user2) {
@@ -414,7 +453,8 @@ module.exports = {
   forgotPasswordCompany,
   verifyOTPCompany,
   resendOtpC,
-  resetPasswordCompany
+  resetPasswordCompany,
+  signInAdmin
 
 
 };

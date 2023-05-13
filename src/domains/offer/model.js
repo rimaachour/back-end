@@ -30,40 +30,37 @@ const Offer = sequelize.define('offers', {
     type: DataTypes.DATE,
     allowNull: false
   },
- 
-location: {
+  location: {
     type: Sequelize.STRING,
     allowNull: false
   },
-  /*company_id:{
+  company_name: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  companyId: {
     type: Sequelize.INTEGER,
-      references: {
-        model: Company,
-        key: 'id'
-      },
-      allowNull:true
-  }*/
-
-
-
-
-
-
-
+    allowNull: false,
+    
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  },
+  status: {
+    type: Sequelize.ENUM('active', 'inactive'),
+    allowNull: false,
+    defaultValue: 'inactive'
+  },
 }, {
   timestamps: false
 });
 
-// Define associations
-/*Offer.belongsTo(Company, { foreignKey: 'company_id' });
-Company.hasMany(Offer, { foreignKey: 'company_id' });*/
 
-/*sequelize.sync({ force: true })
+sequelize.sync({ force: false })
   .then(() => {
     console.log('Offer table created successfully.');
   })
   .catch((error) => {
     console.log('Error creating Offer table:', error);
-  });*/
+  });
 
 module.exports = Offer;

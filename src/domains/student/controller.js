@@ -5,6 +5,8 @@ const Offer = require('../offer/model');
 const studentValidation= require('../../helpers/studentValidation')
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
+const Skill = require('../skills/model')
+const StudentSkill = require('../StudentSkill/model')
 const { GenerateToken } = require('../../helpers/JWT');
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -156,12 +158,11 @@ const getAllStudents = async (req, res) => {
       "city",
       "state",
       "Postal",
-      "place",
-      "skills",
-      "schoolname",
-      "schoollocation",
-      "firstattend",
-      "finalattend",
+      "Fb",
+      "GitHub",
+      "LinkedIn",
+      "WhatsApp",
+      "bio",
       "status"]
     });
     // again ?
@@ -288,12 +289,12 @@ const updateUser = async (req, res, next) => {
     user2.city = data.city;
     user2.state = data.state;
     user2.Postal = data.Postal;
-    user2.place = data.place;
+    user2.bio = data.bio;
     user2.schoolname = data.schoolname;
     user2.skills = data.skills
-    user2.schoollocation = data.schoollocation;
-    user2.firstattend = data.firstattend;
-    user2.finalattend = data.finalattend;
+    user2.Fb = data.Fb;
+    user2.WhatsApp = data.WhatsApp;
+    user2.GitHub = data.GitHub;
     user2.file = data.file;
 
     await user2.save();
@@ -323,12 +324,12 @@ const getProfile = async (req, res, next) => {
       city: user2.city,
       state: user2.state,
       Postal: user2.Postal,
-      place: user2.place,
+      Fb: user2.Fb,
       schoolname: user2.schoolname,
       skills: user2.skills,
-      schoollocation: user2.schoollocation,
-      firstattend: user2.firstattend,
-      finalattend: user2.finalattend,
+      GitHub: user2.GitHub,
+      WhatsApp: user2.WhatsApp,
+      bio: user2.bio,
       file: user2.file,
       created_at: user2.created_at,
       updated_at: user2.updated_at,
@@ -369,10 +370,31 @@ console.log(whereClause);
     res.status(500).json({ message: 'Error searching for offer' });
   }
 }
-//downloadCV
 
 
+const addStudentSkill = async (req, res, next) => {
+  const { skillId, percentage } = req.body;
+  const studentId = req.params.id; // assuming that the user ID is stored in the 'id' property of the token payload
 
+  try {
+    const student = await Student.findByPk(studentId);
+    const skill = await Skill.findByPk(skillId);
+
+    if (!student || !skill) {
+      return res.status(400).send('Invalid student or skill id');
+    }
+
+    const studentSkill = new StudentSkill({ percentage });
+    await student.addSkill(skill, { through: studentSkill });
+
+    res.status(200).send(studentSkill);
+  } catch (err) {
+    return next(err.message);
+  }
+};
+
+
+module.exports = { addStudentSkill };
 
 
 module.exports = {
@@ -385,7 +407,9 @@ module.exports = {
   updateUser,
   searchOffer,
   resendOtpSRegister,
-  getProfile
+  getProfile,
+  addStudentSkill
+  
 
 
 }
