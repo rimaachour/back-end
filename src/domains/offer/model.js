@@ -45,6 +45,11 @@ const Offer = sequelize.define('offers', {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   },
+  status: {
+    type: Sequelize.ENUM('active', 'inactive'),
+    allowNull: false,
+    defaultValue: 'inactive'
+  },
 }, {
   timestamps: false
 });

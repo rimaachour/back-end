@@ -3,7 +3,7 @@ const { error } = require("../../helpers/studentValidation");
 const Offer = require("./model");
 
 const addOffer = async (req, res, next) => {
-  const { title, description, technology, start_date, end_date, domain, location} = req.body;
+  const { title, description, technology, start_date, end_date, domain, location,status} = req.body;
 
   try {
       // Check if the user's role is company
@@ -22,8 +22,8 @@ const addOffer = async (req, res, next) => {
           end_date: end_date,
           domain: domain,
           location: location,
-          companyId : req.local.id
-        
+          companyId : req.local.id,
+          status:status
       });
   
       const savedOffer = await newOffer.save();
@@ -100,15 +100,18 @@ const deleteOfferById = async (req, res, next) => {
 // get all offers
 const getOffers = async (req, res, next) => {
   try {
-    if (req.local.type !== 'student') {
+    if (req.local.type != 'student') {
       throw new Error('You are not authorized to see offers');
     }
-    const offers = await Offer.findAll();
+    const offers = await Offer.findAll({
+      where: { status: 'active' },
+    });
     res.status(200).send(offers);
   } catch (err) {
     next(err);
   }
 };
+
 //getOffersByID 
 const getOfferById = async (req, res, next) => {
   const offerId = req.params.id;

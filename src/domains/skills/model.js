@@ -15,6 +15,7 @@ const Skill = sequelize.define('Skill', {
    
   });
   
+ 
   // Student.belongsToMany(Skill, {
   //   through: {
   //     model: 'StudentSkill',

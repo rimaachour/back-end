@@ -1,26 +1,35 @@
 const StudentSkill = require('./model');
 const Student = require('../student/model')
+const Skill = require('../skills/model')
+
 
 const addStudentSkill = async (req, res, next) => {
-  if (req.local.type != 'company') {
-        
-    throw new Error('You are not authorized to add skill');}
-    const { skillId, percentage } = req.body;
-    const studentId = req.params.studentId;
-    try {
+  const { percentage, SkillId} = req.body;
 
-  
-
-      const newStudentSkill = await StudentSkill.create({
-        skillId: skillId,
-        percentage: percentage,
-        studentId: studentId
-      });
-      res.status(201).send(newStudentSkill);
-    } catch (err) {
-      next(err);
+  try {
+    if (req.local.type != 'student') {
+      throw new Error('You are not authorized to add skills');
     }
-  };
+
+    // Check if the skill exists in the Skill table
+    const skill = await Skill.findOne({ where: { id: SkillId } });
+    if (!skill) {
+      throw new Error('Invalid skill ID');
+    }
+
+    const newStudentSkill = await StudentSkill.create({
+      skillId: SkillId,
+      percentage: percentage,
+      studentId: req.local.id // Assuming you have the student ID available in req.local.id
+    });
+console.log(req.local.id);
+    res.status(201).send(newStudentSkill);
+  } catch (err) {
+    next(err);
+  }
+};
+
+
 
   const deleteStudentSkillById = async (req, res, next) => {
     const studentSkillId = req.params.id;
@@ -71,7 +80,7 @@ const addStudentSkill = async (req, res, next) => {
     try {
         const userpayload = req.local;
 
-      const studentSkills = await StudentSkill.findAll();
+      const studentSkills = await StudentSkill.findAll({});
       res.status(200).send(studentSkills);
     } catch (err) {
       next(err);

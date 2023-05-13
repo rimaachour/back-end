@@ -62,14 +62,6 @@ const signInStudent = async (req, res, next) => {
   const { email, password } = req.body;
   const data = {};
   try {
-
-
-    // Email format validation
-    //const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    //if (!emailRegex.test(email)) {
-    // throw new Error("Invalid email address");
-    //}
-
     const user2 = await Student.findOne({ where: { email } });
     // console.log(user);
     if (!user2) {

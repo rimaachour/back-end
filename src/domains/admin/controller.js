@@ -1,5 +1,5 @@
 const Admin = require("./model");
-
+const Offer = require("../offer/model")
 async function createAdmin(adminData) {
     try {
       const admin = await Admin.create(adminData);
@@ -56,11 +56,41 @@ async function createAdmin(adminData) {
       throw new Error('Failed to delete admin');
     }
   }
+  const updateOfferStatus = async (req, res, next) => {
+    const { id } = req.params;
+    const { status } = req.body;
+  
+    try {
+      if (req.local.role !== 'admin') {
+        throw new Error('You are not authorized to update offer status');
+      }
+  
+      const offer = await Offer.findOne({ where: { id } });
+  
+      if (!offer) {
+        throw new Error('Offer not found');
+      }
+  
+      // Update the offer status
+      offer.status = status;
+      await offer.save();
+  
+      res.status(200).send('Offer status updated successfully');
+    } catch (err) {
+      return next(err);
+    }
+  };
+  
+  
+
+
+
   
   module.exports = {
     createAdmin,
     getAdmins,
     getAdminById,
     updateAdmin,
-    deleteAdmin
+    deleteAdmin,
+    updateOfferStatus
   };

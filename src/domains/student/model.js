@@ -100,10 +100,7 @@ const Student = sequelize.define('students', {
     type: Sequelize.INTEGER,
     allowNull: true
   },
-  place: {
-    type: Sequelize.STRING,
-    allowNull: true
-  },
+ 
   skills: {
     type: Sequelize.STRING,
     allowNull: true
@@ -112,18 +109,31 @@ const Student = sequelize.define('students', {
     type: Sequelize.STRING,
     allowNull: true
   },
-  schoollocation: {
+  LinkedIn:{
     type: Sequelize.STRING,
+      allowNull: true
+  
+   },
+ Fb:{
+  type: Sequelize.STRING,
     allowNull: true
-  },
-  firstattend: {
-    type: DataTypes.DATE,
+
+ },
+ GitHub:{
+  type: Sequelize.STRING,
     allowNull: true
-  },
-  finalattend: {
-    type: DataTypes.DATE,
+
+ },
+ WhatsApp:{
+  type: Sequelize.STRING,
     allowNull: true
-  },
+
+ },
+ bio : {
+  type: Sequelize.STRING,
+    allowNull: true
+
+ },
   status: {
     type: Sequelize.ENUM('active', 'notactive'),
     defaultValue: 'notactive'

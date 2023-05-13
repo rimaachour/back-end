@@ -12,9 +12,10 @@ const Review = require('../domains/reviews')
 //const otp = require('../domains/OTP')
 const filiere =require('../domains/filiere');
 const Domain = require('../domains/domain');
+
 const preference = require('../domains/preference')
 const skills = require('../domains/skills')
-
+const StudentSkill = require('../domains/StudentSkill')
 router.use("/auth", auth);
 router.use("/admin", admin);
 router.use("/entreprise", entreprise);
@@ -24,10 +25,10 @@ router.use("/uploads", upload)
 router.use("/offer", Offer)
 router.use("/review", Review)
 //router.use("/otp", otp)
-router.use("/filiere",filiere)
+ router.use("/domain",filiere)
 router.use("/domain", Domain)
 router.use("/preference",preference)
 router.use("/skills",skills)
-//router.use("/studentSkills",skills2)
+router.use("/studentSkills",StudentSkill)
 module.exports = router;
 
