@@ -11,7 +11,7 @@ router.put("/update/:id",authentication,offerController.updateOfferById)
 router.get('/search',authentication, offerController.searchInOffers);
 router.get('/getOffers',authentication,offerController.getOffers);
 router.get('/getOfferById/:id',authentication,offerController.getOfferById);
-router.get('/getOfferById',authentication,offerController.getOffers)
+
 router.get('/getOffersByCompanyId',authentication,offerController.getOffersByCompanyId)
 module.exports = router;
 

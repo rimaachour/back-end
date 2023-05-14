@@ -264,23 +264,24 @@ const deleteStudentById = async (req, res) => {
 
 
 const updateUser = async (req, res, next) => {
-  const { id } = req.params; // Get the user ID from the request parameters
+  
   const data = req.body; // Get the data from the request body
 
-  if(req.local.id != req.params.id){
-    throw new Error("You can't update this user")
-  }
-  const user2 = await Student.findOne({
-    where: { id: id }
-  })
-
-  if (!user2) {
-    throw new Error('User not found');
-  }
-  console.log(user2);
-  console.log(req.body)
+  
   try {
-
+    const { id } = req.params; // Get the user ID from the request parameters
+    if((req.local.id != req.params.id)||(req.local.type !='student')){
+      throw new Error("You can't update this user")
+    }
+    const user2 = await Student.findOne({
+      where: { id: id }
+    })
+  
+    if (!user2) {
+      throw new Error('User not found');
+    }
+    console.log(user2);
+    console.log(req.body)
 
     // Update the user object with the new data
     user2.firstname = data.firstname;
@@ -298,6 +299,8 @@ const updateUser = async (req, res, next) => {
     user2.GitHub = data.GitHub;
     user2.file = data.file;
     user2.LinkedIn = data.LinkedIn;
+    user2.studyEstablishment= data.studyEstablishment;
+    user2.studyfield= data.studyfield
 
     await user2.save();
     res.status(200).json({ status: true, data: 'Data updated successfully' });
@@ -334,13 +337,14 @@ const getProfile = async (req, res, next) => {
       bio: user2.bio,
       file: user2.file,
       LinkedIn:user2.LinkedIn,
-      created_at: user2.created_at,
-      updated_at: user2.updated_at,
+      studyEstablishment:user2.studyEstablishment,
+      studyfield:user2.studyfield
+      
     };
 
     return res.status(200).json(userData);
   } catch (err) {
-    return next(err.message);
+    return next(err);
   }
 };
 
@@ -351,6 +355,9 @@ const getProfile = async (req, res, next) => {
 async function searchOffer(req, res) {
 
   try {
+    if(req.local.type !='student'){
+      throw new Error("You can't update this user")
+    }
       const { domain, technology, location } = req.query;
   let whereClause = {};
 console.log(whereClause);
@@ -375,29 +382,29 @@ console.log(whereClause);
 }
 
 
-const addStudentSkill = async (req, res, next) => {
-  const { skillId, percentage } = req.body;
-  const studentId = req.params.id; // assuming that the user ID is stored in the 'id' property of the token payload
+// const addStudentSkill = async (req, res, next) => {
+//   const { skillId, percentage } = req.body;
+//   const studentId = req.params.id; // assuming that the user ID is stored in the 'id' property of the token payload
 
-  try {
-    const student = await Student.findByPk(studentId);
-    const skill = await Skill.findByPk(skillId);
+//   try {
+//     const student = await Student.findByPk(studentId);
+//     const skill = await Skill.findByPk(skillId);
 
-    if (!student || !skill) {
-      throw new Error('Invalid student or skill id');
-    }
+//     if (!student || !skill) {
+//       throw new Error('Invalid student or skill id');
+//     }
 
-    const studentSkill = new StudentSkill({ percentage });
-    await student.addSkill(skill, { through: studentSkill });
+//     const studentSkill = new StudentSkill({ percentage });
+//     await student.addSkill(skill, { through: studentSkill });
 
-    res.status(200).send(studentSkill);
-  } catch (err) {
-    next(err);
-  }
-};
+//     res.status(200).send(studentSkill);
+//   } catch (err) {
+//     next(err);
+//   }
+// };
 
 
-module.exports = { addStudentSkill };
+
 
 
 module.exports = {
@@ -411,7 +418,7 @@ module.exports = {
   searchOffer,
   resendOtpSRegister,
   getProfile,
-  addStudentSkill
+  
   
 
 

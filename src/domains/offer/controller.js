@@ -3,7 +3,7 @@ const { error } = require("../../helpers/studentValidation");
 const Offer = require("./model");
 
 const addOffer = async (req, res, next) => {
-  const { title, description, technology, start_date, end_date, domain, location,status} = req.body;
+  const { title, description, technology, internship_level ,domain, duration,location,status,start_date,end_date,type} = req.body;
 
   try {
       // Check if the user's role is company
@@ -20,10 +20,16 @@ const addOffer = async (req, res, next) => {
           company_name: req.local.name,
           start_date: start_date,
           end_date: end_date,
+          duration : duration,
           domain: domain,
           location: location,
           companyId : req.local.id,
-          status:status
+          status:status,
+          internship_level:internship_level ,
+          type:type
+
+
+
       });
   
       const savedOffer = await newOffer.save();
@@ -41,7 +47,7 @@ const addOffer = async (req, res, next) => {
 const deleteOfferById = async (req, res, next) => {
   const offerId = req.params.id;
   try {
-    if (req.local.type !== 'company') {
+    if (req.local.type != 'company') {
       throw new Error('You are not authorized to delete offers');
     }
 
@@ -63,10 +69,10 @@ const deleteOfferById = async (req, res, next) => {
   // update offer 
   const updateOfferById = async (req, res, next) => {
     const offerId = req.params.id;
-    const { title, description, technology, start_date, end_date, domain, location } = req.body;
+    const {title, description, technology, internship_level ,domain, duration,location,status,start_date,end_date,type} = req.body;
   
     try {
-      if (req.local.type !== 'company') {
+      if (req.local.type != 'company') {
         throw new Error('You are not authorized to update this offer');
       }
   
@@ -83,10 +89,17 @@ const deleteOfferById = async (req, res, next) => {
         title: title,
         description: description,
         technology: technology,
+        company_name: req.local.name,
         start_date: start_date,
         end_date: end_date,
+        duration : duration,
         domain: domain,
-        location: location
+        location: location,
+        companyId : req.local.id,
+        status:status,
+        internship_level:internship_level ,
+        type:type
+
       });
   
       res.status(200).send(updatedOffer);
@@ -105,6 +118,7 @@ const getOffers = async (req, res, next) => {
     }
     const offers = await Offer.findAll({
       where: { status: 'active' },
+      attributes: ['title', 'description', 'technology', 'company_name', 'duration', 'domain', 'location', 'companyId', 'status', 'internship_level', 'type']
     });
     res.status(200).send(offers);
   } catch (err) {
@@ -112,12 +126,16 @@ const getOffers = async (req, res, next) => {
   }
 };
 
+
 //getOffersByID 
 const getOfferById = async (req, res, next) => {
   const offerId = req.params.id;
   try {
-    const userpayload = req.local;
-    const foundOffer = await Offer.findByPk(offerId);
+    if (req.local.type != 'student') {
+      throw new Error('You are not authorized to see offers');
+    }
+    
+    const foundOffer = await Offer.findOne({ where: { id: offerId } });
     if (!foundOffer) {
       throw new Error(`Offer with ID ${offerId} not found`);
     }
@@ -126,6 +144,7 @@ const getOfferById = async (req, res, next) => {
     next(err);
   }
 };
+
 
 ///////::getOfferByComapnyI///////////////////////////////////////////////////////////////////////////
 

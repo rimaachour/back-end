@@ -137,6 +137,14 @@ const Student = sequelize.define('students', {
   status: {
     type: Sequelize.ENUM('active', 'notactive'),
     defaultValue: 'notactive'
+  },
+studyEstablishment: {
+    type:  Sequelize.STRING,
+    allowNull: true
+  },
+  studyfield:{
+    type:  Sequelize.STRING,
+    allowNull: true
   }
 }, {
   timestamps: false
