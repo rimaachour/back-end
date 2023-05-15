@@ -1,10 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/db');
-const {Domain} = require("../domain/model");
-const Skill = require("../skills/model");
+const {Filiere} = require("../domain/model");
 const Student = require("../student/model");
-
-console.log('---------man', Domain, Student)
 
 const Preference = sequelize.define('pref', {
     id: {
@@ -16,10 +13,10 @@ const Preference = sequelize.define('pref', {
       type: Sequelize.STRING,
       allowNull: false
     },
-    domainID: {
+    filiereID: {
         type: Sequelize.INTEGER,
         references: {
-            model: Domain,
+            model: Filiere,
             key: 'id'
         }
     },
@@ -37,9 +34,9 @@ const Preference = sequelize.define('pref', {
   });
 
 Preference.associate = (models) => {
-    Preference.hasMany(Domain);
+    Preference.hasMany(Filiere);
     Preference.hasMany(Student);
-    Domain.belongsTo(Preference)
+    Filiere.belongsTo(Preference)
     Student.belongsTo(Preference)
 
 };
