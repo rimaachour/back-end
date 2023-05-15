@@ -69,6 +69,7 @@ const Company = sequelize.define('companies', {
     type: Sequelize.STRING,
     allowNull: false
   },
+  
 }, {
   timestamps: false,
 });

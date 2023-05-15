@@ -35,10 +35,8 @@ router.get('/profile/:id', authentication, async (req, res, next) => {
             "firstname",
             "LastName",
             "email",
-
-            "role",
-
-            "file",
+             "role",
+             "file",
             "Number",
             "streetAdress",
             "city",
@@ -51,7 +49,6 @@ router.get('/profile/:id', authentication, async (req, res, next) => {
             "bio",
             "studyEstablishment",
             "studyfield",
-           
             "status"]
         });
         if (!student) throw new Error('Invalid user');
@@ -70,7 +67,7 @@ router.put('/updateUser/:id', authentication,studentController.updateUser)
 router.get('/searchoffers', authentication,studentController.searchOffer);
 router.post('/resendOTPStudent', studentController.resendOtpSRegister);
 //router.post('/addStudentSkill' , authentication, studentController.addStudentSkill)
-router
+
 
 //router.get('/PublishedStudent',studentController.getPublishedStudent)
 

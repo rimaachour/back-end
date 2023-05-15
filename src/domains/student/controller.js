@@ -164,6 +164,7 @@ const getAllStudents = async (req, res) => {
       "LinkedIn",
       "WhatsApp",
       "bio",
+      "studyEstablishment",
       "status"]
     });
     // again ?
