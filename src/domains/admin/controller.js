@@ -1,5 +1,6 @@
 const Admin = require("./model");
 const Offer = require("../offer/model")
+const Student = require("../student/model")
 async function createAdmin(adminData) {
     try {
       const admin = await Admin.create(adminData);
@@ -80,6 +81,30 @@ async function createAdmin(adminData) {
       return next(err);
     }
   };
+  const updateStudentPopularity = async (req, res, next) => {
+    const { studentID, isPopular } = req.body;
+  
+    try {
+      if (req.local.role !== 'admin') {
+        throw new Error('You are not authorized to update student popularity');
+      }
+  
+      const student = await Student.findByPk(studentID);
+  
+      if (!student) {
+        throw new Error('Student not found');
+      }
+  
+      // Update the student popularity
+      student.popular = isPopular;
+      await student.save();
+  
+      res.status(200).send('Student popularity updated successfully');
+    } catch (err) {
+      return next(err);
+    }
+  };
+  
   
   
 
@@ -92,5 +117,6 @@ async function createAdmin(adminData) {
     getAdminById,
     updateAdmin,
     deleteAdmin,
-    updateOfferStatus
+    updateOfferStatus,
+    updateStudentPopularity
   };

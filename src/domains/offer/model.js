@@ -67,6 +67,11 @@ domain:{
     allowNull: false,
     defaultValue: 'inactive'
   },
+  popular: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
 }, {
   timestamps: false
 });

@@ -69,7 +69,30 @@ const Company = sequelize.define('companies', {
     type: Sequelize.STRING,
     allowNull: false
   },
-  
+  service1:{
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
+  service2:{
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
+  service3:{
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
+  service4:{
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
+  location:{
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
+  Mobile:{
+    type: Sequelize.STRING,
+    allowNull: true,
+  }
 }, {
   timestamps: false,
 });

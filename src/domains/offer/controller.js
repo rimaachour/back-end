@@ -150,22 +150,28 @@ const getOfferById = async (req, res, next) => {
 
 
 const getOffersByCompanyId = async (req, res, next) => {
-  const companyId = req.params.companyId;
+  const companyId = req.params.id;
   try {
-    const userpayload = req.local
+    if (req.local.type !== 'company') {
+      throw new Error('You are not authorized to see offers');
+    }
+
     const foundOffers = await Offer.findAll({
       where: {
         companyId: companyId
       }
     });
+
     if (foundOffers.length === 0) {
       throw new Error(`No offers found for company with ID ${companyId}`);
     }
-    res.status(200).send(foundOffers);
+
+    res.status(200).json(foundOffers);
   } catch (err) {
     next(err);
   }
 };
+
 
 
 

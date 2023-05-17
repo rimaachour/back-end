@@ -12,6 +12,6 @@ router.get('/search',authentication, offerController.searchInOffers);
 router.get('/getOffers',authentication,offerController.getOffers);
 router.get('/getOfferById/:id',authentication,offerController.getOfferById);
 
-router.get('/getOffersByCompanyId',authentication,offerController.getOffersByCompanyId)
+router.get('/getOffersByCompanyId/:id',authentication,offerController.getOffersByCompanyId)
 module.exports = router;
 

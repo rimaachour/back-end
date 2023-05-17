@@ -165,7 +165,17 @@ const getAllStudents = async (req, res) => {
       "WhatsApp",
       "bio",
       "studyEstablishment",
-      "status"]
+      "status",
+      "studyfield",
+      "DateExperience",
+      "TitreExperience",
+      "PlaceExperience",
+      "descriptionExperience",
+      "projectName",
+      "startDate",
+      "finDate",
+      "projectStatus"
+    ]
     });
     // again ?
     res.status(200).json({students,user});
@@ -302,9 +312,16 @@ const updateUser = async (req, res, next) => {
     user2.LinkedIn = data.LinkedIn;
     user2.studyEstablishment= data.studyEstablishment;
     user2.studyfield= data.studyfield
-
+    user2.DateExperience=data.DateExperience,
+    user2.TitreExperience=data.TitreExperience,
+    user2.PlaceExperience=data.PlaceExperience,
+    user2.descriptionExperience=data.descriptionExperience,
+    user2.projectName=data.projectName,
+    user2.startDate=data.startDate,
+    user2.finDate=data.finDate,
+    user2.projectStatus=data.projectStatus
     await user2.save();
-    res.status(200).json({ status: true, data: 'Data updated successfully' });
+    res.status(200).send('Data updated successfully');
   } catch (err) {
     next(err);
   }
@@ -312,15 +329,19 @@ const updateUser = async (req, res, next) => {
 
 // get all the data 
 const getProfile = async (req, res, next) => {
-  const { id } = req.params;
+  const {id} = req.params;
 
   try {
+    if((req.local.id != req.params.id)||(req.local.type !='student')){
+      throw new Error("You can't update this user")
+    }
     const user2 = await Student.findOne({ where: { id } });
     if (!user2) {
       throw new Error("User not found");
     }
 
     const userData = {
+      name : user2.name,
       id: user2.id,
       firstname: user2.firstname,
       LastName: user2.LastName,
@@ -339,8 +360,16 @@ const getProfile = async (req, res, next) => {
       file: user2.file,
       LinkedIn:user2.LinkedIn,
       studyEstablishment:user2.studyEstablishment,
-      studyfield:user2.studyfield
-      
+      studyfield:user2.studyfield,
+      DateExperience:user2.DateExperience,
+      TitreExperience:user2.TitreExperience,
+      PlaceExperience:user2.PlaceExperience,
+      descriptionExperience:user2.descriptionExperience,
+      projectName:user2.projectName,
+      startDate:user2.startDate,
+      finDate:user2.finDate,
+      projectStatus:user2.projectStatus,
+
     };
 
     return res.status(200).json(userData);

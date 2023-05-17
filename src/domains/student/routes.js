@@ -69,7 +69,7 @@ router.post('/resendOTPStudent', studentController.resendOtpSRegister);
 //router.post('/addStudentSkill' , authentication, studentController.addStudentSkill)
 
 
-//router.get('/PublishedStudent',studentController.getPublishedStudent)
+router.get('/getProfile/:id',authentication,studentController.getProfile)
 
 
 module.exports = router;

@@ -105,10 +105,10 @@ const Student = sequelize.define('students', {
     type: Sequelize.STRING,
     allowNull: true
   },
-  schoolname: {
-    type: Sequelize.STRING,
-    allowNull: true
-  },
+  // // schoolname: {
+  // //   type: Sequelize.STRING,
+  // //   allowNull: true
+  // },
   LinkedIn:{
     type: Sequelize.STRING,
       allowNull: true
@@ -145,7 +145,47 @@ studyEstablishment: {
   studyfield:{
     type:  Sequelize.STRING,
     allowNull: true
-  }
+  },
+  popular: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
+  DateExperience:{
+type:Sequelize.DATE,
+allowNull: true,
+  },
+  TitreExperience:{
+    type:Sequelize.STRING,
+    allowNull: true,
+
+  },
+  PlaceExperience:{
+    type:Sequelize.STRING,
+    allowNull: true,
+},
+  descriptionExperience:{
+    type:Sequelize.STRING,
+    allowNull: true,
+  },
+  projectName:{
+    type:Sequelize.STRING,
+    allowNull: true,
+  },
+  startDate:{
+    type:Sequelize.STRING,
+    allowNull: true,
+
+  },
+  finDate:{
+    type:Sequelize.STRING,
+    allowNull:true,
+  },
+projectStatus:{
+  type:Sequelize.STRING,
+  allowNull:true,
+}
+
 }, {
   timestamps: false
 });
