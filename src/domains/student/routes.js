@@ -31,25 +31,25 @@ router.get('/profile/:id', authentication, async (req, res, next) => {
         const student = await Student.findOne({
             where: { id: req.params.id },
             attributes: ["id",
-            "name",
-            "firstname",
-            "LastName",
-            "email",
-             "role",
-             "file",
-            "Number",
-            "streetAdress",
-            "city",
-            "state",
-            "Postal",
-            "Fb",
-            "LinkedIn",
-            "GitHub",
-            "WhatsApp",
-            "bio",
-            "studyEstablishment",
-            "studyfield",
-            "status"]
+                "name",
+                "firstname",
+                "LastName",
+                "email",
+                "role",
+                "file",
+                "Number",
+                "streetAdress",
+                "city",
+                "state",
+                "Postal",
+                "Fb",
+                "LinkedIn",
+                "GitHub",
+                "WhatsApp",
+                "bio",
+                "studyEstablishment",
+                "studyfield",
+                "status"]
         });
         if (!student) throw new Error('Invalid user');
         res.json(student)
@@ -63,13 +63,13 @@ router.get('/:nom', authentication, studentController.getStudentByName)
 
 router.delete('/:id', studentController.deleteStudentById)
 router.post('/verifyOTP', studentController.verifyOTP)
-router.put('/updateUser/:id', authentication,studentController.updateUser)
-router.get('/searchoffers', authentication,studentController.searchOffer);
+router.put('/updateUser/:id', authentication, studentController.updateUser)
+router.get('/searchoffers', authentication, studentController.searchOffer);
 router.post('/resendOTPStudent', studentController.resendOtpSRegister);
 //router.post('/addStudentSkill' , authentication, studentController.addStudentSkill)
 
 
-router.get('/getProfile/:id',authentication,studentController.getProfile)
+router.get('/getProfile/:id', authentication, studentController.getProfile)
 
 
 module.exports = router;

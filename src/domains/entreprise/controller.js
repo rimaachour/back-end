@@ -108,11 +108,11 @@ const updateCompny = async (req, res, next) => {
 
 
     // Save the updated user object to the database
-    const saved = await user1.save();
-    if (saved) {
+     await user1.save();
+  
       // Send a response indicating success
-      return res.status(200).send('Data updated successfully');
-    }
+     res.status(200).send('Data updated successfully');
+    
   } catch (err) {
     next(err);
   }
@@ -222,20 +222,20 @@ if(!user1){
     return next(err);
   }
 };
-const getEntrepriseByName = async (req, res) => {
-  try {
-    const entreprise = await Entreprise.findOne({
-      where: { Name: req.params.Name },
-    });
-    if (!entreprise) {
-      return res.status(404).send('entreprise not found');
-    }
-    res.status(200).send(entreprise);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server Error');
-  }
-};
+// const getEntrepriseByName = async (req, res) => {
+//   try {
+//     const entreprise = await Entreprise.findOne({
+//       where: { name: req.params.name },
+//     });
+//     if (!entreprise) {
+//       return res.status(404).send('entreprise not found');
+//     }
+//     res.status(200).send(entreprise);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send('Server Error');
+//   }
+// };
 
 // const updateEntrepriseById = async (req, res) => {
 //   try {
@@ -291,19 +291,12 @@ const searchStudentBySkills = async (req, res, next) => {
 // get all the data 
 const getStudentProfile = async (req, res, next) => {
   try {
-    if (req.local.type != 'company') {
+    if (req.local.type !== 'company') {
       throw new Error("You're not authorized to see student profiles");
     }
 
-    const studentId = req.params.studentId;
-    const student = await Student.findByPk(studentId, {
-      attributes: ['name', 'skills', 'email','city']
-    });
-
-    if (!student) {
-      throw new Error("Student not found");
-    }
-
+    const student = await Student.findAll();
+    console.log(student)
     res.status(200).json(student);
   } catch (err) {
     next(err);
@@ -312,7 +305,7 @@ const getStudentProfile = async (req, res, next) => {
 
 const getStudentProfileID = async (req, res, next) => {
   try {
-    if (req.local.type !== 'company') {
+    if (req.local.type != 'company') {
       throw new Error("You're not authorized to see student profiles");
     }
 
@@ -381,7 +374,7 @@ const getStudentProfileID = async (req, res, next) => {
 module.exports = {
   registerCompany,
    getEntreprise,
-  getEntrepriseByName,
+  // getEntrepriseByName,
   //updateEntrepriseById,
   deleteEntrepriseById,
   verifyOTP1,

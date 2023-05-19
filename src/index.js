@@ -4,17 +4,17 @@ const routes = require("./routes");
 const express = require('express');
 const app = express();
 const Admin = require("./domains/admin/model");
- async function addAdmin(){
-  const admin = await Admin.findOne({ where: { email:'admin@gmail.com' } })
-  if(!admin){
+async function addAdmin() {
+  const admin = await Admin.findOne({ where: { email: 'admin@gmail.com' } })
+  if (!admin) {
     Admin.create({
-      email:"admin@gmail.com",
-      password:"123456789",
-      
+      email: "admin@gmail.com",
+      password: "123456789",
+
     })
     console.log("admin a été ajoute");
   }
- }
+}
 
 
 
@@ -24,8 +24,8 @@ dbConnection.authenticate()
   .then(() => {
     console.log("connection has been established Successfully");
   })
-  .then(()=>{
-        //addAdmin()
+  .then(() => {
+    //addAdmin()
   })
   .catch((err) => console.error("unable to connect database", err))
 

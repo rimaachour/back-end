@@ -104,7 +104,30 @@ async function createAdmin(adminData) {
       return next(err);
     }
   };
+
+  const changeOfferPopularity = async (req, res, next) => {
+    const { offerID, isPopular } = req.body;
   
+    try {
+      if (req.local.role !== 'admin') {
+        throw new Error('You are not authorized to change offer popularity');
+      }
+  
+      const offer = await Offer.findOne({ where: { id: offerID } });
+  
+      if (!offer) {
+        throw new Error('Offer not found');
+      }
+  
+      // Update the offer popularity
+      offer.popular = isPopular;
+      await offer.save();
+  
+      res.status(200).send('Offer popularity updated successfully');
+    } catch (err) {
+      return next(err);
+    }
+  };
   
   
 
@@ -118,5 +141,6 @@ async function createAdmin(adminData) {
     updateAdmin,
     deleteAdmin,
     updateOfferStatus,
-    updateStudentPopularity
+    updateStudentPopularity,
+    changeOfferPopularity
   };

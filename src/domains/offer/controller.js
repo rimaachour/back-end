@@ -205,7 +205,22 @@ const searchInOffers =async function(req, res){
     }
   }
 
+//getPopularOfferDiscover
 
+const getPopularOfferDiscover = async function(req,res,next){
+  try {
+    const offers = await Offer.findAll({
+      where: { popular: true },
+      attributes: ['title', 'description', 'technology', 'company_name'],
+      limit: 6,
+    });
+    res.status(200).json(offers);
+  } catch (error) {
+    next (error)
+
+ 
+  }
+};
 
 
 
@@ -224,5 +239,7 @@ const searchInOffers =async function(req, res){
      searchInOffers,
      getOffers,
      getOfferById,
-     getOffersByCompanyId}
+     getOffersByCompanyId,
+     getPopularOfferDiscover}
+
 

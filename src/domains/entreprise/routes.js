@@ -28,7 +28,7 @@ router.get('/search', authentication, async (req, res, next) => {
     }
 });
 
-router.get('/:nom', authentication, entrepriseController.getEntrepriseByName);
+// router.get('/:nom', authentication, entrepriseController.getEntrepriseByName);
 router.post('/ResendOtpCRegister', entrepriseController.resendOtpCRegister);
  router.get('/getprofiles', authentication,entrepriseController.getStudentProfile),
  router.get('/getStudentprofilesID', authentication,entrepriseController.getStudentProfileID),

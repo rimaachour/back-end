@@ -122,24 +122,6 @@ async function resendOtpSRegister(req, res ,next) {
     
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // 2. get all students
 
 const getAllStudents = async (req, res) => {
@@ -209,14 +191,6 @@ const getAllStudents = async (req, res) => {
   return res.json({ offers });
 };*/
 
-exports.getStudentProfile = async (req, res) => {
-  // code to retrieve student profile goes here
-};
-
-exports.updateStudentProfile = async (req, res) => {
-  // code to update student profile goes here
-};
-
 const getStudentByName = async (req, res) => {
   try {
     const student = await Student.findOne({
@@ -266,14 +240,6 @@ const deleteStudentById = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
-
-// 6. get published student
-//const getPublishedStudent = async (req, res) => {
-  //const students = await Student.findAll({ where: { published: true } })
-  //res.status(200).send(students)
-//}
-
-
 const updateUser = async (req, res, next) => {
   
   const data = req.body; // Get the data from the request body
@@ -412,26 +378,7 @@ console.log(whereClause);
 }
 
 
-// const addStudentSkill = async (req, res, next) => {
-//   const { skillId, percentage } = req.body;
-//   const studentId = req.params.id; // assuming that the user ID is stored in the 'id' property of the token payload
 
-//   try {
-//     const student = await Student.findByPk(studentId);
-//     const skill = await Skill.findByPk(skillId);
-
-//     if (!student || !skill) {
-//       throw new Error('Invalid student or skill id');
-//     }
-
-//     const studentSkill = new StudentSkill({ percentage });
-//     await student.addSkill(skill, { through: studentSkill });
-
-//     res.status(200).send(studentSkill);
-//   } catch (err) {
-//     next(err);
-//   }
-// };
 
 
 
