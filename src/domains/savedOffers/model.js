@@ -21,7 +21,7 @@ const SavedOffer = sequelize.define('saved_offers', {
   }, {
     timestamps: false
   });
-  sequelize.sync({ force: false }).then(() => {
+  sequelize.sync({ force: true }).then(() => {
     console.log('Tables created successfully');
   }).catch((err) => {
     console.error('Unable to create tables:', err);

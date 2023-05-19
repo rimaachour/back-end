@@ -1,4 +1,4 @@
-const SavedOffer = require("../offer/model")
+const SavedOffer = require('./model')
 
 const saveOffer = async (req, res, next) => {
     try {

@@ -12,6 +12,7 @@ const Review = require('../domains/reviews')
 //const otp = require('../domains/OTP')
 const filiere =require('../domains/filiere');
 const Domain = require('../domains/domain');
+const saved_offers = require ('../domains/savedOffers')
 
 const preference = require('../domains/preference')
 const skills = require('../domains/skills')
@@ -32,5 +33,5 @@ router.use("/preference",preference)
 router.use("/skills",skills)
 router.use("/studentSkills",StudentSkill)
 router.use("/contact",Contact)
+router.use("/savedoffers,",saved_offers)
 module.exports = router;
-
