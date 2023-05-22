@@ -12,12 +12,13 @@ const Review = require('../domains/reviews')
 //const otp = require('../domains/OTP')
 const filiere =require('../domains/filiere');
 const Domain = require('../domains/domain');
-const saved_offers = require ('../domains/savedOffers')
-
-const preference = require('../domains/preference')
-const skills = require('../domains/skills')
-const StudentSkill = require('../domains/StudentSkill')
-const Contact = require('../domains/contact')
+const saved_offers = require ('../domains/savedOffers');
+const profiles = require('../domains/favoriteProfiles');
+const preference = require('../domains/preference');
+const skills = require('../domains/skills');
+const StudentSkill = require('../domains/StudentSkill');
+const Contact = require('../domains/contact');
+const Historique = require('../domains/Historique');
 router.use("/auth", auth);
 router.use("/admin", admin);
 router.use("/entreprise", entreprise);
@@ -33,5 +34,7 @@ router.use("/preference",preference)
 router.use("/skills",skills)
 router.use("/studentSkills",StudentSkill)
 router.use("/contact",Contact)
-router.use("/savedoffers,",saved_offers)
+router.use("/savedoffers",saved_offers);
+router.use("/Profiles",profiles);
+router.use("/Historique",Historique);
 module.exports = router;

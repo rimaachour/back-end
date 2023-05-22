@@ -9,6 +9,7 @@ const company = require('../entreprise/model')
 const { compareSync } = require('bcrypt');
 const Company = require('../entreprise/model');
 const Filiere =require('../filiere/model');
+const Profiles = require('../favoriteProfiles/model')
 
 const Student = sequelize.define('students', {
   id: {
@@ -193,6 +194,7 @@ projectStatus:{
 Student.associate = () => {
 Skill.belongsToMany(Student, { through:StudentSkill});
 Domain.belongsToMany(Student, { through:preference});
+Company.belongsToMany(Student, { through: Profiles });
 //  Filiere.belongsToMany(Student)
 
 
