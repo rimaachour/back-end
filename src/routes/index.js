@@ -19,6 +19,8 @@ const skills = require('../domains/skills');
 const StudentSkill = require('../domains/StudentSkill');
 const Contact = require('../domains/contact');
 const Historique = require('../domains/Historique');
+const location = require('../domains/loaction');
+const Time = require('../domains/Time')
 router.use("/auth", auth);
 router.use("/admin", admin);
 router.use("/entreprise", entreprise);
@@ -37,4 +39,6 @@ router.use("/contact",Contact)
 router.use("/savedoffers",saved_offers);
 router.use("/Profiles",profiles);
 router.use("/Historique",Historique);
+router.use("/location",location);
+router.use("/Time",Time)
 module.exports = router;
