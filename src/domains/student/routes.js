@@ -35,21 +35,20 @@ router.get('/profile/:id', authentication, async (req, res, next) => {
                 "firstname",
                 "LastName",
                 "email",
-
                 "role",
-
                 "file",
                 "Number",
                 "streetAdress",
                 "city",
                 "state",
                 "Postal",
-                "place",
-                "skills",
-                "schoolname",
-                "schoollocation",
-                "firstattend",
-                "finalattend",
+                "Fb",
+                "LinkedIn",
+                "GitHub",
+                "WhatsApp",
+                "bio",
+                "studyEstablishment",
+                "studyfield",
                 "status"]
         });
         if (!student) throw new Error('Invalid user');
@@ -64,13 +63,13 @@ router.get('/:nom', authentication, studentController.getStudentByName)
 
 router.delete('/:id', studentController.deleteStudentById)
 router.post('/verifyOTP', studentController.verifyOTP)
-router.put('/updateStudent/:id',authentication,studentController.updateUser)
-router.get('/searchoffers', authentication,studentController.searchOffer);
+router.put('/updateUser/:id', authentication,studentController.updateUser)
+router.get('/searchoffers', authentication,studentController.serachofferDomain);
 router.post('/resendOTPStudent', studentController.resendOtpSRegister);
-router.post('/addStudentSkill' , authentication, studentController.addStudentSkill)
+//router.post('/addStudentSkill' , authentication, studentController.addStudentSkill)
 
 
-//router.get('/PublishedStudent',studentController.getPublishedStudent)
+router.get('/getProfile/:id', authentication, studentController.getProfile)
 
 
 module.exports = router;

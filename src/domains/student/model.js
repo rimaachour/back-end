@@ -9,6 +9,7 @@ const company = require('../entreprise/model')
 const { compareSync } = require('bcrypt');
 const Company = require('../entreprise/model');
 const Filiere =require('../filiere/model');
+const Profiles = require('../favoriteProfiles/model')
 
 const Student = sequelize.define('students', {
   id: {
@@ -105,10 +106,10 @@ const Student = sequelize.define('students', {
     type: Sequelize.STRING,
     allowNull: true
   },
-  schoolname: {
-    type: Sequelize.STRING,
-    allowNull: true
-  },
+  // // schoolname: {
+  // //   type: Sequelize.STRING,
+  // //   allowNull: true
+  // },
   LinkedIn:{
     type: Sequelize.STRING,
       allowNull: true
@@ -137,7 +138,55 @@ const Student = sequelize.define('students', {
   status: {
     type: Sequelize.ENUM('active', 'notactive'),
     defaultValue: 'notactive'
-  }
+  },
+studyEstablishment: {
+    type:  Sequelize.STRING,
+    allowNull: true
+  },
+  studyfield:{
+    type:  Sequelize.STRING,
+    allowNull: true
+  },
+  popular: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
+  DateExperience:{
+type:Sequelize.DATE,
+allowNull: true,
+  },
+  TitreExperience:{
+    type:Sequelize.STRING,
+    allowNull: true,
+
+  },
+  PlaceExperience:{
+    type:Sequelize.STRING,
+    allowNull: true,
+},
+  descriptionExperience:{
+    type:Sequelize.STRING,
+    allowNull: true,
+  },
+  projectName:{
+    type:Sequelize.STRING,
+    allowNull: true,
+  },
+  startDate:{
+    type:Sequelize.STRING,
+    allowNull: true,
+
+  },
+  finDate:{
+    type:Sequelize.STRING,
+    allowNull:true,
+  },
+projectStatus:{
+  type:Sequelize.STRING,
+  allowNull:true,
+}
+
 }, {
   timestamps: false
 });
@@ -145,6 +194,7 @@ const Student = sequelize.define('students', {
 Student.associate = () => {
 Skill.belongsToMany(Student, { through:StudentSkill});
 Domain.belongsToMany(Student, { through:preference});
+Company.belongsToMany(Student, { through: Profiles });
 //  Filiere.belongsToMany(Student)
 
 

@@ -1,7 +1,11 @@
+const { Op } = require('sequelize');
 const { generateOTP } = require('../../helpers/OTP');
 const { mail } = require('../../helpers/mailer');
 const Student= require('../student/model')
 const Offer = require('../offer/model');
+const Time = require('../Time/model');
+const Location=require('../loaction/model');
+const domain = require('../domain/model')
 const studentValidation= require('../../helpers/studentValidation')
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
@@ -122,24 +126,6 @@ async function resendOtpSRegister(req, res ,next) {
     
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // 2. get all students
 
 const getAllStudents = async (req, res) => {
@@ -164,7 +150,18 @@ const getAllStudents = async (req, res) => {
       "LinkedIn",
       "WhatsApp",
       "bio",
-      "status"]
+      "studyEstablishment",
+      "status",
+      "studyfield",
+      "DateExperience",
+      "TitreExperience",
+      "PlaceExperience",
+      "descriptionExperience",
+      "projectName",
+      "startDate",
+      "finDate",
+      "projectStatus"
+    ]
     });
     // again ?
     res.status(200).json({students,user});
@@ -174,37 +171,7 @@ const getAllStudents = async (req, res) => {
   }
 };
 
-////////////search//////////////////////
 
-/*exports.searchOffers = async (req, res) => {
-  const { category, domain, subcategory, specialty } = req.query;
-  const studentId = req.params.studentId;
-
-  // Check that the student exists
-  const student = await Student.findByPk(studentId);
-  if (!student) {
-    return res.status(404).json({ error: 'Student not found' });
-  }
-
-  // Find offers that match the search criteria and the student's specialty
-  const offers = await Offer.findAll({
-    where: {
-      domain,
-      technology: subcategory,
-      specialty: student.specialty,
-    },
-  });
-
-  return res.json({ offers });
-};*/
-
-exports.getStudentProfile = async (req, res) => {
-  // code to retrieve student profile goes here
-};
-
-exports.updateStudentProfile = async (req, res) => {
-  // code to update student profile goes here
-};
 
 const getStudentByName = async (req, res) => {
   try {
@@ -255,32 +222,25 @@ const deleteStudentById = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
-
-// 6. get published student
-//const getPublishedStudent = async (req, res) => {
-  //const students = await Student.findAll({ where: { published: true } })
-  //res.status(200).send(students)
-//}
-
-
 const updateUser = async (req, res, next) => {
-  const { id } = req.params; // Get the user ID from the request parameters
+  
   const data = req.body; // Get the data from the request body
 
-  if(req.local.id != req.params.id){
-    throw new Error("You can't update this user")
-  }
-  const user2 = await Student.findOne({
-    where: { id: id }
-  })
-
-  if (!user2) {
-    throw new Error('User not found');
-  }
-  console.log(user2);
-  console.log(req.body)
+  
   try {
-
+    const { id } = req.params; // Get the user ID from the request parameters
+    if((req.local.id != req.params.id)||(req.local.type !='student')){
+      throw new Error("You can't update this user")
+    }
+    const user2 = await Student.findOne({
+      where: { id: id }
+    })
+  
+    if (!user2) {
+      throw new Error('User not found');
+    }
+    console.log(user2);
+    console.log(req.body)
 
     // Update the user object with the new data
     user2.firstname = data.firstname;
@@ -298,9 +258,18 @@ const updateUser = async (req, res, next) => {
     user2.GitHub = data.GitHub;
     user2.file = data.file;
     user2.LinkedIn = data.LinkedIn;
-
+    user2.studyEstablishment= data.studyEstablishment;
+    user2.studyfield= data.studyfield
+    user2.DateExperience=data.DateExperience,
+    user2.TitreExperience=data.TitreExperience,
+    user2.PlaceExperience=data.PlaceExperience,
+    user2.descriptionExperience=data.descriptionExperience,
+    user2.projectName=data.projectName,
+    user2.startDate=data.startDate,
+    user2.finDate=data.finDate,
+    user2.projectStatus=data.projectStatus
     await user2.save();
-    res.status(200).json({ status: true, data: 'Data updated successfully' });
+    res.status(200).send('Data updated successfully');
   } catch (err) {
     next(err);
   }
@@ -308,15 +277,19 @@ const updateUser = async (req, res, next) => {
 
 // get all the data 
 const getProfile = async (req, res, next) => {
-  const { id } = req.params;
+  const {id} = req.params;
 
   try {
+    if((req.local.id != req.params.id)||(req.local.type !='student')){
+      throw new Error("You can't update this user")
+    }
     const user2 = await Student.findOne({ where: { id } });
     if (!user2) {
       throw new Error("User not found");
     }
 
     const userData = {
+      name : user2.name,
       id: user2.id,
       firstname: user2.firstname,
       LastName: user2.LastName,
@@ -334,13 +307,22 @@ const getProfile = async (req, res, next) => {
       bio: user2.bio,
       file: user2.file,
       LinkedIn:user2.LinkedIn,
-      created_at: user2.created_at,
-      updated_at: user2.updated_at,
+      studyEstablishment:user2.studyEstablishment,
+      studyfield:user2.studyfield,
+      DateExperience:user2.DateExperience,
+      TitreExperience:user2.TitreExperience,
+      PlaceExperience:user2.PlaceExperience,
+      descriptionExperience:user2.descriptionExperience,
+      projectName:user2.projectName,
+      startDate:user2.startDate,
+      finDate:user2.finDate,
+      projectStatus:user2.projectStatus,
+
     };
 
     return res.status(200).json(userData);
   } catch (err) {
-    return next(err.message);
+    return next(err);
   }
 };
 
@@ -348,56 +330,36 @@ const getProfile = async (req, res, next) => {
 
 
 /// searchOffer////////////
-async function searchOffer(req, res) {
-
-  try {
-      const { domain, technology, location } = req.query;
-  let whereClause = {};
-console.log(whereClause);
-  if (domain) {
-    whereClause.domain = domain;
+const serachofferDomain = async (req,res,next)=>{
+  const {domain, location, type} = req.query;
+  try{
+    const offres= await Offer.findAll({
+      where:{
+        [Op.and]: [
+          domain ?{
+            domain
+          }: {},
+          location ?{
+            location
+          }: {},
+          type ?{
+            type
+          }: {},
+        ]
+      },
+    }) 
+res.json(offres);
   }
+  catch(error){
+    console.log(error);
+    //res.status(500).json({ error: 'Une erreur s\'est produite.' });
+    next(error);
+}
 
-  else if (technology) {
-    whereClause.technology = speciality;
-  }
-
-  else if (location) {
-    whereClause.location = location;
-  }
-
-    //const foundOffers = await Offer.findAll({ where: whereClause });
-    //res.json(foundOffers);
-  } catch (error) {
-    console.log('Error searching for offer:', error);
-    res.status(500).json({ message: 'Error searching for offer' });
-  }
 }
 
 
-const addStudentSkill = async (req, res, next) => {
-  const { skillId, percentage } = req.body;
-  const studentId = req.params.id; // assuming that the user ID is stored in the 'id' property of the token payload
 
-  try {
-    const student = await Student.findByPk(studentId);
-    const skill = await Skill.findByPk(skillId);
-
-    if (!student || !skill) {
-      throw new Error('Invalid student or skill id');
-    }
-
-    const studentSkill = new StudentSkill({ percentage });
-    await student.addSkill(skill, { through: studentSkill });
-
-    res.status(200).send(studentSkill);
-  } catch (err) {
-    next(err);
-  }
-};
-
-
-module.exports = { addStudentSkill };
 
 
 module.exports = {
@@ -408,10 +370,10 @@ module.exports = {
   deleteStudentById,
   verifyOTP,
   updateUser,
-  searchOffer,
+  serachofferDomain,
   resendOtpSRegister,
   getProfile,
-  addStudentSkill
+  
   
 
 

@@ -419,7 +419,7 @@ const resetPasswordCompany = async (req, res, next) => {
     user1.password = hashedPassword;
     user1.confirmpassword = confirmPasswordHash;
     await user1.save()
-    return res.status(200).json({ message: 'Password has been changed successfully' });
+    res.status(200).json({ message: 'Password has been changed successfully' });
 
   } catch (err) {
     next(err);

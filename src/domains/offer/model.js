@@ -34,6 +34,23 @@ const Offer = sequelize.define('offers', {
     type: Sequelize.STRING,
     allowNull: false
   },
+  internship_level: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  duration: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+type:{
+  type: Sequelize.STRING,
+    allowNull: false,
+},
+domain:{
+  type: Sequelize.STRING,
+    allowNull: false,
+},
+
   company_name: {
     type: Sequelize.STRING,
     allowNull: false
@@ -48,11 +65,17 @@ const Offer = sequelize.define('offers', {
   status: {
     type: Sequelize.ENUM('active', 'inactive'),
     allowNull: false,
-    defaultValue: 'inactive'
+    defaultValue: 'active'
+  },
+  popular: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   },
 }, {
   timestamps: false
 });
+
 
 
 sequelize.sync({ force: false })

@@ -18,9 +18,15 @@ const StudentSkill =  sequelize.define('StudentSkill', {
       studentId:{
         type:Sequelize.INTEGER,
         allowNull:false,
+        references: {
+          model: 'students', // Wrote it hardcoded due to circular dependencies causing it to be empty object
+          //TODO fix circular deps
+          key: 'id'
+        }
+      },
       
      
-      },
+
       skillId:{
         type:Sequelize.INTEGER,
         allowNull:false,

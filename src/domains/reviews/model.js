@@ -1,6 +1,8 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/db');
 const Student  = require('../student/model');
+const {Filiere} = require("../domain/model");
+const Company = require("../entreprise/model");
 //const Company = require('../entreprise/model')
 
 const Review = sequelize.define('reviews', {
@@ -27,31 +29,36 @@ const Review = sequelize.define('reviews', {
       min: 0,
       max: 5,
     },
-}, 
-comment: {
-  type: DataTypes.STRING,
-  allowNull: true,
 },
-
-/*entrepriseId: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
+  comment: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
-  studentId: {
+  companyID: {
     type: Sequelize.INTEGER,
-    allowNull: false,
     references: {
-      model: Student,
-      key: 'id',
-    },
-  },*/
-
-
-
+      model: Company,
+      key: 'id'
+    }
+  },
+  studentID: {
+    type: Sequelize.INTEGER,
+    references: {
+      model: 'students', // Wrote it hardcoded due to circular dependencies causing it to be empty object
+      //TODO fix circular deps
+      key: 'id'
+    }
+  }
 },{
   timestamps: false
 });
 
+Review.associate = (models) => {
+  Review.hasOne(Company);
+  Review.hasOne(Student);
+  Company.belongsTo(Review)
+  Student.belongsTo(Review)
+};
 
 sequelize.sync({ force: false }).then(() => {
   console.log('Tables created successfully');

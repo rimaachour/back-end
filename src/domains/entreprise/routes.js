@@ -8,11 +8,11 @@ const router = require('express').Router();
 
 
 router.post('/registerCompany', entrepriseController.registerCompany);
-router.get('/getAllEntreprise',authentication, entrepriseController.getAllEntreprise);
-router.put('/:id', authentication,entrepriseController.updateEntrepriseById);
-router.delete('/:id',authentication, entrepriseController.deleteEntrepriseById);
+router.get('/getEntreprise/:id', authentication, entrepriseController.getEntreprise);
+// router.put('/updateEntrepriseProfile', authentication, entrepriseController.updateEntreprisProfile);
+router.delete('/:id', authentication, entrepriseController.deleteEntrepriseById);
 router.post('/verifyOTP1', entrepriseController.verifyOTP1);
-router.put('/updateCompny/:id',authentication, entrepriseController.updateCompny);
+router.put('/updateCompny/:id', authentication, entrepriseController.updateCompny);
 router.get('/search', authentication, async (req, res, next) => {
     try {
         const { skills } = req.query;
@@ -28,8 +28,9 @@ router.get('/search', authentication, async (req, res, next) => {
     }
 });
 
-router.get('/:nom',authentication, entrepriseController.getEntrepriseByName);
+// router.get('/:nom', authentication, entrepriseController.getEntrepriseByName);
 router.post('/ResendOtpCRegister', entrepriseController.resendOtpCRegister);
-router.get('/getProfileStudent/:id',authentication,entrepriseController.getProfileStudent);
+ router.get('/getprofiles', authentication,entrepriseController.getStudentProfile),
+ router.get('/getStudentprofilesID/:id', authentication,entrepriseController.getStudentProfileID),
 
 module.exports = router;
