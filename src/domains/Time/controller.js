@@ -27,10 +27,10 @@ const deleteTime = async (req, res, next) => {
       if (req.local.role != 'admin') {
           
         throw new Error('You are not authorized to delete skill ');}
-      const Time = await Time.findByPk(id);
+      const time = await Time.findOne({ where: { id } });
   
-      if (Time) {
-        await Time.destroy();
+      if (time) {
+        await time.destroy();
         res.status(200).send(`Time with ID ${id} deleted successfully.`);
       } else {
         res.status(404).send(`Time with ID ${id} not found.`);
@@ -55,10 +55,10 @@ const modifyTime = async (req, res, next) => {
       const time = await Time.findByPk(id);
       res.status(200).send(time);
     } else {
-      res.status(404).send({ message: `time with ID ${id} not found.` });
+      res.status(404).send(`time with ID ${id} not found.` );
     }
   } catch (err) {
-     next(message);
+     next(err);
   }
 };
 //////////////getTime/////////////////
@@ -76,7 +76,7 @@ const getTime = async (req, res, next) => {
         res.status(404).send('No time found.');
       }
     } catch (err) {
-       next(message);
+       next(err);
     }
   };
   

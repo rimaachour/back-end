@@ -304,13 +304,13 @@ const getStudentProfile = async (req, res, next) => {
 };
 
 const getStudentProfileID = async (req, res, next) => {
+  const id = req.params;
   try {
-    if (req.local.type != 'company') {
+    if (req.local.type !=='company') {
       throw new Error("You're not authorized to see student profiles");
     }
 
-    const studentId = req.params.studentId;
-    const student = await Student.findByPk(studentId);
+    const student = await Student.findOne({ where: id });
 
     if (!student) {
       throw new Error("Student not found");
@@ -337,15 +337,14 @@ const getStudentProfileID = async (req, res, next) => {
       LinkedIn: student.LinkedIn,
       studyEstablishment: student.studyEstablishment,
       studyfield: student.studyfield,
-      DateExperience:student.DateExperience,
-      TitreExperience:student.TitreExperience,
-      PlaceExperience:student.PlaceExperience,
-      descriptionExperience:student.descriptionExperience,
-      projectName:student.projectName,
-      startDate:student.startDate,
-      finDate:student.finDate,
-      projectStatus:student.projectStatus
-
+      DateExperience: student.DateExperience,
+      TitreExperience: student.TitreExperience,
+      PlaceExperience: student.PlaceExperience,
+      descriptionExperience: student.descriptionExperience,
+      projectName: student.projectName,
+      startDate: student.startDate,
+      finDate: student.finDate,
+      projectStatus: student.projectStatus
     };
 
     res.status(200).json(userData);
@@ -353,8 +352,6 @@ const getStudentProfileID = async (req, res, next) => {
     next(err);
   }
 };
-
-
 
 
 

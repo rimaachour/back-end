@@ -20,7 +20,8 @@ const StudentSkill = require('../domains/StudentSkill');
 const Contact = require('../domains/contact');
 const Historique = require('../domains/Historique');
 const location = require('../domains/loaction');
-const Time = require('../domains/Time')
+const Time = require('../domains/Time');
+const favorisOffers = require('../domains/favorisOffers');
 router.use("/auth", auth);
 router.use("/admin", admin);
 router.use("/entreprise", entreprise);
@@ -40,5 +41,6 @@ router.use("/savedoffers",saved_offers);
 router.use("/Profiles",profiles);
 router.use("/Historique",Historique);
 router.use("/location",location);
-router.use("/Time",Time)
+router.use("/Time",Time);
+router.use("/favorisoffers",favorisOffers)
 module.exports = router;

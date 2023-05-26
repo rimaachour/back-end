@@ -1,6 +1,7 @@
 const Favoris = require('./model')
 const company = require("../entreprise/model")
 const Student = require("../student/model")
+
 const ProfilesSaved = async (req,res,next) =>{
 const {studentId}=req.body;
 const companyId = req.local.id;

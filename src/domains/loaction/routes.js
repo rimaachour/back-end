@@ -4,9 +4,9 @@ const authentication = require('../../middleware/authentication');
 const LocationController=require("../loaction/controller");
 
 router.post('/addLocation',authentication,LocationController.addlocation);
-router.put('/updateTime',authentication,LocationController.modifylocation);
-router.delete('/deleteTime',authentication,LocationController.Deletelocation);
-router.get('/getTime',authentication,LocationController.getLocation)
+router.put('/updateLocation/:id',authentication,LocationController.modifylocation);
+router.delete('/deleteLocation/:id',authentication,LocationController.Deletelocation);
+router.get('/getLocation',authentication,LocationController.getLocation)
 
 
 

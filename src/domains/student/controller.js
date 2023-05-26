@@ -1,7 +1,11 @@
+const { Op } = require('sequelize');
 const { generateOTP } = require('../../helpers/OTP');
 const { mail } = require('../../helpers/mailer');
 const Student= require('../student/model')
 const Offer = require('../offer/model');
+const Time = require('../Time/model');
+const Location=require('../loaction/model');
+const domain = require('../domain/model')
 const studentValidation= require('../../helpers/studentValidation')
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
@@ -167,29 +171,7 @@ const getAllStudents = async (req, res) => {
   }
 };
 
-////////////search//////////////////////
 
-/*exports.searchOffers = async (req, res) => {
-  const { category, domain, subcategory, specialty } = req.query;
-  const studentId = req.params.studentId;
-
-  // Check that the student exists
-  const student = await Student.findByPk(studentId);
-  if (!student) {
-    return res.status(404).json({ error: 'Student not found' });
-  }
-
-  // Find offers that match the search criteria and the student's specialty
-  const offers = await Offer.findAll({
-    where: {
-      domain,
-      technology: subcategory,
-      specialty: student.specialty,
-    },
-  });
-
-  return res.json({ offers });
-};*/
 
 const getStudentByName = async (req, res) => {
   try {
@@ -348,37 +330,33 @@ const getProfile = async (req, res, next) => {
 
 
 /// searchOffer////////////
-async function searchOffer(req, res) {
-
-  try {
-    if(req.local.type !='student'){
-      throw new Error("You can't update this user")
-    }
-      const { domain, technology, location } = req.query;
-  let whereClause = {};
-console.log(whereClause);
-  if (domain) {
-    whereClause.domain = domain;
+const serachofferDomain = async (req,res,next)=>{
+  const {domain, location, type} = req.query;
+  try{
+    const offres= await Offer.findAll({
+      where:{
+        [Op.and]: [
+          domain ?{
+            domain
+          }: {},
+          location ?{
+            location
+          }: {},
+          type ?{
+            type
+          }: {},
+        ]
+      },
+    }) 
+res.json(offres);
   }
-
-  else if (technology) {
-    whereClause.technology = speciality;
-  }
-
-  else if (location) {
-    whereClause.location = location;
-  }
-
-    //const foundOffers = await Offer.findAll({ where: whereClause });
-    //res.json(foundOffers);
-  } catch (error) {
-    console.log('Error searching for offer:', error);
-    res.status(500).json({ message: 'Error searching for offer' });
-  }
+  catch(error){
+    console.log(error);
+    //res.status(500).json({ error: 'Une erreur s\'est produite.' });
+    next(error);
 }
 
-
-
+}
 
 
 
@@ -392,7 +370,7 @@ module.exports = {
   deleteStudentById,
   verifyOTP,
   updateUser,
-  searchOffer,
+  serachofferDomain,
   resendOtpSRegister,
   getProfile,
   

@@ -22,42 +22,47 @@ const addlocation = async (req, res, next) => {
 /////////////Delete/////////////////////////////
 
 const Deletelocation = async (req, res, next) => {
-    const { id } = req.params;
-  
-    try {
-      if (req.local.role != 'admin') {
-          
-        throw new Error('You are not authorized to delete skill ');}
-      const location = await location.findByPk(id);
-  
-      if (location) {
-        await location.destroy();
-        res.status(200).send(`location with ID ${id} deleted successfully.`);
-      } else {
-        res.status(404).send(`location with ID ${id} not found.`);
-      }
-    } catch (err) {
-       next(err);
+  const { id } = req.params;
+
+  try {
+    if (req.local.role !== 'admin') {
+      throw new Error('You are not authorized to delete skill');
     }
-  };
+
+    const Location = await location.findOne({ where: { id } });
+
+    if (Location) {
+      await Location.destroy();
+      res.status(200).send(`Location with ID ${id} deleted successfully.`);
+    } else {
+      res.status(404).send(`Location with ID ${id} not found.`);
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+
   ////////////////updateLocaation////////////////::
   const modifylocation = async (req, res, next) => {
     const { id } = req.params;
     const { name } = req.body;
   
     try {
-      if (req.local.role != 'admin') {
-          
-        throw new Error('You are not authorized to update location ');}
-      const updatedlocation = await location.update({name}, { where: { id } });
-      if (updatedlocation[0] !== 0) {
-        const location = await location.findByPk(id);
-        res.status(200).send(location);
+      if (req.local.role !== 'admin') {
+        throw new Error('You are not authorized to update location');
+      }
+      
+      const updatedLocation = await location.update({ name }, { where: { id } });
+      
+      if (updatedLocation[0] !== 0) {
+        const Location = await location.findByPk(id);
+        res.status(200).send(Location);
       } else {
-        res.status(404).send({ message: `location with ID ${id} not found.` });
+        res.status(404).send(`Location with ID ${id} not found.`);
       }
     } catch (err) {
-       next(message);
+      next(err);
     }
   };
   
@@ -68,19 +73,20 @@ const Deletelocation = async (req, res, next) => {
       if (req.local.role != 'admin') {
           
         throw new Error('You are not authorized to  get location');}
-      const time = await Time.findAll();
+      const Location = await location.findAll();
   
-      if (time) {
-        res.status(200).send(time);
+      if (Location) {
+        res.status(200).send(Location);
       } else {
         res.status(404).send('No time found.');
       }
     } catch (err) {
-       next(message);
+       next(err);
     }
   };
   
-  module.exports ={addlocation,
+  module.exports ={
+    addlocation,
     modifylocation,
     getLocation,
     Deletelocation}

@@ -77,6 +77,7 @@ domain:{
 });
 
 
+
 sequelize.sync({ force: false })
   .then(() => {
     console.log('Offer table created successfully.');

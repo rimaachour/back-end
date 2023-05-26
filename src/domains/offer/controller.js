@@ -1,46 +1,47 @@
 const { ERROR } = require("sqlite3");
 const { error } = require("../../helpers/studentValidation");
 const Offer = require("./model");
-
+const time = require("../Time/controller");
+const location = require("../loaction/model")
 const addOffer = async (req, res, next) => {
-  const { title, description, technology, internship_level ,domain, duration,location,status,start_date,end_date,type} = req.body;
+  const { title, description, technology, internship_level, domain, duration, location, status, start_date, end_date, type } = req.body;
 
   try {
-      // Check if the user's role is company
-      //console.log(req.local.ty);
-      if (req.local.type != 'company') {
-        
-         throw new Error('You are not authorized to add offers');
-      }
-    
-      const newOffer = new Offer({
-          title: title,
-          description: description,
-          technology: technology,
-          company_name: req.local.name,
-          start_date: start_date,
-          end_date: end_date,
-          duration : duration,
-          domain: domain,
-          location: location,
-          companyId : req.local.id,
-          status:status,
-          internship_level:internship_level ,
-          type:type
+    // Check if the user's role is company
+    //console.log(req.local.ty);
+    if (req.local.type != 'company') {
+
+      throw new Error('You are not authorized to add offers');
+    }
+
+    const newOffer = new Offer({
+      title: title,
+      description: description,
+      technology: technology,
+      company_name: req.local.name,
+      start_date: start_date,
+      end_date: end_date,
+      duration: duration,
+      domain: domain,
+      location: location,
+      companyId: req.local.id,
+      status: status,
+      internship_level: internship_level,
+      type: type
 
 
 
-      });
-  
-      const savedOffer = await newOffer.save();
-      if (savedOffer) {
-          res.status(200).send(newOffer);
-      }
-  
+    });
+
+    const savedOffer = await newOffer.save();
+    if (savedOffer) {
+      res.status(200).send(newOffer);
+    }
+
   } catch (err) {
-     next(err);
+    next(err);
   }
-}; 
+};
 
 
 //delete offer 
@@ -66,49 +67,49 @@ const deleteOfferById = async (req, res, next) => {
 
 
 
-  // update offer 
-  const updateOfferById = async (req, res, next) => {
-    const offerId = req.params.id;
-    const {title, description, technology, internship_level ,domain, duration,location,status,start_date,end_date,type} = req.body;
-  
-    try {
-      if (req.local.type != 'company') {
-        throw new Error('You are not authorized to update this offer');
-      }
-  
-      const offer = await Offer.findByPk(offerId);
-      if (!offer) {
-        throw new Error(`Offer with ID ${offerId} not found`);
-      }
-  
-      if (req.local.id !== offer.companyId) {
-        throw new Error('You are not authorized to update this offer');
-      }
-  
-      const updatedOffer = await offer.update({
-        title: title,
-        description: description,
-        technology: technology,
-        company_name: req.local.name,
-        start_date: start_date,
-        end_date: end_date,
-        duration : duration,
-        domain: domain,
-        location: location,
-        companyId : req.local.id,
-        status:status,
-        internship_level:internship_level ,
-        type:type
+// update offer 
+const updateOfferById = async (req, res, next) => {
+  const offerId = req.params.id;
+  const { title, description, technology, internship_level, domain, duration, location, status, start_date, end_date, type } = req.body;
 
-      });
-  
-      res.status(200).send(updatedOffer);
-  
-    } catch (err) {
-      next(err);
+  try {
+    if (req.local.type != 'company') {
+      throw new Error('You are not authorized to update this offer');
     }
-  };
-  
+
+    const offer = await Offer.findByPk(offerId);
+    if (!offer) {
+      throw new Error(`Offer with ID ${offerId} not found`);
+    }
+
+    if (req.local.id !== offer.companyId) {
+      throw new Error('You are not authorized to update this offer');
+    }
+
+    const updatedOffer = await offer.update({
+      title: title,
+      description: description,
+      technology: technology,
+      company_name: req.local.name,
+      start_date: start_date,
+      end_date: end_date,
+      duration: duration,
+      domain: domain,
+      location: location,
+      companyId: req.local.id,
+      status: status,
+      internship_level: internship_level,
+      type: type
+
+    });
+
+    res.status(200).send(updatedOffer);
+
+  } catch (err) {
+    next(err);
+  }
+};
+
 ////////////////////functiotogetalloffers//////////////
 // get all offers
 const getOffers = async (req, res, next) => {
@@ -134,7 +135,7 @@ const getOfferById = async (req, res, next) => {
     if (req.local.type != 'student') {
       throw new Error('You are not authorized to see offers');
     }
-    
+
     const foundOffer = await Offer.findOne({ where: { id: offerId } });
     if (!foundOffer) {
       throw new Error(`Offer with ID ${offerId} not found`);
@@ -173,53 +174,69 @@ const getOffersByCompanyId = async (req, res, next) => {
 };
 
 
+const searchOffers = async (req, res, next) => {
+  const { time } = req.query;
 
+  try {
+    if (req.local.type != 'student ') {
+      throw new Error('You are not authorized to search of offer ');
+    }
+
+    let offers;
+
+    if (time) {
+      offers = await Offer.findAll({
+        where: {
+          time: time.toLowerCase() // Assurez-vous que les valeurs du tableau "time" sont en minuscules dans votre base de données
+        }
+      });
+    } else {
+      offers = await Offer.findAll();
+    }
+
+    res.status(200).json(offers);
+  } catch (err) {
+    next(err);
+  }
+};
 
 
 
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////:::
-const searchInOffers =async function(req, res){
-    try {
-        const { domain, speciality, location } = req.query;
-    let whereClause = {};
-  console.log(whereClause);
-    if (domain) {
-      whereClause.domain = domain;
-    }
-  
-    else if (speciality) {
-      whereClause.technology = speciality;
-    }
-  
-    else if (location) {
-      whereClause.location = location;
-    }
-  
-      const foundOffers = await Offer.findAll({ where: whereClause });
-      res.json(foundOffers);
-    } catch (error) {
-      console.log('Error searching for offer:', error);
-      res.status(500).json({ message: 'Error searching for offer' });
-    }
-  }
+
 
 //getPopularOfferDiscover
 
-const getPopularOfferDiscover = async function(req,res,next){
-  try {
-    const offers = await Offer.findAll({
-      where: { popular: true },
-      attributes: ['title', 'description', 'technology', 'company_name'],
-      limit: 6,
-    });
-    res.status(200).json(offers);
-  } catch (error) {
-    next (error)
+  const getPopularOfferDiscover = async function (req, res, next) {
+    try {
+      const offers = await Offer.findAll({
+        where: { popular: true },
+        attributes: ['title', 'description', 'technology', 'company_name'],
+        limit: 6,
+      });
+      res.status(200).json(offers);
+    } catch (error) {
+      next(error)
 
- 
-  }
+
+    }
+  };
+const getPopularofferDiscoverDetails = async function (req,res,next){
+  const offerId = req.params.id;
+try{
+if ((req.local.type == 'student')|| (req.local.type =='company')){
+  throw new Error('You are not authorized to see offers');
+}
+const offers = await Offer.findAll({
+  where: { popular: true },
+  limit: 6,
+});
+res.status(200).json(offers);
+} catch (error) {
+next(error);
+}
 };
 
 
@@ -233,13 +250,18 @@ const getPopularOfferDiscover = async function(req,res,next){
 
 
 
-  module.exports = {addOffer,
-    deleteOfferById,
-    updateOfferById,
-     searchInOffers,
-     getOffers,
-     getOfferById,
-     getOffersByCompanyId,
-     getPopularOfferDiscover}
+
+
+module.exports = {
+  addOffer,
+  deleteOfferById,
+  updateOfferById,
+  searchOffers,
+  getOffers,
+  getOfferById,
+  getOffersByCompanyId,
+  getPopularOfferDiscover,
+  getPopularofferDiscoverDetails
+}
 
 

@@ -7,7 +7,7 @@ const addSkill = async (req, res, next) => {
 
   try {
     if (req.local.role != 'admin') {
-        
+
       throw new Error('You are not authorized to add skill');
     }
     const newSkill = new Skill({ name });
@@ -17,7 +17,7 @@ const addSkill = async (req, res, next) => {
       res.status(200).send(newSkill);
     }
   } catch (err) {
-     next(err);
+    next(err);
   }
 };
 const modifySkill = async (req, res, next) => {
@@ -26,9 +26,10 @@ const modifySkill = async (req, res, next) => {
 
   try {
     if (req.local.role != 'admin') {
-        
-      throw new Error('You are not authorized to update skill');}
-    const updatedSkill = await Skill.update({name}, { where: { id } });
+
+      throw new Error('You are not authorized to update skill');
+    }
+    const updatedSkill = await Skill.update({ name }, { where: { id } });
     if (updatedSkill[0] !== 0) {
       const skill = await Skill.findByPk(id);
       res.status(200).send(skill);
@@ -36,7 +37,7 @@ const modifySkill = async (req, res, next) => {
       res.status(404).send({ message: `Skill with ID ${id} not found.` });
     }
   } catch (err) {
-     next(message);
+    next(message);
   }
 };
 
@@ -45,8 +46,9 @@ const deleteSkill = async (req, res, next) => {
 
   try {
     if (req.local.role != 'admin') {
-        
-      throw new Error('You are not authorized to delete skill ');}
+
+      throw new Error('You are not authorized to delete skill ');
+    }
     const skill = await Skill.findByPk(id);
 
     if (skill) {
@@ -56,7 +58,7 @@ const deleteSkill = async (req, res, next) => {
       res.status(404).send(`Skill with ID ${id} not found.`);
     }
   } catch (err) {
-     next(err);
+    next(err);
   }
 };
 
@@ -64,8 +66,9 @@ const deleteSkill = async (req, res, next) => {
 const getSkills = async (req, res, next) => {
   try {
     if (req.local.role != 'admin') {
-        
-      throw new Error('You are not authorized to  get skills');}
+
+      throw new Error('You are not authorized to  get skills');
+    }
     const skills = await Skill.findAll();
 
     if (skills) {
@@ -74,13 +77,15 @@ const getSkills = async (req, res, next) => {
       res.status(404).send('No skills found.');
     }
   } catch (err) {
-     next(message);
+    next(message);
   }
 };
 
 
 
-module.exports = { addSkill,
-  getSkills, 
-modifySkill,deleteSkill, };
+module.exports = {
+  addSkill,
+  getSkills,
+  modifySkill, deleteSkill,
+};
 

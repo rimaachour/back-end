@@ -8,11 +8,12 @@ const authentication = require('../../middleware/authentication');
 router.post('/addOffer', authentication,offerController.addOffer);
 router.delete("/delete/:id",authentication,offerController.deleteOfferById);
 router.put("/update/:id",authentication,offerController.updateOfferById)
-router.get('/search',authentication, offerController.searchInOffers);
 router.get('/getOffers',authentication,offerController.getOffers);
 router.get('/getOfferById/:id',authentication,offerController.getOfferById);
 router.get('/getOfferById/:id',authentication,offerController.getOfferById);
 router.get('/getPopularOfferDiscover',offerController.getPopularOfferDiscover);
-router.get('/getOffersByCompanyId/:id',authentication,offerController.getOffersByCompanyId)
+router.get('/getOffersByCompanyId/:id',authentication,offerController.getOffersByCompanyId);
+router.get('/searchOffer',authentication,offerController.searchOffers),
+router.get('/getOfferDiscoverDetails',authentication,offerController.getPopularofferDiscoverDetails)
 module.exports = router;
 
