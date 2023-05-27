@@ -22,6 +22,7 @@ const Historique = require('../domains/Historique');
 const location = require('../domains/loaction');
 const Time = require('../domains/Time');
 const favorisOffers = require('../domains/favorisOffers');
+const domainOffers =require('../domains/domainOffer')
 router.use("/auth", auth);
 router.use("/admin", admin);
 router.use("/entreprise", entreprise);
@@ -43,4 +44,5 @@ router.use("/Historique",Historique);
 router.use("/location",location);
 router.use("/Time",Time);
 router.use("/favorisoffers",favorisOffers)
+router.use("/domainOffer",domainOffers)
 module.exports = router;

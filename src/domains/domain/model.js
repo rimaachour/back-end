@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes, HasMany } = require('sequelize');
 const sequelize = require('../../config/db');
-
+const Offer = require ('../offer/model')
 const Domain = sequelize.define('domains',{
   id: {
     type: Sequelize.INTEGER,
@@ -49,12 +49,13 @@ const Filiere = sequelize.define('filiere', {
 // Synchronize the model with the database and create the domains table if it doesn't exist
 
 Domain.associate = () => {
-  Domain.hasMany(Filiere);
+Domain.hasMany(Filiere);
 Filiere.belongsTo(Domain);
+
 }
 
 
-/*sequelize.sync({ force: true }).then(() => {
+/*sequelize.sync({ force: false}).then(() => {
   console.log('Tables created successfully');
 }).catch((err) => {
   console.error('Unable to create tables:', err);

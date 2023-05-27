@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/db');
 const Offer = require('../offer/model');
-
+const student = require('../student/model')
 const favorisOffers = sequelize.define('favorisOffers', {
   id: {
     type: DataTypes.INTEGER,
@@ -15,10 +15,18 @@ const favorisOffers = sequelize.define('favorisOffers', {
       model: Offer,
       key: 'id'
     }
-  }
+  },
+  studentId:{
+    type: DataTypes.INTEGER, // Corrected data type
+    allowNull: false,
+    references: {
+      model: student,
+      key: 'id'
+  }}
 });
 
 favorisOffers.belongsTo(Offer, { foreignKey: 'offerId' });
+favorisOffers.belongsTo(student,{foreignKey:'studentId'})
 
 sequelize.sync({ force: false }).then(() => {
   console.log('Tables created successfully');

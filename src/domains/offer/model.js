@@ -1,7 +1,10 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/db');
 const Company = require('../entreprise/model');
-
+const Domain = require('../domain/model');
+const location = require('../loaction/model')
+const Time = require('../Time/model');
+const domainOffer = require('../domainOffer/model');
 const Offer = sequelize.define('offers', {
   id: {
     type: Sequelize.INTEGER,
@@ -30,10 +33,7 @@ const Offer = sequelize.define('offers', {
     type: DataTypes.DATE,
     allowNull: false
   },
-  location: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
+
   internship_level: {
     type: Sequelize.STRING,
     allowNull: false
@@ -42,14 +42,7 @@ const Offer = sequelize.define('offers', {
     type: Sequelize.STRING,
     allowNull: false
   },
-type:{
-  type: Sequelize.STRING,
-    allowNull: false,
-},
-domain:{
-  type: Sequelize.STRING,
-    allowNull: false,
-},
+
 
   company_name: {
     type: Sequelize.STRING,
@@ -58,10 +51,38 @@ domain:{
   companyId: {
     type: Sequelize.INTEGER,
     allowNull: false,
-    
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
+    references: {
+      model: Company, // 'Actors' would also work
+      key: 'id'
+    }
   },
+  domainOfferId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    references: {
+      model: domainOffer, // 'Actors' would also work
+      key: 'id'
+    }
+  },
+
+  locationId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    references: {
+      model: location, // 'Actors' would also work
+      key: 'id'
+    }
+  },
+  TimeId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    references: {
+      model: Time, // 'Actors' would also work
+      key: 'id'
+    }
+  },
+
+
   status: {
     type: Sequelize.ENUM('active', 'inactive'),
     allowNull: false,
@@ -72,11 +93,23 @@ domain:{
     allowNull: false,
     defaultValue: false
   },
+
+
 }, {
   timestamps: false
 });
 
+Offer.associate = (models) => {
+  Company.hasMany(Offer);
+  Offer.belongsTo(Company);
+  location.hasMany(Offer);
+  Offer.belongsTo(location);
+  Time.hasMany(Offer);
+  Offer.belongsTo(Time);
+  domainOffer.hasMany(Offer);
+  Offer.belongsTo(domainOffer);
 
+};
 
 sequelize.sync({ force: false })
   .then(() => {

@@ -97,7 +97,7 @@ const Company = sequelize.define('companies', {
   timestamps: false,
 });
 
-    Company.hasMany(Offer, { as: 'companyId'});
+    //Company.hasMany(Offer, { as: 'companyId'});
 
 // Offer.belongsTo(Company, { foreignKey: 'companyId' });
 // Company.hasMany(Review, { as: 'CompanyReviews' });

@@ -1,20 +1,31 @@
 const { ERROR } = require("sqlite3");
 const { error } = require("../../helpers/studentValidation");
 const Offer = require("./model");
-const time = require("../Time/controller");
 const location = require("../loaction/model")
+const {domainOffer} = require("../domainOffer/model");
+const Time = require("../Time/model");
+
+
+
 const addOffer = async (req, res, next) => {
-  const { title, description, technology, internship_level, domain, duration, location, status, start_date, end_date, type } = req.body;
+  const { title, description, technology, internship_level, duration, status, start_date, end_date,domainOfferId, locationId, TimeId } = req.body;
 
   try {
     // Check if the user's role is company
-    //console.log(req.local.ty);
     if (req.local.type != 'company') {
-
       throw new Error('You are not authorized to add offers');
     }
 
-    const newOffer = new Offer({
+     const foundDomain = await domainOffer.findOne({ where: { id: domainOfferId }});
+     const foundLocation = await location.findOne({ where: { id:locationId }});
+    const foundTime = await Time.findOne({ where: { id:TimeId }});
+
+    if (!foundDomain || !foundLocation || !foundTime) {
+      throw new Error('Invalid domain, location, or time');
+    }
+
+    const newOffer = await Offer.create({
+      
       title: title,
       description: description,
       technology: technology,
@@ -22,26 +33,20 @@ const addOffer = async (req, res, next) => {
       start_date: start_date,
       end_date: end_date,
       duration: duration,
-      domain: domain,
-      location: location,
       companyId: req.local.id,
+      locationId: locationId,
+      TimeId: TimeId,
+      domainOfferId: domainOfferId,
       status: status,
       internship_level: internship_level,
-      type: type
-
-
-
     });
 
-    const savedOffer = await newOffer.save();
-    if (savedOffer) {
-      res.status(200).send(newOffer);
-    }
-
+    res.status(200).send(newOffer);
   } catch (err) {
     next(err);
   }
 };
+
 
 
 //delete offer 
@@ -112,20 +117,27 @@ const updateOfferById = async (req, res, next) => {
 
 ////////////////////functiotogetalloffers//////////////
 // get all offers
+
+
 const getOffers = async (req, res, next) => {
   try {
-    if (req.local.type != 'student') {
+    if (req.local.type !== 'student') {
       throw new Error('You are not authorized to see offers');
     }
+
     const offers = await Offer.findAll({
       where: { status: 'active' },
-      attributes: ['title', 'description', 'technology', 'company_name', 'duration', 'domain', 'location', 'companyId', 'status', 'internship_level', 'type']
+      include: {
+        model: Time, // Specify the associated model (assuming it is named "offer")
+      },
     });
+
     res.status(200).send(offers);
   } catch (err) {
     next(err);
   }
 };
+
 
 
 //getOffersByID 

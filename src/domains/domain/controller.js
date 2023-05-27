@@ -16,7 +16,7 @@ const addDomain = async (req, res, next) => {
     const newDomain = await Domain.create({ name });
     res.status(200).send(newDomain);
   } catch (err) {
-    return next(err.message);
+    return next(err);
   }
 };
 
