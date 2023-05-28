@@ -354,6 +354,24 @@ const getStudentProfileID = async (req, res, next) => {
 };
 
 
+const getPopularStudentProfiles = async (req, res, next) => {
+  try {
+    if (req.local.type !== 'company') {
+      throw new Error("You're not authorized to see student profiles");
+    }
+
+    const popularProfiles = await Student.findAll({
+      where: { popular: true },
+      limit: 6,
+      order: Sequelize.literal('random()'), // Retrieves random profiles
+    });
+
+    res.status(200).json(popularProfiles);
+  } catch (err) {
+    next(err);
+  }
+};
+
 
 
 
@@ -379,5 +397,6 @@ module.exports = {
   searchStudentBySkills,
   resendOtpCRegister,
   getStudentProfile,
-  getStudentProfileID
+  getStudentProfileID,
+  getPopularStudentProfiles
 };

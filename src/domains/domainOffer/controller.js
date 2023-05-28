@@ -1,4 +1,4 @@
-const {domainOffer} = require ('./model')
+const domainOffer = require ('./model')
 
 
 const addDomainOffer = async (req, res, next) => {

@@ -32,5 +32,6 @@ router.get('/search', authentication, async (req, res, next) => {
 router.post('/ResendOtpCRegister', entrepriseController.resendOtpCRegister);
  router.get('/getprofiles', authentication,entrepriseController.getStudentProfile),
  router.get('/getStudentprofilesID/:id', authentication,entrepriseController.getStudentProfileID),
+ router.get('/getPopularProfileStudent',authentication,entrepriseController.getPopularStudentProfiles)
 
 module.exports = router;

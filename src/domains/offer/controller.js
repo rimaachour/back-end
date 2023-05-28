@@ -2,8 +2,9 @@ const { ERROR } = require("sqlite3");
 const { error } = require("../../helpers/studentValidation");
 const Offer = require("./model");
 const location = require("../loaction/model")
-const {domainOffer} = require("../domainOffer/model");
+const domainOffer = require("../domainOffer/model");
 const Time = require("../Time/model");
+const { Op } = require('sequelize');
 
 
 
@@ -18,9 +19,9 @@ const addOffer = async (req, res, next) => {
 
      const foundDomain = await domainOffer.findOne({ where: { id: domainOfferId }});
      const foundLocation = await location.findOne({ where: { id:locationId }});
-    const foundTime = await Time.findOne({ where: { id:TimeId }});
+   
 
-    if (!foundDomain || !foundLocation || !foundTime) {
+    if (!foundDomain || !foundLocation ) {
       throw new Error('Invalid domain, location, or time');
     }
 
@@ -35,7 +36,7 @@ const addOffer = async (req, res, next) => {
       duration: duration,
       companyId: req.local.id,
       locationId: locationId,
-      TimeId: TimeId,
+     
       domainOfferId: domainOfferId,
       status: status,
       internship_level: internship_level,
@@ -127,10 +128,13 @@ const getOffers = async (req, res, next) => {
 
     const offers = await Offer.findAll({
       where: { status: 'active' },
-      include: {
-        model: Time, // Specify the associated model (assuming it is named "offer")
-      },
+      include: [
+        { model: domainOffer, as: 'domainOffer' },
+        { model: location, as: 'location' },
+      
+      ],
     });
+    
 
     res.status(200).send(offers);
   } catch (err) {
@@ -143,16 +147,25 @@ const getOffers = async (req, res, next) => {
 //getOffersByID 
 const getOfferById = async (req, res, next) => {
   const offerId = req.params.id;
+
   try {
-    if (req.local.type != 'student') {
+    if (req.local.type !== 'student') {
       throw new Error('You are not authorized to see offers');
     }
 
-    const foundOffer = await Offer.findOne({ where: { id: offerId } });
-    if (!foundOffer) {
-      throw new Error(`Offer with ID ${offerId} not found`);
+    const offer = await Offer.findByPk(offerId, {
+      include: [
+        { model: domainOffer, as: 'domainOffer' },
+        { model: location, as: 'location' },
+      
+      ],
+    });
+
+    if (!offer) {
+      throw new Error('Offer not found');
     }
-    res.status(200).send(foundOffer);
+
+    res.status(200).send(offer);
   } catch (err) {
     next(err);
   }
@@ -164,26 +177,33 @@ const getOfferById = async (req, res, next) => {
 
 const getOffersByCompanyId = async (req, res, next) => {
   const companyId = req.params.id;
+
   try {
     if (req.local.type !== 'company') {
       throw new Error('You are not authorized to see offers');
     }
 
-    const foundOffers = await Offer.findAll({
+    const offers = await Offer.findAll({
       where: {
-        companyId: companyId
-      }
+        companyId: companyId,
+      },
+      include: [
+        { model: domainOffer, as: 'domainOffer' },
+        { model: location, as: 'location' },
+     
+      ],
     });
 
-    if (foundOffers.length === 0) {
+    if (offers.length === 0) {
       throw new Error(`No offers found for company with ID ${companyId}`);
     }
 
-    res.status(200).json(foundOffers);
+    res.status(200).json(offers);
   } catch (err) {
     next(err);
   }
 };
+
 
 
 const searchOffers = async (req, res, next) => {
@@ -253,6 +273,37 @@ next(error);
 
 
 
+const getPopularOffers = async (req, res, next) => {
+  try {
+    if (req.local.type !== 'student') {
+      throw new Error('You are not authorized to see offers');
+    }
+
+    const offers = await Offer.findAll({
+      where: { 
+        status: 'active',
+        popular: true,
+      },
+      include: [
+        { model: domainOffer, as: 'domainOffer' },
+        { model: location, as: 'location' },
+   
+      ],
+    });
+
+    // Shuffle the offers array randomly
+    const shuffledOffers = offers.sort(() => Math.random() - 0.5);
+
+    // Take the first 3 offers from the shuffled array
+    const randomOffers = shuffledOffers.slice(0, 3);
+
+    res.status(200).json(randomOffers);
+  } catch (error) {
+    next(error);
+  }
+};
+ 
+
 
 
 
@@ -273,7 +324,8 @@ module.exports = {
   getOfferById,
   getOffersByCompanyId,
   getPopularOfferDiscover,
-  getPopularofferDiscoverDetails
+  getPopularofferDiscoverDetails,
+  getPopularOffers
 }
 
 

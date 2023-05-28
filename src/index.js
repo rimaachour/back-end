@@ -47,7 +47,7 @@ dbConnection.authenticate()
     console.log("connection has been established Successfully");
   })
   .then(() => {
-    addAdmin()
+   // addAdmin()
   })
   .catch((err) => console.error("unable to connect database", err))
 

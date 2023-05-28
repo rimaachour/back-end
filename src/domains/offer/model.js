@@ -3,7 +3,7 @@ const sequelize = require('../../config/db');
 const Company = require('../entreprise/model');
 const Domain = require('../domain/model');
 const location = require('../loaction/model')
-const Time = require('../Time/model');
+
 const domainOffer = require('../domainOffer/model');
 const Offer = sequelize.define('offers', {
   id: {
@@ -73,14 +73,7 @@ const Offer = sequelize.define('offers', {
       key: 'id'
     }
   },
-  TimeId: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-    references: {
-      model: Time, // 'Actors' would also work
-      key: 'id'
-    }
-  },
+
 
 
   status: {
@@ -93,8 +86,10 @@ const Offer = sequelize.define('offers', {
     allowNull: false,
     defaultValue: false
   },
-
-
+type:{
+  type: Sequelize.STRING,
+  allowNull: false
+},
 }, {
   timestamps: false
 });
@@ -102,16 +97,13 @@ const Offer = sequelize.define('offers', {
 Offer.associate = (models) => {
   Company.hasMany(Offer);
   Offer.belongsTo(Company);
-  location.hasMany(Offer);
-  Offer.belongsTo(location);
-  Time.hasMany(Offer);
-  Offer.belongsTo(Time);
-  domainOffer.hasMany(Offer);
-  Offer.belongsTo(domainOffer);
-
 };
 
-sequelize.sync({ force: false })
+Offer.belongsTo(domainOffer, { foreignKey: 'domainOfferId' });
+Offer.belongsTo(location, { foreignKey: 'locationId' });
+
+
+sequelize.sync({ force: true })
   .then(() => {
     console.log('Offer table created successfully.');
   })
