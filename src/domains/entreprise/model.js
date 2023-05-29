@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/db');
 const Review = require('../reviews/model');
 const Offer = require('../offer/model')
-
+const Favoris = require('../favoriteProfiles/model')
 const Company = sequelize.define('companies', {
   id: {
     type: Sequelize.INTEGER,
@@ -98,7 +98,7 @@ const Company = sequelize.define('companies', {
 });
 
     //Company.hasMany(Offer, { as: 'companyId'});
-
+    Favoris.belongsTo(Company, { foreignKey: 'companyId' });
 // Offer.belongsTo(Company, { foreignKey: 'companyId' });
 // Company.hasMany(Review, { as: 'CompanyReviews' });
 

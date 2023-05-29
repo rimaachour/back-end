@@ -1,15 +1,14 @@
 const { ERROR } = require("sqlite3");
 const { error } = require("../../helpers/studentValidation");
 const Offer = require("./model");
-const location = require("../loaction/model")
+const location= require("../loaction/model")
 const domainOffer = require("../domainOffer/model");
-const Time = require("../Time/model");
 const { Op } = require('sequelize');
 
 
 
 const addOffer = async (req, res, next) => {
-  const { title, description, technology, internship_level, duration, status, start_date, end_date,domainOfferId, locationId, TimeId } = req.body;
+const { title, description, technology, internship_level, status, start_date, end_date, domainOfferId, locationId, type } = req.body;
 
   try {
     // Check if the user's role is company
@@ -17,26 +16,33 @@ const addOffer = async (req, res, next) => {
       throw new Error('You are not authorized to add offers');
     }
 
-     const foundDomain = await domainOffer.findOne({ where: { id: domainOfferId }});
-     const foundLocation = await location.findOne({ where: { id:locationId }});
-   
+    const foundDomain = await domainOffer.findOne({ where: { id: domainOfferId } });
+      const foundLocation = await location.findOne({ where: { id: locationId } });
+    
 
-    if (!foundDomain || !foundLocation ) {
+    if (!foundDomain || !foundLocation) {
       throw new Error('Invalid domain, location, or time');
     }
+    // Calculate duration in months
+    const startDate = new Date(start_date);
+    const endDate = new Date(end_date);
+    const startYear = startDate.getFullYear();
+    const startMonth = startDate.getMonth();
+    const endYear = endDate.getFullYear();
+    const endMonth = endDate.getMonth();
+    const durationInMonths = (endYear - startYear) * 12 + (endMonth - startMonth) + 1;
 
     const newOffer = await Offer.create({
-      
       title: title,
       description: description,
       technology: technology,
       company_name: req.local.name,
       start_date: start_date,
       end_date: end_date,
-      duration: duration,
+      duration: durationInMonths,
       companyId: req.local.id,
       locationId: locationId,
-     
+      type: type,
       domainOfferId: domainOfferId,
       status: status,
       internship_level: internship_level,
@@ -50,71 +56,84 @@ const addOffer = async (req, res, next) => {
 
 
 
+
 //delete offer 
 const deleteOfferById = async (req, res, next) => {
-  const offerId = req.params.id;
-  try {
-    if (req.local.type != 'company') {
-      throw new Error('You are not authorized to delete offers');
+ 
+    const offerId  = req.params.id;
+  
+    try {
+      // Check if the user's role is company
+      if (req.local.type != 'company') {
+        throw new Error('You are not authorized to delete offers');
+      }
+  
+      const foundOffer = await Offer.findOne({ where: { id: offerId } });
+  
+      if (!foundOffer) {
+        throw new Error('Offer not found');
+      }
+  
+      await foundOffer.destroy();
+  
+      res.status(200).send({ message: 'Offer deleted successfully' });
+    } catch (err) {
+      next(err);
     }
-
-    const deletedOffer = await Offer.destroy({ where: { id: offerId } });
-    if (!deletedOffer) {
-      throw new Error(`Offer with ID ${offerId} not found`);
-    }
-    // if (req.local.type !== deletedOffer.companyId) {
-    //   throw new Error('you cannot delete this offer');
-    // }
-    res.status(200).send(`Offer with ID ${offerId} has been deleted`);
-  } catch (err) {
-    next(err);
-  }
-};
+  };
+  
 
 
 
 // update offer 
-const updateOfferById = async (req, res, next) => {
-  const offerId = req.params.id;
-  const { title, description, technology, internship_level, domain, duration, location, status, start_date, end_date, type } = req.body;
+const updateOffer = async (req, res, next) => {
+  const offerId  = req.params.id;
+  const { title, description, technology, internship_level, status, start_date, end_date, domainOfferId, locationId, type } = req.body;
 
   try {
-    if (req.local.type != 'company') {
-      throw new Error('You are not authorized to update this offer');
+    // Check if the user's role is company
+    if (req.local.type !== 'company') {
+      throw new Error('You are not authorized to update offers');
     }
 
-    const offer = await Offer.findByPk(offerId);
-    if (!offer) {
-      throw new Error(`Offer with ID ${offerId} not found`);
+    const foundOffer = await Offer.findOne({ where: { id: offerId } });
+
+    if (!foundOffer) {
+      throw new Error('Offer not found');
     }
 
-    if (req.local.id !== offer.companyId) {
-      throw new Error('You are not authorized to update this offer');
-    }
+    // Update the offer properties
+    foundOffer.title = title;
+    foundOffer.description = description;
+    foundOffer.technology = technology;
+    foundOffer.internship_level = internship_level;
+    foundOffer.status = status;
+    foundOffer.start_date = start_date;
+    foundOffer.end_date = end_date;
+    foundOffer.domainOfferId = domainOfferId;
+    foundOffer.locationId = locationId;
+    foundOffer.type = type;
 
-    const updatedOffer = await offer.update({
-      title: title,
-      description: description,
-      technology: technology,
-      company_name: req.local.name,
-      start_date: start_date,
-      end_date: end_date,
-      duration: duration,
-      domain: domain,
-      location: location,
-      companyId: req.local.id,
-      status: status,
-      internship_level: internship_level,
-      type: type
+    // Calculate duration in months
+    const startDate = new Date(start_date);
+    const endDate = new Date(end_date);
+    const startYear = startDate.getFullYear();
+    const startMonth = startDate.getMonth();
+    const endYear = endDate.getFullYear();
+    const endMonth = endDate.getMonth();
+    const durationInMonths = (endYear - startYear) * 12 + (endMonth - startMonth) + 1;
 
-    });
+    foundOffer.duration = durationInMonths;
 
-    res.status(200).send(updatedOffer);
+    await foundOffer.save();
 
+    res.status(200).send(foundOffer);
   } catch (err) {
     next(err);
   }
 };
+
+
 
 ////////////////////functiotogetalloffers//////////////
 // get all offers
@@ -131,10 +150,10 @@ const getOffers = async (req, res, next) => {
       include: [
         { model: domainOffer, as: 'domainOffer' },
         { model: location, as: 'location' },
-      
+
       ],
     });
-    
+
 
     res.status(200).send(offers);
   } catch (err) {
@@ -157,7 +176,7 @@ const getOfferById = async (req, res, next) => {
       include: [
         { model: domainOffer, as: 'domainOffer' },
         { model: location, as: 'location' },
-      
+
       ],
     });
 
@@ -190,7 +209,7 @@ const getOffersByCompanyId = async (req, res, next) => {
       include: [
         { model: domainOffer, as: 'domainOffer' },
         { model: location, as: 'location' },
-     
+
       ],
     });
 
@@ -241,35 +260,50 @@ const searchOffers = async (req, res, next) => {
 
 //getPopularOfferDiscover
 
-  const getPopularOfferDiscover = async function (req, res, next) {
-    try {
-      const offers = await Offer.findAll({
-        where: { popular: true },
-        attributes: ['title', 'description', 'technology', 'company_name'],
-        limit: 6,
-      });
-      res.status(200).json(offers);
-    } catch (error) {
-      next(error)
+const getPopularOfferDiscover = async function (req, res, next) {
+  try {
+    const offers = await Offer.findAll({
+      where: { popular: true },
+      attributes: ['title', 'description', 'technology', 'company_name'],
+      limit: 6,
+    });
+    res.status(200).json(offers);
+  } catch (error) {
+    next(error)
 
 
-    }
-  };
-const getPopularofferDiscoverDetails = async function (req,res,next){
-  const offerId = req.params.id;
-try{
-if ((req.local.type == 'student')|| (req.local.type =='company')){
-  throw new Error('You are not authorized to see offers');
-}
-const offers = await Offer.findAll({
-  where: { popular: true },
-  limit: 6,
-});
-res.status(200).json(offers);
-} catch (error) {
-next(error);
-}
+  }
 };
+
+
+const getPopularofferDiscoverDetails = async function (req, res, next) {
+  const offerId = req.params.id;
+  try {
+    if ((req.local.type != 'student')||( req.local.type != 'company')){
+      throw new Error('You are not authorized to see offers');
+    }
+
+    const offers = await Offer.findAll({
+      where: { popular: true },
+      limit: 6,
+      include: [
+        {
+          model: domainOffer,
+          as: 'domainOffer',
+        },
+        {
+          model: location,
+          as: 'location',
+        },
+      ],
+    });
+
+    res.status(200).json(offers);
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 
 
@@ -280,14 +314,14 @@ const getPopularOffers = async (req, res, next) => {
     }
 
     const offers = await Offer.findAll({
-      where: { 
+      where: {
         status: 'active',
         popular: true,
       },
       include: [
         { model: domainOffer, as: 'domainOffer' },
         { model: location, as: 'location' },
-   
+
       ],
     });
 
@@ -302,7 +336,7 @@ const getPopularOffers = async (req, res, next) => {
     next(error);
   }
 };
- 
+
 
 
 
@@ -318,7 +352,7 @@ const getPopularOffers = async (req, res, next) => {
 module.exports = {
   addOffer,
   deleteOfferById,
-  updateOfferById,
+  updateOffer,
   searchOffers,
   getOffers,
   getOfferById,

@@ -3,7 +3,6 @@ const sequelize = require('../../config/db');
 const Company = require('../entreprise/model');
 const Domain = require('../domain/model');
 const location = require('../loaction/model')
-
 const domainOffer = require('../domainOffer/model');
 const Offer = sequelize.define('offers', {
   id: {
@@ -103,7 +102,7 @@ Offer.belongsTo(domainOffer, { foreignKey: 'domainOfferId' });
 Offer.belongsTo(location, { foreignKey: 'locationId' });
 
 
-sequelize.sync({ force: true })
+sequelize.sync({ force: false })
   .then(() => {
     console.log('Offer table created successfully.');
   })

@@ -46,7 +46,8 @@ const getAllProfiles = async (req, res, next) => {
 
 const getAllProfilesByCompanyId = async (req, res, next) => {
   const companyId = req.local.id;
-  
+  //  const studentId =req.local.id;
+
    // Assuming companyId is available in req.local
   try {
     if (req.local.type !== 'company') {
@@ -55,19 +56,16 @@ const getAllProfilesByCompanyId = async (req, res, next) => {
 
     const profiles = await Favoris.findAll({
        where: { companyId,
-       
+        // studentId
+
   },
-  include : Student
+    include : Student
    });
     res.status(200).json(profiles);
   } catch (error) {
     next(error);
   }
 };
-
-
-
-////////////removefavorite///////////////////
 
 
 

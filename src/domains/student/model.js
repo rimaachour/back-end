@@ -9,7 +9,7 @@ const company = require('../entreprise/model')
 const { compareSync } = require('bcrypt');
 const Company = require('../entreprise/model');
 const Filiere =require('../filiere/model');
-const Profiles = require('../favoriteProfiles/model')
+const Favoris = require('../favoriteProfiles/model')
 
 const Student = sequelize.define('students', {
   id: {
@@ -153,7 +153,7 @@ studyEstablishment: {
     defaultValue: false
   },
   DateExperience:{
-type:Sequelize.DATE,
+type:Sequelize.STRING,
 allowNull: true,
   },
   TitreExperience:{
@@ -215,7 +215,7 @@ Company.belongsToMany(Student, { through: Profiles });
  Company.belongsToMany(Student, { through: 'reviews' });
 
 };
-
+Favoris.belongsTo(Student,{foreignKey:'studentId'})
 sequelize.sync({ force: false }).then(() => {
   console.log('Tables created successfully');
 }).catch((err) => {

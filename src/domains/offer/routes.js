@@ -7,13 +7,13 @@ const authentication = require('../../middleware/authentication');
 
 router.post('/addOffer', authentication,offerController.addOffer);
 router.delete("/delete/:id",authentication,offerController.deleteOfferById);
-router.put("/update/:id",authentication,offerController.updateOfferById)
+router.put("/update/:id",authentication,offerController.updateOffer)
 router.get('/getOffers',authentication,offerController.getOffers);
 router.get('/getOfferById/:id',authentication,offerController.getOfferById);
 router.get('/getPopularOfferDiscover',offerController.getPopularOfferDiscover);
 router.get('/getOffersByCompanyId/:id',authentication,offerController.getOffersByCompanyId);
 router.get('/searchOffer',authentication,offerController.searchOffers),
-router.get('/getOfferDiscoverDetails',authentication,offerController.getPopularofferDiscoverDetails),
+router.get('/getOfferDiscoverDetails/:id',authentication,offerController.getPopularofferDiscoverDetails),
 router.get('/getPopularOffer',authentication,offerController.getPopularOffers)
 module.exports = router;
 

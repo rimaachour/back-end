@@ -1,12 +1,12 @@
 const { Op } = require('sequelize');
 const { generateOTP } = require('../../helpers/OTP');
 const { mail } = require('../../helpers/mailer');
-const Student= require('../student/model')
+const Student = require('../student/model')
 const Offer = require('../offer/model');
 const Time = require('../Time/model');
-const Location=require('../loaction/model');
+const Location = require('../loaction/model');
 const domain = require('../domain/model')
-const studentValidation= require('../../helpers/studentValidation')
+const studentValidation = require('../../helpers/studentValidation')
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const Skill = require('../skills/model')
@@ -59,13 +59,13 @@ const registerUser = async (req, res, next) => {
       role: "student",
       OTP: otp,
       status: 'pending activation'
-    }); 
+    });
 
     await mail(newUser.email, 'otp', otp);
     await newUser.save();
 
     res.status(200).json({ user: newUser, status: true, message: "Student added successfully" });
-      
+
   } catch (err) {
     next(err);
     console.log(err.message);
@@ -75,55 +75,56 @@ const registerUser = async (req, res, next) => {
 
 // function verification OTP
 
-async function verifyOTP(req, res,next) {
-  const { email, OTP} = req.body;
+async function verifyOTP(req, res, next) {
+  const { email, OTP } = req.body;
 
   try {
-  const student = await Student.findOne({ where: {email: email} });
-  if (!student) {
-    throw new Error('Student not found' );
-  }
+    const student = await Student.findOne({ where: { email: email } });
+    if (!student) {
+      throw new Error('Student not found');
+    }
 
-  if (student.status ==='active') {
-    throw new Error('Student already verified' );
-  }
+    if (student.status === 'active') {
+      throw new Error('Student already verified');
+    }
     if (student.OTP != +OTP) {
-      throw new Error('OTP not verified');}
-student.status ='active';
-      await student.save();
+      throw new Error('OTP not verified');
+    }
+    student.status = 'active';
+    await student.save();
     res.status(200).json({ status: true, message: 'OTP verified' });
-    
+
   } catch (error) {
     next(error);
   }
 }
 
 ///////////////////////////////ResendOTPRegister//////////////////////
-async function resendOtpSRegister(req, res ,next) {
+async function resendOtpSRegister(req, res, next) {
   const { email } = req.body;
 
 
   try {
-    
-  const user = await Student.findOne({ where: { email } });
-  if (!user) {
-    throw new Error ('User not found' );
-  }
 
-  if (user.isVerified) {
-    throw new Error('User already verified' );
-  }
+    const user = await Student.findOne({ where: { email } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    if (user.isVerified) {
+      throw new Error('User already verified');
+    }
     const otp = await generateOTP(); // Generate OTP
     user.OTP = otp;
     await user.save();
     await mail(user.email, "OTP Verification", `Your OTP is ${otp}`);
-     res.status(200).json({
+    res.status(200).json({
       status: true,
       message: 'New OTP sent to your email',
     });
   } catch (error) {
     next(error)
-    
+
   }
 }
 // 2. get all students
@@ -133,39 +134,39 @@ const getAllStudents = async (req, res) => {
     const user = req.local;
     const students = await Student.findAll({
       attributes: ["id",
-      "name",
-      "firstname",
-      "LastName",
-      "email",
-      "role",
-      "file",
-      "Number",
-      "streetAdress",
-      "city",
-      "state",
-      "Postal",
-      "Fb",
-      "LinkedIn",
-      "GitHub",
-      "LinkedIn",
-      "WhatsApp",
-      "bio",
-      "studyEstablishment",
-      "status",
-      "studyfield",
-      "DateExperience",
-      "TitreExperience",
-      "PlaceExperience",
-      "descriptionExperience",
-      "projectName",
-      "startDate",
-      "finDate",
-      "projectStatus"
-    ]
+        "name",
+        "firstname",
+        "LastName",
+        "email",
+        "role",
+        "file",
+        "Number",
+        "streetAdress",
+        "city",
+        "state",
+        "Postal",
+        "Fb",
+        "LinkedIn",
+        "GitHub",
+        "LinkedIn",
+        "WhatsApp",
+        "bio",
+        "studyEstablishment",
+        "status",
+        "studyfield",
+        "DateExperience",
+        "TitreExperience",
+        "PlaceExperience",
+        "descriptionExperience",
+        "projectName",
+        "startDate",
+        "finDate",
+        "projectStatus"
+      ]
     });
     // again ?
-    res.status(200).json({students,user});
-  } catch (err)  {
+    res.status(200).json({ students, user });
+  } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
   }
@@ -223,19 +224,19 @@ const deleteStudentById = async (req, res) => {
   }
 };
 const updateUser = async (req, res, next) => {
-  
+
   const data = req.body; // Get the data from the request body
 
-  
+
   try {
     const { id } = req.params; // Get the user ID from the request parameters
-    if((req.local.id != req.params.id)||(req.local.type !='student')){
+    if ((req.local.id != req.params.id) || (req.local.type != 'student')) {
       throw new Error("You can't update this user")
     }
     const user2 = await Student.findOne({
       where: { id: id }
     })
-  
+
     if (!user2) {
       throw new Error('User not found');
     }
@@ -258,16 +259,16 @@ const updateUser = async (req, res, next) => {
     user2.GitHub = data.GitHub;
     user2.file = data.file;
     user2.LinkedIn = data.LinkedIn;
-    user2.studyEstablishment= data.studyEstablishment;
-    user2.studyfield= data.studyfield
-    user2.DateExperience=data.DateExperience,
-    user2.TitreExperience=data.TitreExperience,
-    user2.PlaceExperience=data.PlaceExperience,
-    user2.descriptionExperience=data.descriptionExperience,
-    user2.projectName=data.projectName,
-    user2.startDate=data.startDate,
-    user2.finDate=data.finDate,
-    user2.projectStatus=data.projectStatus
+    user2.studyEstablishment = data.studyEstablishment;
+    user2.studyfield = data.studyfield
+    user2.DateExperience = data.DateExperience,
+      user2.TitreExperience = data.TitreExperience,
+      user2.PlaceExperience = data.PlaceExperience,
+      user2.descriptionExperience = data.descriptionExperience,
+      user2.projectName = data.projectName,
+      user2.startDate = data.startDate,
+      user2.finDate = data.finDate,
+      user2.projectStatus = data.projectStatus
     await user2.save();
     res.status(200).send('Data updated successfully');
   } catch (err) {
@@ -277,10 +278,10 @@ const updateUser = async (req, res, next) => {
 
 // get all the data 
 const getProfile = async (req, res, next) => {
-  const {id} = req.params;
+  const { id } = req.params;
 
   try {
-    if((req.local.id != req.params.id)||(req.local.type !='student')){
+    if ((req.local.id != req.params.id) || (req.local.type != 'student')) {
       throw new Error("You can't update this user")
     }
     const user2 = await Student.findOne({ where: { id } });
@@ -289,7 +290,7 @@ const getProfile = async (req, res, next) => {
     }
 
     const userData = {
-      name : user2.name,
+      name: user2.name,
       id: user2.id,
       firstname: user2.firstname,
       LastName: user2.LastName,
@@ -306,17 +307,18 @@ const getProfile = async (req, res, next) => {
       WhatsApp: user2.WhatsApp,
       bio: user2.bio,
       file: user2.file,
-      LinkedIn:user2.LinkedIn,
-      studyEstablishment:user2.studyEstablishment,
-      studyfield:user2.studyfield,
-      DateExperience:user2.DateExperience,
-      TitreExperience:user2.TitreExperience,
-      PlaceExperience:user2.PlaceExperience,
-      descriptionExperience:user2.descriptionExperience,
-      projectName:user2.projectName,
-      startDate:user2.startDate,
-      finDate:user2.finDate,
-      projectStatus:user2.projectStatus,
+      LinkedIn: user2.LinkedIn,
+      studyEstablishment: user2.studyEstablishment,
+      studyfield: user2.studyfield,
+      DateExperience: user2.DateExperience,
+      TitreExperience: user2.TitreExperience,
+      PlaceExperience: user2.PlaceExperience,
+      descriptionExperience: user2.descriptionExperience,
+      projectName: user2.projectName,
+      startDate: user2.startDate,
+      
+      finDate: user2.finDate,
+      projectStatus: user2.projectStatus,
 
     };
 
@@ -330,31 +332,31 @@ const getProfile = async (req, res, next) => {
 
 
 /// searchOffer////////////
-const serachofferDomain = async (req,res,next)=>{
-  const {domain, location, type} = req.query;
-  try{
-    const offres= await Offer.findAll({
-      where:{
+const serachofferDomain = async (req, res, next) => {
+  const { domain, location, type } = req.query;
+  try {
+    const offres = await Offer.findAll({
+      where: {
         [Op.and]: [
-          domain ?{
+          domain ? {
             domain
-          }: {},
-          location ?{
+          } : {},
+          location ? {
             location
-          }: {},
-          type ?{
+          } : {},
+          type ? {
             type
-          }: {},
+          } : {},
         ]
       },
-    }) 
-res.json(offres);
+    })
+    res.json(offres);
   }
-  catch(error){
+  catch (error) {
     console.log(error);
     //res.status(500).json({ error: 'Une erreur s\'est produite.' });
     next(error);
-}
+  }
 
 }
 
@@ -373,8 +375,8 @@ module.exports = {
   serachofferDomain,
   resendOtpSRegister,
   getProfile,
-  
-  
+
+
 
 
 }
