@@ -6,7 +6,7 @@ const authentication = require('../../middleware/authentication');
 router.post('/addSkills',authentication,skillController.addSkill);
 router.put('/modifySkill/:id',authentication,skillController.modifySkill);
 router.delete('/deleteSkill/:id',authentication,skillController.deleteSkill);
-router.get('/',authentication,skillController.getSkills);
+router.get('/getSkill',authentication,skillController.getSkills);
 
 
 module.exports = router;

@@ -12,7 +12,7 @@ const StudentSkill =  sequelize.define('StudentSkill', {
         unique: true
       },
     percentage: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false
       },
       studentId:{
@@ -42,10 +42,10 @@ const StudentSkill =  sequelize.define('StudentSkill', {
 
 
     StudentSkill.associate  = () =>{
-      Skill.hasMany(StudentSkill);
+  
       Student.hasMany(StudentSkill);
       StudentSkill.belongsTo(Student);
-      StudentSkill.belongsTo(Skill);
+    
     }
 
 

@@ -1,21 +1,22 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../../config/db');
 const Student = require('../student/model')
-
+const StudentSkill =require('../StudentSkill/model')
 const Skill = sequelize.define('Skill', {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true
     },
-    name: {
+    nameskill: {
       type: DataTypes.STRING,
       allowNull: false
     },
    
   });
   
- 
+ StudentSkill.belongsTo(Skill, { foreignKey: 'skillId', as: 'Skill' });
+
   // Student.belongsToMany(Skill, {
   //   through: {
   //     model: 'StudentSkill',

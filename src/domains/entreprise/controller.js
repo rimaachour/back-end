@@ -190,7 +190,7 @@ async function verifyOTP1(req, res, next) {
 
 
 ///////////////////////getCompagny///////////////////////////////////////////
-const getEntreprise = async (req, res) => {
+const getEntreprise = async (req,res,next) => {
 const{id}=req.params;
 
   try {
@@ -219,7 +219,7 @@ if(!user1){
     };
     return res.status(200).json(userData);
   } catch (err) {
-    return next(err);
+     next(err);
   }
 };
 // const getEntrepriseByName = async (req, res) => {

@@ -19,7 +19,7 @@ const addStudentSkill = async (req, res, next) => {
 
     const newStudentSkill = await StudentSkill.create({
       skillId: SkillId,
-      percentage: percentage,
+      percentage: `${percentage}%`,
       studentId: req.local.id // Assuming you have the student ID available in req.local.id
     });
 console.log(req.local.id);
@@ -74,18 +74,34 @@ console.log(req.local.id);
   };
 
   const getAllStudentSkills = async (req, res, next) => {
+
+  
     if (req.local.type != 'student') {
         
       throw new Error('You are not authorized to get skills ');}
     try {
+    
         const userpayload = req.local;
 
-      const studentSkills = await StudentSkill.findAll({});
+      const studentSkills = await StudentSkill.findAll({
+        include: [{ model: Skill, as: 'Skill' }],
+      attributes: {
+        exclude: ['Skill.nameskill']
+      }
+ 
+      });
       res.status(200).send(studentSkills);
     } catch (err) {
       next(err);
     }
   };
+
+
+
+
+
+
+
   module.exports = {addStudentSkill,
     deleteStudentSkillById,
     updatePercentageById,

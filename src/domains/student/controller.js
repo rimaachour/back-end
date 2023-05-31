@@ -4,8 +4,9 @@ const { mail } = require('../../helpers/mailer');
 const Student = require('../student/model')
 const Offer = require('../offer/model');
 const Time = require('../Time/model');
-const Location = require('../loaction/model');
-const domain = require('../domain/model')
+const location = require('../loaction/model');
+const domainOffer = require('../domainOffer/model');
+
 const studentValidation = require('../../helpers/studentValidation')
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
@@ -174,20 +175,20 @@ const getAllStudents = async (req, res) => {
 
 
 
-const getStudentByName = async (req, res) => {
-  try {
-    const student = await Student.findOne({
-      where: { Name: req.params.Name },
-    });
-    if (!student) {
-      return res.status(404).send('Student not found');
-    }
-    res.status(200).send(student);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Server Error');
-  }
-};
+// const getStudentByName = async (req, res) => {
+//   try {
+//     const student = await Student.findOne({
+//       where: { Name: req.params.Name },
+//     });
+//     if (!student) {
+//       return res.status(404).send('Student not found');
+//     }
+//     res.status(200).send(student);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send('Server Error');
+//   }
+// };
 // 4. update Student
 const updateStudentById = async (req, res) => {
   try {
@@ -333,22 +334,35 @@ const getProfile = async (req, res, next) => {
 
 /// searchOffer////////////
 const serachofferDomain = async (req, res, next) => {
-  const { domain, location, type } = req.query;
+  const { domainOfferId, locationId, type } = req.query;
   try {
+  if  (req.local.type != 'student'){
+    throw new Error("You can't update this user")
+  }
     const offres = await Offer.findAll({
       where: {
         [Op.and]: [
-          domain ? {
-            domain
+          domainOfferId ? {
+            domainOfferId
           } : {},
-          location ? {
-            location
+          locationId ? {
+            locationId
           } : {},
           type ? {
             type
           } : {},
         ]
       },
+      include: [
+        {
+          model: domainOffer,
+          as: 'domainOffer',
+        },
+        {
+          model: location,
+          as: 'location',
+        },
+      ],
     })
     res.json(offres);
   }
@@ -367,7 +381,7 @@ const serachofferDomain = async (req, res, next) => {
 module.exports = {
   registerUser,
   getAllStudents,
-  getStudentByName,
+  // getStudentByName,
   updateStudentById,
   deleteStudentById,
   verifyOTP,

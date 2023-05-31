@@ -70,7 +70,7 @@ const Deletelocation = async (req, res, next) => {
 
   const getLocation = async (req, res, next) => {
     try {
-      if (req.local.role != 'admin') {
+      if (req.local.type !== 'company' && req.local.type !== 'student') {
           
         throw new Error('You are not authorized to  get location');}
       const Location = await location.findAll();

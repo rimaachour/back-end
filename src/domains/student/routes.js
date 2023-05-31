@@ -57,7 +57,7 @@ router.get('/profile/:id', authentication, async (req, res, next) => {
         next(error);
     }
 })
-router.get('/:nom', authentication, studentController.getStudentByName)
+// router.get('/:nom', authentication, studentController.getStudentByName)
 
 //router.put('update/:id',studentController.updateStudentById)
 

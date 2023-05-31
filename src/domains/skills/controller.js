@@ -3,14 +3,14 @@ const Skill = require('./model');
 
 
 const addSkill = async (req, res, next) => {
-  const { name } = req.body;
+  const { nameskill } = req.body;
 
   try {
     if (req.local.role != 'admin') {
 
       throw new Error('You are not authorized to add skill');
     }
-    const newSkill = new Skill({ name });
+    const newSkill = new Skill({ nameskill });
     const savedSkill = await newSkill.save();
 
     if (savedSkill) {
@@ -22,14 +22,14 @@ const addSkill = async (req, res, next) => {
 };
 const modifySkill = async (req, res, next) => {
   const { id } = req.params;
-  const { name } = req.body;
+  const { nameskill } = req.body;
 
   try {
     if (req.local.role != 'admin') {
 
       throw new Error('You are not authorized to update skill');
     }
-    const updatedSkill = await Skill.update({ name }, { where: { id } });
+    const updatedSkill = await Skill.update({ nameskill }, { where: { id } });
     if (updatedSkill[0] !== 0) {
       const skill = await Skill.findByPk(id);
       res.status(200).send(skill);
@@ -65,7 +65,7 @@ const deleteSkill = async (req, res, next) => {
 
 const getSkills = async (req, res, next) => {
   try {
-    if (req.local.role != 'admin') {
+    if (req.local.type != 'student') {
 
       throw new Error('You are not authorized to  get skills');
     }
@@ -77,7 +77,7 @@ const getSkills = async (req, res, next) => {
       res.status(404).send('No skills found.');
     }
   } catch (err) {
-    next(message);
+    next(err);
   }
 };
 
