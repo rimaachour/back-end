@@ -90,7 +90,7 @@ const  addProject = async(req,res,next) =>{
             throw new Error('You are not authorized to get projects');
           }
       
-          const project = await Project.findOne({
+          const project = await Project.findAll({
             where: {
               studentId: req.local.id,
             },

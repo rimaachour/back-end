@@ -13,20 +13,7 @@ router.get('/getEntreprise/:id', authentication, entrepriseController.getEntrepr
 router.delete('/:id', authentication, entrepriseController.deleteEntrepriseById);
 router.post('/verifyOTP1', entrepriseController.verifyOTP1);
 router.put('/updateCompny/:id', authentication, entrepriseController.updateCompny);
-router.get('/search', authentication, async (req, res, next) => {
-    try {
-        const { skills } = req.query;
-        const students = await Student.findAll({
-            where: {
-                skills: skills
-            }
-        });
-
-        return res.status(200).send(students);
-    } catch (err) {
-        return next(err.message);
-    }
-});
+router.get('/search', entrepriseController.searchStudentBySkills)
 
 // router.get('/:nom', authentication, entrepriseController.getEntrepriseByName);
 router.post('/ResendOtpCRegister', entrepriseController.resendOtpCRegister);

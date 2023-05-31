@@ -4,6 +4,7 @@ const Entreprise = require('./model');
 const Student = require('../student/model')
 const bcrypt = require('bcrypt');
 const multer = require('multer');
+ const studentSkills = require('../StudentSkill/model')
 const { GenerateToken } = require('../../helpers/JWT');
 
 const storage = multer.memoryStorage();
@@ -272,21 +273,38 @@ const deleteEntrepriseById = async (req, res) => {
 };
 //////////////////////////////searchProfileStudent////////////////////
 const searchStudentBySkills = async (req, res, next) => {
-
-
   try {
-    const { skills } = req.query;
-    const students = await Student.findAll({
-      where: {
-        skills: skills
-      }
-    });
+    // if (req.local.type !== 'company') {
+    //   throw new Error('You are not authorized to see offers');
+    // }
 
-    return res.status(200).send(students);
+    const { skillId } = req.query;
+
+    try {
+      const studentsskill = await studentSkills.findAll({
+        where: {
+          skillId: skillId,
+        },
+        include: [
+          {
+            model: Student,
+            through: {
+              attributes: ['studentId']
+            },
+            // Include the Profile model to fetch the detailed profile
+          },
+        ],
+      });
+
+      res.status(200).send(studentsskill);
+    } catch (err) {
+      next(err);
+    }
   } catch (err) {
-    return next(err.message);
+    next(err);
   }
 };
+
 /////////////////////////
 // get all the data 
 const getStudentProfile = async (req, res, next) => {
