@@ -11,22 +11,22 @@ const SavedOffer = sequelize.define('saved_offers', {
       primaryKey: true,
       unique: true
     },
-    studentId: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-        references: {
-            model: Student,
-            key: 'id'
-        }
-    },
-    offerId: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-        references: {
-            model: Offer,
-            key: 'id'
-        }
-    }
+    // studentId: {
+    //   type: Sequelize.INTEGER,
+    //   allowNull: false,
+    //     references: {
+    //         model: Student,
+    //         key: 'id'
+    //     }
+    // },
+    // offerId: {
+    //   type: Sequelize.INTEGER,
+    //   allowNull: false,
+    //     references: {
+    //         model: Offer,
+    //         key: 'id'
+    //     }
+    // }
   }, {
     timestamps: false
   });

@@ -97,7 +97,31 @@ console.log(req.local.id);
   };
 
 
-
+  const getSkillsByStudentId = async (req, res, next) => {
+    try {
+      const studentId  = req.params.id;
+  
+      // Check if the requester is authorized as a student
+      if (req.local.type !== 'student') {
+        throw new Error('You are not authorized to get skills');
+      }
+  
+      const studentSkills = await StudentSkill.findAll({
+        where: {
+          studentId: studentId,
+        },
+        include: [{ model: Skill, as: 'Skill' }],
+        attributes: {
+          exclude: ['Skill.nameskill']
+        }
+      });
+  
+      res.status(200).send(studentSkills);
+    } catch (err) {
+      next(err);
+    }
+  };
+  
 
 
 
@@ -105,4 +129,5 @@ console.log(req.local.id);
   module.exports = {addStudentSkill,
     deleteStudentSkillById,
     updatePercentageById,
-    getAllStudentSkills}
+    getAllStudentSkills,
+    getSkillsByStudentId}

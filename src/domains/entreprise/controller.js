@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const multer = require('multer');
  const studentSkills = require('../StudentSkill/model')
 const { GenerateToken } = require('../../helpers/JWT');
-
+const sequelize = require('../../config/db');
 const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
@@ -195,7 +195,7 @@ const getEntreprise = async (req,res,next) => {
 const{id}=req.params;
 
   try {
-    if ((req.local.type != 'company')||(req.local.id != req.params.id)) {
+    if ((req.local.type != 'company'&& req.local.type != 'student')||(req.local.id != req.params.id)) {
       throw new Error("You're not authorized to update this profile");
     }
     const user1 = await Entreprise.findOne({ where: { id } });
@@ -381,7 +381,7 @@ const getPopularStudentProfiles = async (req, res, next) => {
     const popularProfiles = await Student.findAll({
       where: { popular: true },
       limit: 6,
-      order: Sequelize.literal('random()'), // Retrieves random profiles
+      order: sequelize.literal('RAND()'), // Retrieves random profiles (MySQL)
     });
 
     res.status(200).json(popularProfiles);
@@ -389,6 +389,7 @@ const getPopularStudentProfiles = async (req, res, next) => {
     next(err);
   }
 };
+
 
 
 

@@ -7,6 +7,7 @@ router.get('/getMySkills', authentication, StudentskillController.getAllStudentS
 router.post('/addskill',authentication,StudentskillController.addStudentSkill);
 router.put('/deleteskills',authentication,StudentskillController.deleteStudentSkillById);
 router.put('/updateskill',authentication,StudentskillController.updatePercentageById);
+router.get('/getMySkillsById/:id', authentication, StudentskillController.getSkillsByStudentId);
 
 
 module.exports = router;

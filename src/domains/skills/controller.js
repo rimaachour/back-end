@@ -65,7 +65,7 @@ const deleteSkill = async (req, res, next) => {
 
 const getSkills = async (req, res, next) => {
   try {
-    if (req.local.type != 'student') {
+    if (req.local.type !== 'company' && req.local.type !== 'student') {
 
       throw new Error('You are not authorized to  get skills');
     }
