@@ -1,12 +1,13 @@
 const subscribers = require('./model')
 const Student = require('../student/model');
 const Company = require('../entreprise/model');
+const notification = require('../notification/model')
 const { message } = require('../../helpers/studentValidation');
 // Fonction pour permettre à un étudiant de s'abonner à un compte d'entreprise
 
 
 const sAbonner = async (req, res, next) => {
-  const {companyId}  = req.body;
+  const companyId  = req.body.companyId;
   const studentId = req.local.id;
   try {
     if (req.local.type !== 'student') {
@@ -22,7 +23,7 @@ const sAbonner = async (req, res, next) => {
 
     // Check if the subscription already exists
     const subscription = await subscribers.findOne({
-      where: { studentId: req.local.id, companyId: company.id }
+      where: { studentId: studentId, companyId: companyId }
     });
 
     if (subscription) {
@@ -31,8 +32,8 @@ const sAbonner = async (req, res, next) => {
 
     // Create a new subscription in the "subscribers" table
     const newSubscription = await subscribers.create({
-      studentId: student.id,
-      companyId: company.id
+      studentId: studentId,
+      companyId: companyId
     });
 
     // Update the subscriberCount in the Company model
@@ -44,6 +45,16 @@ const sAbonner = async (req, res, next) => {
     //   studentFirstName: student.firstname,
     //   studentLastName: student.LastName
     // });
+
+await notification.create({
+    studentId: studentId,
+    companyId: companyId,
+    message: `The student ${student.name} subscribe to your account .`
+  });
+
+
+
+
     global?.io.emit(`follow-${companyId}`,{
         message :`the student ${student.name} has followed your account.`
     });

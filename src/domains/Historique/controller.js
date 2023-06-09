@@ -4,11 +4,12 @@ const Student = require('../student/model');
 const Company = require('../entreprise/model');
 const Offer = require('../offer/model');
 const notification = require('../notification/model');
+
+
 const applyOffre = async (req, res, next) => {
   const offerId = req.params.id;
   const studentId = req.local.id;
-  const companyId = req.local.id;
-
+  const companyId = req.body.companyId;
 
   try {
     if (req.local.type != 'student') {
@@ -31,6 +32,8 @@ const applyOffre = async (req, res, next) => {
 
 
     });
+    await company.increment('AppliedOfferCount',{by:1});
+    await company.save()
    // Create a new notification
   await notification.create({
     studentId: studentId,
@@ -53,41 +56,41 @@ const applyOffre = async (req, res, next) => {
     next(error);
   }
 };
-  
-  async function getAppliedStudents(req, res, next) {
-    const companyId = req.local.id;
-  
-    try {
-      if (req.local.type != 'company') {
-        throw new Error('You are not authorized to getprofileStudent for an offer');
-      }
-      const appliedStudents = await Historique.findAll({
-        where: { companyId },
-       include: [
-          {
-            model: Student,
-            as: 'student',
-            attributes: ['id', 'name', 'firstname', 'email'],
-           
-          },
-          {
-            model: Offer,
-            as: 'offer',
-            //attributes: ['id', 'name', 'firstname', 'email'],
-           
-          },
-         
-        ], 
-      });
-  
-      res.json({appliedStudents});
-    } catch (error) {
-      console.error('Error retrieving applied students:', error);
-      next(error);
+
+async function getAppliedStudents(req, res, next) {
+  const companyId = req.local.id;
+
+  try {
+    if (req.local.type != 'company') {
+      throw new Error('You are not authorized to getprofileStudent for an offer');
     }
+    const appliedStudents = await Historique.findAll({
+      where: { companyId },
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          attributes: ['id', 'name', 'firstname', 'email'],
+
+        },
+        {
+          model: Offer,
+          as: 'offer',
+          //attributes: ['id', 'name', 'firstname', 'email'],
+
+        },
+
+      ],
+    });
+
+    res.json({ appliedStudents });
+  } catch (error) {
+    console.error('Error retrieving applied students:', error);
+    next(error);
   }
-  
-  
+}
+
+
 
 
 
@@ -106,10 +109,10 @@ const getAppliedOffersCount = async (req, res, next) => {
     next(error);
   }
 };
-  
-  module.exports = {applyOffre,
-    getAppliedOffersCount,
-//getAppliedOffer,
- getAppliedStudents
-  };
-  
+
+module.exports = {
+  applyOffre,
+  getAppliedOffersCount,
+  //getAppliedOffer,
+  getAppliedStudents
+};
