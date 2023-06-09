@@ -14,6 +14,7 @@ router.get('/getPopularOfferDiscover',offerController.getPopularOfferDiscover);
 router.get('/getOffersByCompanyId/:id',authentication,offerController.getOffersByCompanyId);
 router.get('/searchOffer',authentication,offerController.searchOffers),
 router.get('/getOfferDiscoverDetails/:id',authentication,offerController.getPopularofferDiscoverDetails),
-router.get('/getPopularOffer',authentication,offerController.getPopularOffers)
+router.get('/getPopularOffer',authentication,offerController.getPopularOffers);
+router.get('/getCompanyDetailsfromoffer/:id',authentication,offerController.getCompanyDetailsByOfferId);
 module.exports = router;
 

@@ -4,6 +4,7 @@ const Offer = require("./model");
 const location= require("../loaction/model")
 const domainOffer = require("../domainOffer/model");
 const { Op } = require('sequelize');
+const Company = require("../entreprise/model")
 
 
 
@@ -176,6 +177,7 @@ const getOfferById = async (req, res, next) => {
       include: [
         { model: domainOffer, as: 'domainOffer' },
         { model: location, as: 'location' },
+     
 
       ],
     });
@@ -218,6 +220,51 @@ const getOffersByCompanyId = async (req, res, next) => {
     }
 
     res.status(200).json(offers);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getCompanyDetailsByOfferId = async (req, res, next) => {
+  const  offerId  = req.params.id;
+  try {
+    if (req.local.type !== 'student') {
+      throw new Error('You are not authorized to see offers');
+    }
+
+    // Find the offer by ID
+    const offer = await Offer.findOne({ where: { id: offerId } });
+
+    if (!offer) {
+      throw new Error("Offer not found");
+    }
+
+    // Get the company associated with the offer
+    const company = await Company.findOne({ where: { id: offer.companyId } });
+
+    if (!company) {
+      throw new Error("Company not found");
+    }
+
+    // Return the company details
+    const companyDetails = {
+      id: company.id,
+      name: company.name,
+      description: company.description,
+      domain: company.domain,
+      address: company.address,
+      logo: company.logo,
+      email: company.email,
+      location: company.location,
+      mobile: company.Mobile,
+      service1: company.service1,
+      service2: company.service2,
+      service3: company.service3,
+      service4: company.service4,
+      subscriberCount: company.SubscriberCount,
+    };
+
+    res.status(200).json(companyDetails);
   } catch (err) {
     next(err);
   }
@@ -359,7 +406,8 @@ module.exports = {
   getOffersByCompanyId,
   getPopularOfferDiscover,
   getPopularofferDiscoverDetails,
-  getPopularOffers
+  getPopularOffers,
+  getCompanyDetailsByOfferId
 }
 
 

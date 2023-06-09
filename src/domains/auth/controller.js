@@ -155,8 +155,6 @@ const signInCompany = async (req, res, next) => {
 const forgotPasswordStudent = async (req, res, next) => {
   try {
     const { email } = req.body;
-
-
     const student = await Student.findOne({ where: { email: email } });
     if (!student) {
       throw new Error("Invalid email address");
@@ -165,11 +163,14 @@ const forgotPasswordStudent = async (req, res, next) => {
     await mail(student.email, "OTP Verification", `Your OTP is ${otp}`);
     student.OTP = otp;
     await student.save();
-    return res.status(200).json({ ok: true, message: "OTP sent to your email" });
+    res.status(200).json({ ok: true, message: "OTP sent to your email" });
   } catch (err) {
     console.error(err);
     next(err);
-    throw new Error("Error sending OTP, please try again later");
+   res.json({
+    status : "Failed" , 
+    message : "Error sending OTP, please try again later"
+   });
 
 
   }
@@ -320,14 +321,15 @@ const forgotPasswordCompany = async (req, res, next) => {
     await entreprise.save();
     console.log(entreprise.OTP);
 
-    return res
+     res
       .status(200)
       .json({ ok: true, message: "OTP sent to your email" });
   } catch (err) {
     console.error(err);
-    next(err);
-
-    throw new Error("Error sending OTP, please try again later");
+    res.json({
+      status : "Failed" , 
+      message : err.message
+    });
   }
 };
 
@@ -366,8 +368,10 @@ const verifyOTPCompany = async (req, res, next) => {
 //resendOTP
 async function resendOtpC(req, res) {
   const { email } = req.body;
-
+  console.log(email)
+  
   const entreprise = await Entreprise.findOne({ where: { email: email } });
+  console.log(entreprise)
   if (!entreprise) {
     return res.status(404).json({ status: false, message: 'Company not found' });
   }

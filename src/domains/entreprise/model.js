@@ -92,11 +92,30 @@ const Company = sequelize.define('companies', {
   Mobile:{
     type: Sequelize.STRING,
     allowNull: true,
-  }
+  },
+  SubscriberCount:{
+    type:Sequelize.INTEGER,
+    allowNull:false,
+    defaultValue:0,
+  },
+  ReviewerCount:{
+    type:Sequelize.INTEGER,
+    allowNull:false,
+    defaultValue:0,
+  },
+  AppliedOfferCount:{
+    type:Sequelize.INTEGER,
+    allowNull:false,
+    defaultValue:0,
+  },
 }, {
   timestamps: false,
 });
 
+Company.associate = () => {
+  Company.belongsToMany(Student, { through: Subscriber , foreignKey:'companyId' });
+
+};
     //Company.hasMany(Offer, { as: 'companyId'});
     Favoris.belongsTo(Company, { foreignKey: 'companyId' });
 // Offer.belongsTo(Company, { foreignKey: 'companyId' });

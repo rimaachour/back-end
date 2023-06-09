@@ -30,7 +30,7 @@ const registerCompany = async (req, res, next) => {
     // Check if email address is already in use
     const emailExists = await Entreprise.findOne({ where: { email: req.body.email } });
     if (emailExists) {
-      throw new Error('duplicated Email');
+      throw new Error('Email already exists');
     }
 
 
@@ -38,7 +38,7 @@ const registerCompany = async (req, res, next) => {
 
     // Check if passwords match
     if (password != confirmpassword) {
-      throw new Error('the password and confirm password diff');
+      throw new Error('the password and confirm password does not match');
     }
 
     // Generate OTP and hash passwords
@@ -112,7 +112,7 @@ const updateCompny = async (req, res, next) => {
      await user1.save();
   
       // Send a response indicating success
-     res.status(200).send('Data updated successfully');
+     res.json({message:'Data updated successfully'});
     
   } catch (err) {
     next(err);
@@ -192,37 +192,40 @@ async function verifyOTP1(req, res, next) {
 
 ///////////////////////getCompagny///////////////////////////////////////////
 const getEntreprise = async (req,res,next) => {
-const{id}=req.params;
-
-  try {
-    if ((req.local.type != 'company'&& req.local.type != 'student')||(req.local.id != req.params.id)) {
-      throw new Error("You're not authorized to update this profile");
-    }
-    const user1 = await Entreprise.findOne({ where: { id } });
-if(!user1){
-  throw new Error("User not found");
-
-}
-    const userData = {
-    id:user1.id,
-    description : user1.description,
-    domain : user1.domain,
-    address :user1.address,
-    logo :user1.logo,
-    name:user1.name,
-    email:user1.email,
-    location:user1.location,
-    Mobile:user1.Mobile,
-   service4:user1.service4,
-   service1:user1.service1,
-   service2:user1.service2,
-   service3:user1.service3,
-    };
-    return res.status(200).json(userData);
-  } catch (err) {
-     next(err);
+  const{id}=req.params;
+  
+    try {
+      if ((req.local.type != 'company' && req.local.type != 'student'))
+      {
+        throw new Error("You're not authorized to see  this profile");
+      }
+      const user1 = await Entreprise.findOne({ where: { id } });
+  if(!user1){
+    throw new Error("User not found");
+  
   }
-};
+      const userData = {
+      id:user1.id,
+      description : user1.description,
+      domain : user1.domain,
+      address :user1.address,
+      logo :user1.logo,
+      name:user1.name,
+      email:user1.email,
+      location:user1.location,
+      Mobile:user1.Mobile,
+     service4:user1.service4,
+     service1:user1.service1,
+     service2:user1.service2,
+     service3:user1.service3,
+     SubscriberCount:user1.SubscriberCount,
+  
+      };
+      return res.status(200).json(userData);
+    } catch (err) {
+       next(err);
+    }
+  }
 // const getEntrepriseByName = async (req, res) => {
 //   try {
 //     const entreprise = await Entreprise.findOne({
@@ -362,7 +365,8 @@ const getStudentProfileID = async (req, res, next) => {
       projectName: student.projectName,
       startDate: student.startDate,
       finDate: student.finDate,
-      projectStatus: student.projectStatus
+      projectStatus: student.projectStatus,
+     
     };
 
     res.status(200).json(userData);
@@ -418,4 +422,4 @@ module.exports = {
   getStudentProfile,
   getStudentProfileID,
   getPopularStudentProfiles
-};
+}

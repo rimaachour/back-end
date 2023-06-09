@@ -45,7 +45,7 @@ const registerUser = async (req, res, next) => {
 
 
     if (password !== confirmpassword) {
-      throw new Error('Passwords do not match');
+      throw new Error('the password and confirm password does not match');
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -271,7 +271,8 @@ const updateUser = async (req, res, next) => {
       user2.finDate = data.finDate,
       user2.projectStatus = data.projectStatus
     await user2.save();
-    res.status(200).send('Data updated successfully');
+    res.json({message:'Data updated successfully'});
+    
   } catch (err) {
     next(err);
   }

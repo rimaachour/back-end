@@ -18,13 +18,16 @@ const preference = require('../domains/preference');
 const skills = require('../domains/skills');
 const StudentSkill = require('../domains/StudentSkill');
 const Contact = require('../domains/contact');
-const Historique = require('../domains/Historique');
+//const Historique = require('../domains/Historique');
 const location = require('../domains/loaction');
 const Time = require('../domains/Time');
 const favorisOffers = require('../domains/favorisOffers');
 const domainOffers =require('../domains/domainOffer');
 const project = require('../domains/projet');
 const experience = require('../domains/experience')
+const Subscriber = require('../domains/subscribers')
+const notification = require('../domains/notification');
+const Historique = require("../domains/Historique");
 router.use("/auth", auth);
 router.use("/admin", admin);
 router.use("/entreprise", entreprise);
@@ -48,5 +51,7 @@ router.use("/Time",Time);
 router.use("/favorisoffers",favorisOffers)
 router.use("/domainOffer",domainOffers)
 router.use("/project",project),
-router.use("/experience",experience)
+router.use("/experience",experience),
+router.use("/subscriber",Subscriber),
+router.use ("/notification",notification)
 module.exports = router;

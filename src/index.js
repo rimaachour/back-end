@@ -18,8 +18,11 @@ async function addAdmin() {
 
 const server = require('http').createServer(app);
 const socketIO = require('socket.io');
-const io = socketIO(server);
-
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+  }
+});
 global.io = io;
 
       // Envoyer une notification à l'entreprise (par exemple, un e-mail)
@@ -31,6 +34,7 @@ global.io = io;
       global?.io.on('connection', (socket) => {
         // Handle socket connection events
         // data => company | student id;
+        console.log("connected")
         socket.on('join', (data) =>{
           console.log('user has been joined room => ', data);
           socket.join(data);
@@ -47,7 +51,7 @@ dbConnection.authenticate()
     console.log("connection has been established Successfully");
   })
   .then(() => {
-    //addAdmin()
+    addAdmin()
   })
   .catch((err) => console.error("unable to connect database", err))
 
