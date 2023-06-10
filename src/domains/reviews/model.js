@@ -13,51 +13,40 @@ const Review = sequelize.define('reviews', {
     primaryKey: true,
     unique: true
   },
-  review: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
+ 
   rating: {
     type: DataTypes.INTEGER,
     allowNull: true
   },
-  stars:{
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
-    validate: {
-      min: 0,
-      max: 5,
-    },
-},
-  comment: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  companyID: {
+  
+  companyId: {
     type: Sequelize.INTEGER,
     references: {
       model: Company,
       key: 'id'
     }
   },
-  studentID: {
+  studentId: {
     type: Sequelize.INTEGER,
     references: {
       model: 'students', // Wrote it hardcoded due to circular dependencies causing it to be empty object
       //TODO fix circular deps
       key: 'id'
     }
+  },
+  reviewer: {
+    type: DataTypes.ENUM('student', 'company'),
+    allowNull: false
   }
+ 
 },{
   timestamps: false
 });
 
 Review.associate = (models) => {
-  Review.hasOne(Company);
-  Review.hasOne(Student);
-  Company.belongsTo(Review)
-  Student.belongsTo(Review)
+  Review.belongsTo(Student, { foreignKey: 'studentId' });
+Review.belongsTo(Company, { foreignKey: 'companyId' })
+
 };
 
 sequelize.sync({ force: false }).then(() => {

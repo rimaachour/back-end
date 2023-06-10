@@ -25,9 +25,9 @@ const Historique = sequelize.define('Historique', {
     Status: {
         type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: 'bandung',
+        defaultValue: 'pending',
         validate: {
-          isIn: [['bandung', 'accepted', 'refused']],
+          isIn: [['pending', 'accepted', 'refused']],
         },
       },
       

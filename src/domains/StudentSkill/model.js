@@ -41,12 +41,15 @@ const StudentSkill =  sequelize.define('StudentSkill', {
     });
 
 
-    StudentSkill.associate  = () =>{
+     StudentSkill.associate  = () =>{
   
-      Student.hasMany(StudentSkill);
-      StudentSkill.belongsTo(Student);
+      Student.hasMany(StudentSkill, { foreignKey: 'studentId', as: 'StudentSkill' });
+      StudentSkill.belongsTo(Student, { foreignKey: 'studentId', as: 'student' });
+      Skill.hasMany(StudentSkill ,{ foreignKey: 'skillId', as: 'StudentSkill' });
+      StudentSkill.belongsTo(Skill, { foreignKey: 'studentId', as: 'student' });
+
     
-    }
+     }
 
 
     sequelize.sync({ force: false }).then(() => {

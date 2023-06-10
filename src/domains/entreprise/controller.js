@@ -281,7 +281,7 @@ const searchStudentBySkills = async (req, res, next) => {
     //   throw new Error('You are not authorized to see offers');
     // }
 
-    const { skillId } = req.query;
+    const { skillId } = req.body;
 
     try {
       const studentsskill = await studentSkills.findAll({
@@ -291,9 +291,7 @@ const searchStudentBySkills = async (req, res, next) => {
         include: [
           {
             model: Student,
-            through: {
-              attributes: ['studentId']
-            },
+            as: 'student',
             // Include the Profile model to fetch the detailed profile
           },
         ],

@@ -91,6 +91,36 @@ async function getAppliedStudents(req, res, next) {
 }
 
 
+const getAppliedOffersByStudentId = async (req, res, next) => {
+  const studentId= req.params.id;
+
+  try {
+    if (req.local.type !== 'student') {
+      throw new Error('You are not authorized to access this information');
+    }
+
+    const appliedOffers = await Historique.findAll({
+      where: { studentId },
+      include: [
+        {
+          model: Offer,
+          as: 'offer',
+          //attributes: ['id', 'title', 'status'], // Include other attributes you want to display
+        },
+      ],
+    });
+
+    res.json({ appliedOffers });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+
+
+
 
 
 
@@ -114,5 +144,6 @@ module.exports = {
   applyOffre,
   getAppliedOffersCount,
   //getAppliedOffer,
-  getAppliedStudents
+  getAppliedStudents,
+  getAppliedOffersByStudentId
 };

@@ -137,7 +137,7 @@ const Student = sequelize.define('students', {
  },
   status: {
     type: Sequelize.ENUM('active', 'notactive'),
-    defaultValue: 'notactive'
+    defaultValue: 'active'
   },
 studyEstablishment: {
     type:  Sequelize.STRING,
