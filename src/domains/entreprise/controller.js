@@ -5,6 +5,7 @@ const Student = require('../student/model')
 const bcrypt = require('bcrypt');
 const multer = require('multer');
  const studentSkills = require('../StudentSkill/model')
+ const Skill = require('../skills/model')
 const { GenerateToken } = require('../../helpers/JWT');
 const sequelize = require('../../config/db');
 const storage = multer.memoryStorage();
@@ -277,32 +278,20 @@ const deleteEntrepriseById = async (req, res) => {
 //////////////////////////////searchProfileStudent////////////////////
 const searchStudentBySkills = async (req, res, next) => {
   try {
-    // if (req.local.type !== 'company') {
-    //   throw new Error('You are not authorized to see offers');
-    // }
-
-    const { skillId } = req.body;
-
-    try {
-      const studentsskill = await studentSkills.findAll({
-        where: {
-          skillId: skillId,
-        },
-        include: [
-          {
-            model: Student,
-            as: 'student',
-            // Include the Profile model to fetch the detailed profile
-          },
-        ],
-      });
-
-      res.status(200).send(studentsskill);
-    } catch (err) {
-      next(err);
+    if (req.local.type !== 'company') {
+      throw new Error('You are not authorized to perform this action');
     }
-  } catch (err) {
-    next(err);
+
+    const studyField = req.query.studyField; // Assuming the study field is provided as a query parameter
+
+    const students = await Student.findAll({
+      where: { studyField: studyField },
+      attributes: ['id', 'name', 'email', 'studyField'], // Include the attributes you want to retrieve
+    });
+
+    res.json({ students });
+  } catch (error) {
+    next(error);
   }
 };
 

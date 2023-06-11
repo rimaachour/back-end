@@ -4,6 +4,8 @@ const Student = require('../student/model');
 const Company = require('../entreprise/model');
 const Offer = require('../offer/model');
 const notification = require('../notification/model');
+const { Op } = require('sequelize');
+const Accepted = require('../Accepted/model')
 
 
 const applyOffre = async (req, res, next) => {
@@ -61,25 +63,24 @@ async function getAppliedStudents(req, res, next) {
   const companyId = req.local.id;
 
   try {
-    if (req.local.type != 'company') {
-      throw new Error('You are not authorized to getprofileStudent for an offer');
+    if (req.local.type !== 'company') {
+      throw new Error('You are not authorized to get profileStudent for an offer');
     }
+
     const appliedStudents = await Historique.findAll({
       where: { companyId },
       include: [
         {
           model: Student,
           as: 'student',
-          attributes: ['id', 'name', 'firstname', 'email'],
-
+         // attributes: ['id', 'name', 'firstname', 'email'],
+         
         },
         {
           model: Offer,
           as: 'offer',
           //attributes: ['id', 'name', 'firstname', 'email'],
-
         },
-
       ],
     });
 
@@ -89,10 +90,13 @@ async function getAppliedStudents(req, res, next) {
     next(error);
   }
 }
+/////////////////////////////////////////////////////////
+
+
 
 
 const getAppliedOffersByStudentId = async (req, res, next) => {
-  const studentId= req.params.id;
+  const studentId= req.id;
 
   try {
     if (req.local.type !== 'student') {
@@ -100,7 +104,7 @@ const getAppliedOffersByStudentId = async (req, res, next) => {
     }
 
     const appliedOffers = await Historique.findAll({
-      where: { studentId },
+      where: { id: studentId },
       include: [
         {
           model: Offer,
@@ -115,6 +119,93 @@ const getAppliedOffersByStudentId = async (req, res, next) => {
     next(error);
   }
 };
+
+
+
+async function rejectApplication(req, res, next) {
+  const companyId = req.local.id;
+  const offerId = req.body.offerId;
+  const studentId = req.body.studentId;
+
+  try {
+
+    if (req.local.type !== 'company') {
+      throw new Error('You are not authorized to access this information');
+    }
+
+
+    const application = await Historique.findOne({
+      where: {
+
+        offerId: offerId,
+        studentId:studentId,
+        Status: 'pending',
+      },
+    });
+
+    if (!application) {
+    throw new Error ( 'Application not found or already rejected.' );
+    }
+
+    application.Status = 'refused';
+    await application.save();
+
+    res.status(200).json({ message: 'Application rejected successfully.' });
+  } catch (error) {
+   
+ next(error)
+  }
+}
+
+
+
+
+
+async function updateApplicationStatus(req, res, next) {
+  const studentId = req.body.studentId
+    const offerId = req.body.offerId;
+  try {
+  
+    if (req.local.type !== 'company') {
+      throw new Error('You are not authorized to access this information');
+    }
+
+    // Update the accepted student's application status to "accepted"
+    await Historique.update(
+      { Status: 'accepted' },
+      {
+        where: {
+          studentId:studentId,
+          offerId: offerId,
+        
+        },
+      }
+    );
+
+
+  
+    // Update the accepted student's application status to "accepted"
+    await Historique.update(
+      { Status: 'refused' },
+      {
+        where: {
+          studentId:{[Op.not]:studentId},
+          offerId: offerId,
+        
+        },
+      }
+    );
+
+
+   
+
+  
+    res.status(200).json({ message: 'Application status updated successfully.' });
+  } catch (error) {
+      next(error);
+
+  }
+}
 
 
 
@@ -145,5 +236,7 @@ module.exports = {
   getAppliedOffersCount,
   //getAppliedOffer,
   getAppliedStudents,
-  getAppliedOffersByStudentId
+  getAppliedOffersByStudentId,
+  rejectApplication,
+  updateApplicationStatus
 };

@@ -28,6 +28,7 @@ const experience = require('../domains/experience')
 const Subscriber = require('../domains/subscribers')
 const notification = require('../domains/notification');
 const Historique = require("../domains/Historique");
+const Accepted = require("../domains/Accepted")
 router.use("/auth", auth);
 router.use("/admin", admin);
 router.use("/entreprise", entreprise);
@@ -53,5 +54,6 @@ router.use("/domainOffer",domainOffers)
 router.use("/project",project),
 router.use("/experience",experience),
 router.use("/subscriber",Subscriber),
-router.use ("/notification",notification)
+router.use ("/notification",notification),
+router.use("/accepted",Accepted)
 module.exports = router;
