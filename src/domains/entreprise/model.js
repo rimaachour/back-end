@@ -65,7 +65,7 @@ const Company = sequelize.define('companies', {
     type: Sequelize.STRING,
     allowNull: true,
   },
-  status: {
+   status: {
     type: Sequelize.STRING,
     allowNull: false
   },

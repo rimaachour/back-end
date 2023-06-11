@@ -54,6 +54,6 @@ router.use("/domainOffer",domainOffers)
 router.use("/project",project),
 router.use("/experience",experience),
 router.use("/subscriber",Subscriber),
-router.use ("/notification",notification),
+router.use ("/notification",notification)
 router.use("/accepted",Accepted)
 module.exports = router;

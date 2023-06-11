@@ -18,7 +18,6 @@ const Review = sequelize.define('reviews', {
     type: DataTypes.INTEGER,
     allowNull: true
   },
-  
   companyId: {
     type: Sequelize.INTEGER,
     references: {

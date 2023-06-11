@@ -1,7 +1,7 @@
 const Review = require('./model')
 const Company = require("../entreprise/model")
 const Student = require("../student/model")
-
+const notification = require("../notification/model")
 
 
 const ReviewStudentToCompany = async (req, res, next) => {
@@ -70,20 +70,20 @@ const ReviewCompanyToStudent = async(req,res,next)=>{
     companyId : companyId,
     reviewer: 'company'
   });
-  
+
   await notification.create({
     studentId: studentId,
     companyId: companyId,
-    message: `The company ${Company.name} less review  on your account account `
+    message: `The company ${Company.name} less review on your account.`
   });
   res.status(201).json({ review });
   } catch (error) {
   next(error);
   }
   };
-  
-  
-  
+
+
+
 
 
 
@@ -93,8 +93,3 @@ const ReviewCompanyToStudent = async(req,res,next)=>{
 
 module.exports ={ ReviewStudentToCompany,
   ReviewCompanyToStudent};
-
-
-
-
-
