@@ -195,10 +195,10 @@ const getEntreprise = async (req,res,next) => {
   const{id}=req.params;
   
     try {
-      if ((req.local.type != 'company' && req.local.type != 'student'))
-      {
-        throw new Error("You're not authorized to see  this profile");
-      }
+      // if ((req.local.type != 'company' && req.local.type != 'student'))
+      // {
+      //   throw new Error("You're not authorized to see  this profile");
+      // }
       const user1 = await Entreprise.findOne({ where: { id } });
   if(!user1){
     throw new Error("User not found");
@@ -219,6 +219,8 @@ const getEntreprise = async (req,res,next) => {
      service2:user1.service2,
      service3:user1.service3,
      SubscriberCount:user1.SubscriberCount,
+     AppliedOfferCount:user1.AppliedOfferCount,
+     ReviewerCount:user1.ReviewerCount
   
       };
       return res.status(200).json(userData);

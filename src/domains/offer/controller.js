@@ -262,6 +262,8 @@ const getCompanyDetailsByOfferId = async (req, res, next) => {
       service3: company.service3,
       service4: company.service4,
       subscriberCount: company.SubscriberCount,
+      AppliedOfferCount:company.AppliedOfferCount,
+      ReviewerCount:company.ReviewerCount
     };
 
     res.status(200).json(companyDetails);

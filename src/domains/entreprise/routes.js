@@ -8,7 +8,7 @@ const router = require('express').Router();
 
 
 router.post('/registerCompany', entrepriseController.registerCompany);
-router.get('/getEntreprise/:id', authentication, entrepriseController.getEntreprise);
+router.get('/getEntreprise/:id', entrepriseController.getEntreprise);
 // router.put('/updateEntrepriseProfile', authentication, entrepriseController.updateEntreprisProfile);
 router.delete('/:id', authentication, entrepriseController.deleteEntrepriseById);
 router.post('/verifyOTP1', entrepriseController.verifyOTP1);
